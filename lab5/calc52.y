@@ -3,6 +3,8 @@
 %{                      /* SECCION 1 */
 #include <stdio.h>
 double memoria [26] ;   /* Se define una zona de memoria para las variables */
+int yylex();
+int yyerror(char *mensaje);
 %}
 %union {                /* El tipo de la pila (del AP) tiene caracter dual */
       double valor ;    /*  - valor numerico real */
