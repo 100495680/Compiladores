@@ -2,7 +2,7 @@
 /* 100495723@alumnos.uc3m.es 100495680@alumnos.uc3m.es */
 %{                      /* SECCION 1 */
 #include <stdio.h>
-double memoria [26] ;   /* Se define una zona de memoria para las variables */
+double memoria [52] ;   /* Se define una zona de memoria para las variables */
 %}
 %union {                /* El tipo de la pila (del AP) tiene caracter dual */
       double valor ;    /*  - valor numerico real */
@@ -23,7 +23,10 @@ double memoria [26] ;   /* Se define una zona de memoria para las variables */
 axioma:       expresion '\n'              { printf ("Expresion=%lf\n", $1) ; } 
                        r_expr
             | VARIABLE '=' expresion '\n' { memoria [$1] = $3;
-                                            printf ("%c=%lf\n", $1+'A', $3);
+                                             if ($1 > 26) {
+                                             printf ("%c=%lf\n", $1 - 26 + 'A', $3);
+                                             } else {
+                                             printf ("%c=%lf\n", $1+'a', $3);};
                                           }
                        r_expr
             ;
@@ -75,7 +78,7 @@ int yylex ()
     }
 
     if (c >= 'A' && c <= 'Z') {
-         yylval.indice = c - 'A' ;  /* resta a c el valor ascii de A */
+         yylval.indice = 26 + c - 'A' ;  /* resta a c el valor ascii de A */
          return VARIABLE ;
     }
 
