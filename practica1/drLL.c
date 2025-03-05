@@ -1,3 +1,5 @@
+/* 113 Liang Ji Zhu Ignacio Leal Sánchez */
+/* 100495723@alumnos.uc3m.es 100495680@alumnos.uc3m.es */
 #include <ctype.h>
 #include <stdio.h>
 #include <string.h>
@@ -109,6 +111,7 @@ void rd_syntax_error (int expected, int token, char *output)
 
 void MatchSymbol (int expected_token)
 {
+	printf("Dentro %c", tokens.token_val);
 	if (tokens.token != expected_token) {
 		rd_syntax_error (expected_token, tokens.token, "token %d expected, but %d was read") ;
 		exit (0) ;
@@ -118,24 +121,63 @@ void MatchSymbol (int expected_token)
 }
 
 
-// #define ParseLParen() 	MatchSymbol ('(') ; // More concise and efficient definitions
-// #define ParseRParen() 	MatchSymbol (')') ; ///   rather than using functions
+#define ParseLParen() 	MatchSymbol ('(') ; // More concise and efficient definitions
+#define ParseRParen() 	MatchSymbol (')') ; ///   rather than using functions
 											/// The actual recomendation is to use MatchSymbol in the code rather than theese macros
 
 
-void PaerseYourGrammar ()
+void ParseYourGrammar ()
 {
+	if (tokens.token_val == '+') {
+		MatchSymbol(T_OPERATOR);
+		printf("+");
+		update_old_token();
+		tokens.token = rd_lex();
+	}
+	printf("Fuera"); 
+	if (tokens.token_val == '-') {
+		MatchSymbol(T_OPERATOR);
+		printf("-");
+		rd_lex();
+	}
+	if (tokens.token_val == '*') {
+		MatchSymbol(T_OPERATOR);
+		printf("*");
+	}
+	if (tokens.token_val == '/') {
+		MatchSymbol(T_OPERATOR);
+		printf("/");
+	}
+	
+	if (tokens.token_val == '(') {
+		ParseLParen();
 
-expresion:    OPERADOR expresion expresion                   
+		rd_lex();
+		ParseYourGrammar();
+
+		rd_lex();
+		ParseRParen();
+
+	}
+
+	if (isdigit(tokens.token_val) == 0){
+			MatchSymbol(T_NUMBER);
+	}
+
+	printf("%c", tokens.token_val);
+	ParseYourGrammar();
+	ParseYourGrammar();
+	/*
+	expresion:    OPERADOR expresion expresion                   
 			| (expresion)  
 			| NUMERO
-			;
+			;*/
 }
 
 
 void ParseAxiom () 		
 {									/// Axiom ::= \n
-	PaerseYourGrammar () ;			/// Dummy Parser. Complete this with your design								
+	ParseYourGrammar () ;			/// Dummy Parser. Complete this with your design								
 	if (tokens.token == '\n') {	
 		MatchSymbol ('\n') ;
 		printf ("\n") ; 
