@@ -1,3 +1,5 @@
+/* 113 Liang Ji Zhu Ignacio Leal Sánchez */
+/* 100495723@alumnos.uc3m.es 100495680@alumnos.uc3m.es */
 %{                            /* Primera Seccion */
 #include "calc52.tab.h"        /* Cabecera con decl. de token etc. */
 extern int n_linea;
@@ -5,7 +7,8 @@ extern int n_linea;
 %%                            /* Segunda Seccion */
 [ \t]                    { ; } /* ignorar espacios y tabuladores */
 [0-9]+\.?|[0-9]*\.[0-9]+ { sscanf (yytext, "%lf", &yylval); return (NUMERO); }
-[A-Za-z]   { sscanf (yytext, "%s", &yylval); return (ALPHA);}
+[A-Z]   { sscanf (yytext, "%c", &yylval); yylval.indice += 26 - 'A' ; return (VARIABLE);}
+[a-z]   { sscanf (yytext, "%c", &yylval); yylval.indice -= 'a' ;return (VARIABLE);}
 =                      { return '=';}
 \n                       { n_linea++; return ('\n'); }
 .                        { return (yytext [0]); }   /* literales */

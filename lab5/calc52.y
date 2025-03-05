@@ -64,7 +64,7 @@ char *mensaje ;
 {
     fprintf (stderr, "%s en la linea %d\n", mensaje, n_linea) ;
 }
-
+/**
 int yylex ()
 {
     unsigned char c ;
@@ -80,12 +80,12 @@ int yylex ()
     }
 
     if (c >= 'A' && c <= 'Z') {
-         yylval.indice = 26 + c - 'A' ;  /* resta a c el valor ascii de A */
+         yylval.indice = 26 + c - 'A' ; 
          return VARIABLE ;
     }
 
     if (c >= 'a' && c <= 'z') {
-         yylval.indice = c - 'a' ;  /* resta a c el valor ascii de a  */
+         yylval.indice = c - 'a' ;
          return VARIABLE ;
     }
 
@@ -93,7 +93,7 @@ int yylex ()
           n_linea++ ;
     return c;
 }
-
+*/
 int main ()
 {
     yyparse () ;
