@@ -125,6 +125,11 @@ void MatchSymbol (int expected_token)
 
 void PaerseYourGrammar ()
 {
+
+expresion:    OPERADOR expresion expresion                   
+			| (expresion)  
+			| NUMERO
+			;
 }
 
 

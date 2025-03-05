@@ -1,0 +1,24 @@
+Para verificar si una gramática es **LL(1)** en **JFLAP**, sigue estos pasos:
+
+### 1. **Carga la gramática en JFLAP**
+   - Abre **JFLAP** y selecciona **Grammar**.
+   - Ingresa las producciones de tu gramática.
+
+### 2. **Elimina recursión izquierda (si existe)**
+   - LL(1) no permite recursión izquierda directa o indirecta.
+   - Si la gramática tiene recursión izquierda, conviértela a una forma sin recursión izquierda.
+
+### 3. **Factoriza la gramática (si es necesario)**
+   - LL(1) requiere que cada símbolo no terminal tenga producciones que comiencen con símbolos únicos.
+   - Si hay producciones que comparten un prefijo común, realiza factorización por la izquierda.
+
+### 4. **Convierte la gramática a una tabla LL(1)**
+   - Ve a **Input** → **Convert to PDA (LL)**
+   - Si la conversión es exitosa, la gramática es **LL(1)**.
+   - Si hay conflictos (como conflictos de **First/Follow** o múltiples producciones en una celda de la tabla), JFLAP mostrará un error.
+
+### 5. **Verifica la tabla LL(1)**
+   - Si la tabla LL(1) tiene celdas con más de una producción, la gramática **no es LL(1)**.
+   - Si cada celda tiene como máximo una producción, la gramática es **LL(1)**.
+
+Si JFLAP indica que la gramática no es LL(1), revisa la recursión izquierda, la factorización y los conjuntos **First** y **Follow**.
