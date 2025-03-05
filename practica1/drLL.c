@@ -133,6 +133,7 @@ void ParseYourGrammar ()
 		printf("+");
 		update_old_token();
 		tokens.token = rd_lex();
+		printf("%d",tokens.token);
 	}
 	printf("Fuera"); 
 	if (tokens.token_val == '-') {
@@ -160,7 +161,7 @@ void ParseYourGrammar ()
 
 	}
 
-	if (isdigit(tokens.token_val) == 0){
+	if (isdigit(tokens.number) == 0){
 			MatchSymbol(T_NUMBER);
 	}
 
