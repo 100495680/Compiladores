@@ -111,7 +111,6 @@ void rd_syntax_error (int expected, int token, char *output)
 
 void MatchSymbol (int expected_token)
 {
-	printf("Dentro %c", tokens.token_val);
 	if (tokens.token != expected_token) {
 		rd_syntax_error (expected_token, tokens.token, "token %d expected, but %d was read") ;
 		exit (0) ;
@@ -127,53 +126,45 @@ void MatchSymbol (int expected_token)
 
 
 void ParseYourGrammar ()
-{
-	if (tokens.token_val == '+') {
-		MatchSymbol(T_OPERATOR);
-		printf("+");
-		update_old_token();
-		tokens.token = rd_lex();
-		printf("%d",tokens.token);
-	}
-	printf("Fuera"); 
-	if (tokens.token_val == '-') {
-		MatchSymbol(T_OPERATOR);
-		printf("-");
-		rd_lex();
-	}
-	if (tokens.token_val == '*') {
-		MatchSymbol(T_OPERATOR);
-		printf("*");
-	}
-	if (tokens.token_val == '/') {
-		MatchSymbol(T_OPERATOR);
-		printf("/");
-	}
-	
-	if (tokens.token_val == '(') {
-		ParseLParen();
+{	
+	if (tokens.token == T_OPERATOR){
+		if (tokens.token_val == '+') {
+			MatchSymbol(T_OPERATOR);
+			printf("+");
+		}
+		if (tokens.token_val == '-') {
+			MatchSymbol(T_OPERATOR);
+			printf("-");
+		}
+		if (tokens.token_val == '*') {
+			MatchSymbol(T_OPERATOR);
+			printf("*");
+		}
+		if (tokens.token_val == '/') {
+			MatchSymbol(T_OPERATOR);
+			printf("/");
+		}
 
-		rd_lex();
+		ParseYourGrammar();
 		ParseYourGrammar();
 
-		rd_lex();
+	}
+
+	if (tokens.token == T_NUMBER){
+			MatchSymbol(T_NUMBER);
+			printf("%d", tokens.number);
+			
+	}
+
+	if (tokens.token == '(') {
+		ParseLParen();
+		ParseYourGrammar();
 		ParseRParen();
 
 	}
-
-	if (isdigit(tokens.number) == 0){
-			MatchSymbol(T_NUMBER);
-	}
-
-	printf("%c", tokens.token_val);
-	ParseYourGrammar();
-	ParseYourGrammar();
-	/*
-	expresion:    OPERADOR expresion expresion                   
-			| (expresion)  
-			| NUMERO
-			;*/
+	
 }
+
 
 
 void ParseAxiom () 		
