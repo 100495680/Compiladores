@@ -130,39 +130,35 @@ void ParseYourGrammar ()
 	if (tokens.token == T_OPERATOR){
 		if (tokens.token_val == '+') {
 			MatchSymbol(T_OPERATOR);
-			printf("+");
 		}
 		if (tokens.token_val == '-') {
 			MatchSymbol(T_OPERATOR);
-			printf("-");
 		}
 		if (tokens.token_val == '*') {
 			MatchSymbol(T_OPERATOR);
-			printf("*");
 		}
 		if (tokens.token_val == '/') {
 			MatchSymbol(T_OPERATOR);
-			printf("/");
 		}
-
+		char operator = tokens.token_val;
 		ParseYourGrammar();
+		printf("%c", operator);
 		ParseYourGrammar();
-
 	}
 
 	if (tokens.token == T_NUMBER){
-			MatchSymbol(T_NUMBER);
-			printf("%d", tokens.number);
-			
+		printf("%d", tokens.number);
+		MatchSymbol(T_NUMBER);
 	}
 
 	if (tokens.token == '(') {
 		ParseLParen();
+		printf("(");
 		ParseYourGrammar();
 		ParseRParen();
+		printf(")");
 
 	}
-	
 }
 
 
