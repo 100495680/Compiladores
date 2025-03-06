@@ -112,7 +112,7 @@ void rd_syntax_error (int expected, int token, char *output)
 void MatchSymbol (int expected_token)
 {
 	if (tokens.token != expected_token) {
-		rd_syntax_error (expected_token, tokens.token, "token %d expected, but %d was read") ;
+		rd_syntax_error (expected_token, tokens.token, "token %d expected, but %d was read\n") ;
 		exit (0) ;
 	} else {
 	 	rd_lex () ; 			/// read next Token
@@ -128,6 +128,7 @@ void MatchSymbol (int expected_token)
 void ParseYourGrammar ()
 {	
 	if (tokens.token == T_OPERATOR){
+		char operator = tokens.token_val;
 		if (tokens.token_val == '+') {
 			MatchSymbol(T_OPERATOR);
 		}
@@ -140,24 +141,44 @@ void ParseYourGrammar ()
 		if (tokens.token_val == '/') {
 			MatchSymbol(T_OPERATOR);
 		}
-		char operator = tokens.token_val;
 		ParseYourGrammar();
-		printf("%c", operator);
+		printf("%c ", operator);
 		ParseYourGrammar();
 	}
 
 	if (tokens.token == T_NUMBER){
-		printf("%d", tokens.number);
+		printf("%d ", tokens.number);
 		MatchSymbol(T_NUMBER);
 	}
 
 	if (tokens.token == '(') {
+		if (tokens.old_token == '(')
+		{
+			printf("\n");
+			fflush(stdout); // Imprimimos los contenidos del print anterior y saltamos la linea
+
+			rd_syntax_error(tokens.token,tokens.old_token,"Obtubimos %c queríamos algo distinto a %c\n");
+		}
 		ParseLParen();
 		printf("(");
 		ParseYourGrammar();
 		ParseRParen();
-		printf(")");
+		printf(") ");
 
+	}
+
+	// Añadir la asignación
+	if (tokens.token == '=') {
+		MatchSymbol('=');
+		ParseYourGrammar();
+		printf("= ");
+		ParseYourGrammar();
+	}
+
+	// 
+	if (tokens.token == T_VARIABLE){
+		printf("%s ", tokens.variable_name);
+		MatchSymbol(T_VARIABLE);
 	}
 }
 
