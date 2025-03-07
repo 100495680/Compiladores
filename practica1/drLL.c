@@ -9,13 +9,13 @@
 
 
 // void ParseYourGrammar () ; 		/// Dummy Parser
-void ParseAxiom () ;			/// Prototype for forward reference 		
-void ParseExpression ();
-char ParseRestExpr();
-void ParseParameter();
+char *ParseAxiom () ;			/// Prototype for forward reference 		
+char *ParseExpression ();
+char *ParseRestExpr();
+char *ParseParameter();
 int ParseOperator();
-int ParseNumber();
-char ParseAlphaNum();
+char *ParseNumber();
+char *ParseAlphaNum();
 struct s_tokens {
 	int token ;					// Here we store the current token/literal 
 	int old_token ; 			// Sometimes we need to check the previous token
@@ -136,29 +136,31 @@ void MatchSymbol (int expected_token)
 // Alphanum ::= [a-zA-Z] [0-9]?
 // Numero ::= [0-9]+
 
-int ParseNumber(){
+char *ParseNumber(){
 	// Numero ::= [0-9]+
 	// Como no devuelve nada la funcion sera "void", 
 	// si devuelve para hacer futuros calculos sera "int"
+	char buffer[64];
+	char *result;
+
+	sprintf(buffer, "%d", tokens.number);
 	MatchSymbol(T_NUMBER);
-	return tokens.number;
+	result = (char *)malloc(strlen(buffer) + 1);
+	strcpy(result, buffer);
+	return result;
 }
 
-char ParseAlphaNum(){
+char *ParseAlphaNum(){
 	// Alphanum ::= [a-zA-Z] [0-9]?
-	MatchSymbol(T_VARIABLE);
-	return tokens.variable_name;
-}
+	char buffer[64];
+	char *result;
 
-void ParseParameter(){
-	// Parametro ::= Numero | Alphanum
-	int val;
-	if (tokens.token == T_NUMBER){
-		val = ParseNumber () ;
-	}
-	if (tokens.token == T_VARIABLE){
-		val = ParseAlphaNum () ;
-	}
+	strcpy(buffer, tokens.variable_name);
+	MatchSymbol(T_VARIABLE);
+	
+	result = (char *)malloc(strlen(buffer) + 1);
+	strcpy(result, buffer);
+	return result;
 }
 
 int ParseOperator(){
@@ -167,40 +169,87 @@ int ParseOperator(){
 	return tokens.token_val;
 }
 
-char ParseRestExpr(){
-	// RestExpr ::=  OperadorExpresionExpresion | =AlphanumExpresion
-	int op;
-	char exp1;
-	char exp2;
-	if (tokens.token == T_OPERATOR){
-		op = ParseOperator();
-		if (tokens.token);
+char *ParseParameter(){
+	// Parametro ::= Numero | Alphanum
+	char *result;
+	if (tokens.token == T_NUMBER){
+		result = ParseNumber () ;
 	}
-}
-void ParseExpression(){
-	// Expresion ::= (RestExpr) | Parametro
-	char r_exp;
-	if (tokens.token == '('){
-		MatchSymbol('(');
-		printf("(");
-		r_exp = ParseRestExpr();
-		printf("%s", r_exp);
-		MatchSymbol(')');
-		printf(")");
-		return 0;
+	else if (tokens.token == T_VARIABLE){
+		result = ParseAlphaNum () ;
 	}
-	ParseParameter();
+	else {
+		rd_syntax_error(-1, tokens.token, "Se esperaba un Número o una Variable en Parametro\n");
+	}
+	return result;
 }
 
-void ParseAxiom(){									/// Axiom ::= \n
+char *ParseRestExpr(){
+	// RestExpr ::=  OperadorExpresionExpresion | =AlphanumExpresion
+	int op;
+	char *expr1;
+	char *expr2;
+	char *result;
+
+	char *var;
+	char *expr;
+	if (tokens.token == T_OPERATOR){
+		op = ParseOperator();
+		
+		expr1 = ParseExpression();
+		expr2 = ParseExpression();
+		
+		result = (char *)malloc(strlen(expr1) + strlen(expr2) + 4);
+		sprintf(result, "%s %c %s", expr1, (char)op, expr2);
+
+        free(expr1);
+        free(expr2);
+	}
+	else if (tokens.token == '='){
+		MatchSymbol('=');
+		var = ParseAlphaNum();
+		expr = ParseExpression();
+
+		result = (char *)malloc(strlen(expr1) + strlen(expr2) + 4);
+		sprintf(result, "%s = %s", var, expr);
+		free(var);
+		free(expr);
+	}
+	else {
+		rd_syntax_error(-1, tokens.token, "Se esperaba un Operador o '=' en RestExpr\n");
+	}
+	return result;
+}
+
+char *ParseExpression(){
+	// Expresion ::= (RestExpr) | Parametro
+	char *r_exp;
+	char *result;
+	if (tokens.token == '('){
+		MatchSymbol('(');
+		r_exp = ParseRestExpr();
+		MatchSymbol(')');
+		result = (char *)malloc(strlen(r_exp) + 3);
+		// imprimir el infijo entre parentesis
+        sprintf(result, "(%s)", r_exp);
+        free(r_exp);
+	} else{
+		result = ParseParameter();
+	}
+	return result;
+}
+
+char *ParseAxiom(){									/// Axiom ::= \n
 	// Axioma ::= Expresion
-	ParseExpression () ;			/// Dummy Parser. Complete this with your design								
+	char *expr = ParseExpression();
+	printf("%s\n", expr);								
 	if (tokens.token == '\n') {
 		printf ("\n") ; 
 		MatchSymbol ('\n') ;
 	} else { 
 		rd_syntax_error (-1, tokens.token, "-- Unexpected Token (Expected:%d=None, Read:%d) at end of Parsing\n") ;
 	}
+	return expr;
 }
 
 
