@@ -70,7 +70,8 @@ int rd_lex ()
 		return (tokens.token) ;	// returns the Token for Variable
 	}
 
-	if (isalpha(c)) {  /// Token Variable of type Letter[Digit]? 
+	if (isalpha(c)) {  /// Token Variable of type Letter[Digit]?
+        update_old_token();
 		cc = getchar () ;
 		if (isdigit (cc)) {									
 			sprintf (tokens.variable_name, "%c%c", c, cc) ;		/// This copies the LetterDigit name in the variable name
@@ -78,7 +79,6 @@ int rd_lex ()
 			ungetc (cc, stdin) ;									
 			sprintf (tokens.variable_name, "%c", c) ;			/// This copies the single Letter name in the variable name
 		}													
-        update_old_token () ;
 		tokens.token = T_VARIABLE ;
         return (tokens.token) ;	// returns the Token for Number
     } 
@@ -173,9 +173,9 @@ void PaerseYourGrammar () {
 void ParseAxiom () 		
 {									/// Axiom ::= \n
 	ParseYourGrammar () ;			/// Dummy Parser. Complete this with your design								
-	if (tokens.token == '\n') {	
-		MatchSymbol ('\n') ;
+	if (tokens.token == '\n') {
 		printf ("\n") ; 
+		MatchSymbol ('\n') ;
 	} else { 
 		rd_syntax_error (-1, tokens.token, "-- Unexpected Token (Expected:%d=None, Read:%d) at end of Parsing\n") ;
 	}
