@@ -131,22 +131,11 @@ void ParseYourGrammar ()
 		ParseLParen();
 		printf("(");
 		if (tokens.token == T_OPERATOR || tokens.token == '='){
-			char operator = tokens.token_val;
-			if (tokens.token_val == '+') {
+			char operator;
+			if (tokens.token == T_OPERATOR) {
+				operator = tokens.token_val;
 				MatchSymbol(T_OPERATOR);
-				operator = '+';
-			}
-			if (tokens.token_val == '-') {
-				MatchSymbol(T_OPERATOR);
-				operator = '-';
-			}
-			if (tokens.token_val == '*') {
-				MatchSymbol(T_OPERATOR);
-				operator = '*';
-			}
-			if (tokens.token_val == '/') {
-				MatchSymbol(T_OPERATOR);
-				operator = '/';
+				
 			}
 			if (tokens.token == '=') {
 				MatchSymbol('=');
