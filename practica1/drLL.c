@@ -11,8 +11,11 @@
 // void ParseYourGrammar () ; 		/// Dummy Parser
 void ParseAxiom () ;			/// Prototype for forward reference 		
 void ParseExpression ();
-
-
+void ParseRestExpr();
+void ParseParameter();
+int ParseOperator();
+int ParseNumber();
+char ParseAlphaNum();
 struct s_tokens {
 	int token ;					// Here we store the current token/literal 
 	int old_token ; 			// Sometimes we need to check the previous token
@@ -133,25 +136,44 @@ void MatchSymbol (int expected_token)
 // Alphanum ::= [a-zA-Z] [0-9]?
 // Numero ::= [0-9]+
 
-void ParseNumber(){
+int ParseNumber(){
 	// Numero ::= [0-9]+
 	// Como no devuelve nada la funcion sera "void", 
 	// si devuelve para hacer futuros calculos sera "int"
 	MatchSymbol(T_NUMBER);
+	return tokens.number;
 }
-void ParseAlphaNum(){
+char ParseAlphaNum(){
 	// Alphanum ::= [a-zA-Z] [0-9]?
 	MatchSymbol(T_VARIABLE);
+	return tokens.variable_name;
 }
 void ParseParameter(){
 	// Parametro ::= Numero | Alphanum
+	int val;
+	if (tokens.token == T_NUMBER){
+		val = ParseNumber () ;
+	}
+	if (tokens.token == T_VARIABLE){
+		val = ParseAlphaNum () ;
+	}
 }
-void ParseExpression (){
+int ParseOperator(){
+	// Operador ::= + | - | * | /
+	MatchSymbol(T_OPERATOR);
+	return tokens.token_val;
+}
+void ParseRestExpr(){
+	// RestExpr ::=  OperadorExpresionExpresion | =AlphanumExpresion
+	int op;
+	char exp1;
+	char exp2;
+}
+void ParseExpression(){
 
 }
 
-void ParseAxiom () 		
-{									/// Axiom ::= \n
+void ParseAxiom(){									/// Axiom ::= \n
 	ParseExpression () ;			/// Dummy Parser. Complete this with your design								
 	if (tokens.token == '\n') {
 		printf ("\n") ; 
