@@ -233,7 +233,8 @@ char *ParseExpression(){
 		// imprimir el infijo entre parentesis
         sprintf(result, "(%s)", r_exp);
         free(r_exp);
-	} else{
+	} 
+	else {
 		result = ParseParameter();
 	}
 	return result;
