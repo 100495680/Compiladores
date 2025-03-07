@@ -11,7 +11,7 @@
 // void ParseYourGrammar () ; 		/// Dummy Parser
 void ParseAxiom () ;			/// Prototype for forward reference 		
 void ParseExpression ();
-void ParseRestExpr();
+char ParseRestExpr();
 void ParseParameter();
 int ParseOperator();
 int ParseNumber();
@@ -143,11 +143,13 @@ int ParseNumber(){
 	MatchSymbol(T_NUMBER);
 	return tokens.number;
 }
+
 char ParseAlphaNum(){
 	// Alphanum ::= [a-zA-Z] [0-9]?
 	MatchSymbol(T_VARIABLE);
 	return tokens.variable_name;
 }
+
 void ParseParameter(){
 	// Parametro ::= Numero | Alphanum
 	int val;
@@ -158,22 +160,40 @@ void ParseParameter(){
 		val = ParseAlphaNum () ;
 	}
 }
+
 int ParseOperator(){
 	// Operador ::= + | - | * | /
 	MatchSymbol(T_OPERATOR);
 	return tokens.token_val;
 }
-void ParseRestExpr(){
+
+char ParseRestExpr(){
 	// RestExpr ::=  OperadorExpresionExpresion | =AlphanumExpresion
 	int op;
 	char exp1;
 	char exp2;
+	if (tokens.token == T_OPERATOR){
+		op = ParseOperator();
+		if (tokens.token);
+	}
 }
 void ParseExpression(){
-
+	// Expresion ::= (RestExpr) | Parametro
+	char r_exp;
+	if (tokens.token == '('){
+		MatchSymbol('(');
+		printf("(");
+		r_exp = ParseRestExpr();
+		printf("%s", r_exp);
+		MatchSymbol(')');
+		printf(")");
+		return 0;
+	}
+	ParseParameter();
 }
 
 void ParseAxiom(){									/// Axiom ::= \n
+	// Axioma ::= Expresion
 	ParseExpression () ;			/// Dummy Parser. Complete this with your design								
 	if (tokens.token == '\n') {
 		printf ("\n") ; 
