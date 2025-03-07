@@ -1,5 +1,3 @@
-/* 113 Liang Ji Zhu Ignacio Leal Sánchez */
-/* 100495723@alumnos.uc3m.es 100495680@alumnos.uc3m.es */
 #include <ctype.h>
 #include <stdio.h>
 #include <string.h>
@@ -7,10 +5,13 @@
 
 #define T_NUMBER 	1001
 #define T_OPERATOR	1002		
-#define T_VARIABLE  1003  
+#define T_VARIABLE  1003
 
-void ParseYourGrammar () ; 		/// Dummy Parser
+
+// void ParseYourGrammar () ; 		/// Dummy Parser
 void ParseAxiom () ;			/// Prototype for forward reference 		
+void ParseExpression ();
+
 
 struct s_tokens {
 	int token ;					// Here we store the current token/literal 
@@ -70,8 +71,8 @@ int rd_lex ()
 		return (tokens.token) ;	// returns the Token for Variable
 	}
 
-	if (isalpha(c)) {  /// Token Variable of type Letter[Digit]?
-        update_old_token();
+	if (isalpha(c)) {  /// Token Variable of type Letter[Digit]? 
+		update_old_token () ;
 		cc = getchar () ;
 		if (isdigit (cc)) {									
 			sprintf (tokens.variable_name, "%c%c", c, cc) ;		/// This copies the LetterDigit name in the variable name
@@ -112,7 +113,7 @@ void rd_syntax_error (int expected, int token, char *output)
 void MatchSymbol (int expected_token)
 {
 	if (tokens.token != expected_token) {
-		rd_syntax_error (expected_token, tokens.token, "token %d expected, but %c was read\n") ;
+		rd_syntax_error (expected_token, tokens.token, "token %d expected, but %d was read") ;
 		exit (0) ;
 	} else {
 	 	rd_lex () ; 			/// read next Token
@@ -120,59 +121,38 @@ void MatchSymbol (int expected_token)
 }
 
 
-#define ParseLParen() 	MatchSymbol ('(') ; // More concise and efficient definitions
-#define ParseRParen() 	MatchSymbol (')') ; ///   rather than using functions
+// #define ParseLParen() 	MatchSymbol ('(') ; // More concise and efficient definitions
+// #define ParseRParen() 	MatchSymbol (')') ; ///   rather than using functions
 											/// The actual recomendation is to use MatchSymbol in the code rather than theese macros
+// Gramatica:
+// Axioma ::= Expresion
+// Expresion ::= (RestExpr) | Parametro
+// RestExpr ::=  OperadorExpresionExpresion | =AlphanumExpresion
+// Operador ::= + | - | * | /
+// Parametro ::= Numero | Alphanum
+// Alphanum ::= [a-zA-Z] [0-9]?
+// Numero ::= [0-9]+
 
-
-void ParseYourGrammar ()
-{	
-	if (tokens.token == '(') {
-		ParseLParen();
-		printf("(");
-		if (tokens.token == T_OPERATOR || tokens.token == '='){
-			char operator;
-			if (tokens.token == T_OPERATOR) {
-				operator = tokens.token_val;
-				MatchSymbol(T_OPERATOR);
-				
-			}
-			if (tokens.token == '=') {
-				MatchSymbol('=');
-				operator = '=';
-			}
-			
-			ParseYourGrammar();
-			printf("%c ", operator);
-			ParseYourGrammar();
-		}
-		ParseRParen();
-		printf(") ");
-	}
-	if (tokens.token == T_NUMBER){
-		printf("%d ", tokens.number);
-		MatchSymbol(T_NUMBER);
-	}
-
-	// Add the variables
-	if (tokens.token == T_VARIABLE){
-		printf("%s ", tokens.variable_name);
-		MatchSymbol(T_VARIABLE);
-	}
+void ParseNumber(){
+	// Numero ::= [0-9]+
+	// Como no devuelve nada la funcion sera "void", 
+	// si devuelve para hacer futuros calculos sera "int"
+	MatchSymbol(T_NUMBER);
 }
-
-void PaerseYourGrammar () {
-	while(5)
-	{
-		printf("Token %d, Token_val %c, Token_number %d\n",tokens.token,tokens.token_val,tokens.number);
-		rd_lex();
-	}
+void ParseAlphaNum(){
+	// Alphanum ::= [a-zA-Z] [0-9]?
+	MatchSymbol(T_VARIABLE);
+}
+void ParseParameter(){
+	// Parametro ::= Numero | Alphanum
+}
+void ParseExpression (){
 
 }
 
 void ParseAxiom () 		
 {									/// Axiom ::= \n
-	ParseYourGrammar () ;			/// Dummy Parser. Complete this with your design								
+	ParseExpression () ;			/// Dummy Parser. Complete this with your design								
 	if (tokens.token == '\n') {
 		printf ("\n") ; 
 		MatchSymbol ('\n') ;
