@@ -1,4 +1,4 @@
-/* Liang Ji Zhu Ignacio Leal Sánchez 113 */
+/* 113 Liang Ji Zhu Ignacio Leal Sánchez */
 /* 100495723@alumnos.uc3m.es 100495680@alumnos.uc3m.es */
 #include <ctype.h>
 #include <stdio.h>
@@ -130,129 +130,158 @@ void MatchSymbol (int expected_token)
 // #define ParseRParen() 	MatchSymbol (')') ; ///   rather than using functions
 											/// The actual recomendation is to use MatchSymbol in the code rather than theese macros
 // Gramatica:
-// Axioma ::= Expresion
-// Expresion ::= (RestExpr) | Parametro
-// RestExpr ::=  OperadorExpresionExpresion | =AlphanumExpresion
-// Operador ::= + | - | * | /
-// Parametro ::= Numero | Alphanum
-// Alphanum ::= [a-zA-Z] [0-9]?
-// Numero ::= [0-9]+
+// Axioma 		::= Expresion
+// Expresion 	::= (RestExpr) | Parametro
+// RestExpr 	::=  OperadorExpresionExpresion | = AlphanumExpresion
+// Operador 	::= + | - | * | /
+// Parametro 	::= Numero | Alphanum
+// Alphanum 	::= [a-zA-Z] [0-9]?
+// Numero 		::= [0-9]+
 
+// Función ParseNumber()
+// Se encarga de procesar la producción: Numero ::= [0-9]+
+// Convierte el valor numérico actual a una cadena, consume el token y lo retorna.
 char *ParseNumber(){
-	// Numero ::= [0-9]+
-	// Como no devuelve nada la funcion sera "void", 
-	// si devuelve para hacer futuros calculos sera "int"
-	char buffer[64];
-	char *result;
+    char buffer[64];
+    char *result;
 
-	sprintf(buffer, "%d", tokens.number);
-	MatchSymbol(T_NUMBER);
-	result = (char *)malloc(strlen(buffer) + 1);
-	strcpy(result, buffer);
-	return result;
+    // Formateamos el número almacenado en tokens.number en una cadena
+    sprintf(buffer, "%d", tokens.number);
+    // Verifica que el token actual es un número y lo consume
+    MatchSymbol(T_NUMBER);
+    // Asigna memoria para la cadena resultante y la copia
+    result = (char *)malloc(strlen(buffer) + 1);
+    strcpy(result, buffer);
+    return result;
 }
 
+// Función ParseAlphaNum()
+// Procesa la producción: Alphanum ::= [a-zA-Z] [0-9]?
+// Toma el nombre de variable leído y lo retorna como cadena.
 char *ParseAlphaNum(){
-	// Alphanum ::= [a-zA-Z] [0-9]?
-	char buffer[64];
-	char *result;
+    char buffer[64];
+    char *result;
 
-	strcpy(buffer, tokens.variable_name);
-	MatchSymbol(T_VARIABLE);
-	
-	result = (char *)malloc(strlen(buffer) + 1);
-	strcpy(result, buffer);
-	return result;
+    // Copia el nombre de la variable actual desde tokens.variable_name
+    strcpy(buffer, tokens.variable_name);
+    // Consume el token de variable
+    MatchSymbol(T_VARIABLE);
+    
+    // Reserva memoria para la cadena resultante y la copia
+    result = (char *)malloc(strlen(buffer) + 1);
+    strcpy(result, buffer);
+    return result;
 }
 
+// Función ParseOperator()
+// Procesa la producción: Operador ::= + | - | * | /
+// Consume el token del operador y retorna su valor (carácter).
 int ParseOperator(){
-	// Operador ::= + | - | * | /
-	MatchSymbol(T_OPERATOR);
-	return tokens.token_val;
+    MatchSymbol(T_OPERATOR);
+    return tokens.token_val;
 }
 
+// Procesa la producción: Parametro ::= Numero | Alphanum
+// Determina si el token actual es un número o una variable y llama a la función
+// correspondiente para obtener la cadena resultante.
 char *ParseParameter(){
-	// Parametro ::= Numero | Alphanum
-	char *result;
-	if (tokens.token == T_NUMBER){
-		result = ParseNumber () ;
-	}
-	else if (tokens.token == T_VARIABLE){
-		result = ParseAlphaNum () ;
-	}
-	else {
-		rd_syntax_error(-1, tokens.token, "Se esperaba un Número o una Variable en Parametro\n");
-	}
-	return result;
+    char *result;
+    if (tokens.token == T_NUMBER){
+        result = ParseNumber();
+    }
+    else if (tokens.token == T_VARIABLE){
+        result = ParseAlphaNum();
+    }
+    else {
+        rd_syntax_error(-1, tokens.token, "Se esperaba un Número o una Variable en Parametro\n");
+    }
+    return result;
 }
 
+// Función ParseRestExpr()
+// Procesa la producción: RestExpr ::= Operador Expresion Expresion | = Alphanum Expresion
+// Según el token actual, diferencia si se trata de una operación aritmética o de una asignación.
 char *ParseRestExpr(){
-	// RestExpr ::=  OperadorExpresionExpresion | =AlphanumExpresion
-	int op;
-	char *expr1;
-	char *expr2;
-	char *result;
+    int op;
+    char *expr1;
+    char *expr2;
+    char *result;
 
-	char *var;
-	char *expr;
-	if (tokens.token == T_OPERATOR){
-		op = ParseOperator();
-		
-		expr1 = ParseExpression();
-		expr2 = ParseExpression();
-		
-		result = (char *)malloc(strlen(expr1) + strlen(expr2) + 4);
-		sprintf(result, "%s %c %s", expr1, (char)op, expr2);
+    char *var;
+    char *expr;
+    // Caso: Operación aritmética. Se espera un operador aritmético.
+    if (tokens.token == T_OPERATOR){
+        op = ParseOperator();  // Consume el operador y lo retorna
+        
+        // Procesa las dos subexpresiones recursivamente
+        expr1 = ParseExpression();
+        expr2 = ParseExpression();
+        
+        // Reserva memoria para la cadena resultante y la construye en notación infija
+        result = (char *)malloc(strlen(expr1) + strlen(expr2) + 4);
+        sprintf(result, "%s %c %s", expr1, (char)op, expr2);
 
         free(expr1);
         free(expr2);
-	}
-	else if (tokens.token == '='){
-		MatchSymbol('=');
-		var = ParseAlphaNum();
-		expr = ParseExpression();
+    }
+    // Caso: Asignación. Se espera el símbolo '='.
+    else if (tokens.token == '='){
+        MatchSymbol('=');  			// Consume el token '='
+        var = ParseAlphaNum();      // Procesa la variable a la izquierda
+        expr = ParseExpression();   // Procesa la expresión a la derecha
 
-		result = (char *)malloc(strlen(expr1) + strlen(expr2) + 4);
-		sprintf(result, "%s = %s", var, expr);
-		free(var);
-		free(expr);
-	}
-	else {
-		rd_syntax_error(-1, tokens.token, "Se esperaba un Operador o '=' en RestExpr\n");
-	}
-	return result;
+        // Se reserva memoria para concatenar la variable, el símbolo '=' y la expresión.
+        result = (char *)malloc(strlen(var) + strlen(expr) + 4);
+        sprintf(result, "%s = %s", var, expr);
+
+        free(var);
+        free(expr);
+    }
+    else {
+        rd_syntax_error(-1, tokens.token, "Se esperaba un Operador o '=' en RestExpr\n");
+    }
+    return result;
 }
 
+// Función ParseExpression()
+// Procesa la producción: Expresion ::= (RestExpr) | Parametro
+// Distingue entre una expresión compuesta (entre paréntesis) y un parámetro simple.
 char *ParseExpression(){
-	// Expresion ::= (RestExpr) | Parametro
-	char *r_exp;
-	char *result;
-	if (tokens.token == '('){
-		MatchSymbol('(');
-		r_exp = ParseRestExpr();
-		MatchSymbol(')');
-		result = (char *)malloc(strlen(r_exp) + 3);
-		// imprimir el infijo entre parentesis
+    char *r_exp;
+    char *result;
+    // Si la expresión comienza con '(' se procesa como una expresión compuesta.
+    if (tokens.token == '('){
+        MatchSymbol('(');         	// Consume '('
+        r_exp = ParseRestExpr();    // Procesa la parte interna (RestExpr)
+        MatchSymbol(')');         	// Consume ')'
+        // Reserva memoria para agregar paréntesis en la salida infija.
+        result = (char *)malloc(strlen(r_exp) + 3);
+        // Se encapsula la expresión traducida entre paréntesis.
         sprintf(result, "(%s)", r_exp);
         free(r_exp);
-	} 
-	else {
-		result = ParseParameter();
-	}
-	return result;
+    } 
+    else {
+        // Si no es una expresión compuesta, se trata de un parámetro (número o variable)
+        result = ParseParameter();
+    }
+    return result;
 }
 
-char *ParseAxiom(){									/// Axiom ::= \n
-	// Axioma ::= Expresion
-	char *expr = ParseExpression();
-	printf("%s\n", expr);								
-	if (tokens.token == '\n') {
-		printf ("\n") ; 
-		MatchSymbol ('\n') ;
-	} else { 
-		rd_syntax_error (-1, tokens.token, "-- Unexpected Token (Expected:%d=None, Read:%d) at end of Parsing\n") ;
-	}
-	return expr;
+// Función ParseAxiom()
+// Procesa la producción: Axioma ::= Expresion "\n"
+// Es el punto de partida del análisis y se encarga de procesar una expresión seguida de un salto de línea.
+char *ParseAxiom(){
+    char *expr = ParseExpression();  // Procesa la expresión
+    // Imprime la traducción a notación infija generada
+    printf("%s\n", expr);
+    // Verifica que el token actual sea un salto de línea y lo consume.
+    if (tokens.token == '\n') {
+        printf ("\n");
+        MatchSymbol('\n');
+    } else { 
+        rd_syntax_error(-1, tokens.token, "-- Unexpected Token (Expected:%d=None, Read:%d) at end of Parsing\n");
+    }
+    return expr;
 }
 
 
