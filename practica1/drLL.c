@@ -1,4 +1,4 @@
-/* 113 Liang Ji Zhu Ignacio Leal Sánchez */
+/* Liang Ji Zhu Ignacio Leal Sánchez 113 */
 /* 100495723@alumnos.uc3m.es 100495680@alumnos.uc3m.es */
 #include <ctype.h>
 #include <stdio.h>
