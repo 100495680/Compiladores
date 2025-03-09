@@ -126,9 +126,17 @@ void MatchSymbol (int expected_token)
 #define ParseRParen() 	MatchSymbol (')') ; ///   rather than using functions
 											/// The actual recomendation is to use MatchSymbol in the code rather than theese macros
 
+// Gramatica:
+// Axiom ::= Expresion "\n"
+// Expresion ::= "(" RestExpr ")" | Parametro
+// RestExpr ::=  Operador Expresion Expresion | "=" Alphanum Expresion
+// Operador ::= + | - | * | /
+// Parametro ::= Numero | Alphanum
+// Alphanum ::= [a-zA-Z] [0-9]?
+// Numero ::= [0-9]+
 
-void ParseExpresion ()
-{	
+void ParseExpresion() {
+	// Expresion ::= "(" RestExpr ")"
 	if (tokens.token == '(') {
 		ParseLParen();
 		printf("(");
@@ -136,6 +144,7 @@ void ParseExpresion ()
 		ParseRParen();
 		printf(") ");
 	} else {
+		// Expresion ::= Parametro
 		if ( tokens.token == T_NUMBER || tokens.token == T_VARIABLE) {
 			ParseParameter();
 		} else {
@@ -146,60 +155,59 @@ void ParseExpresion ()
 	}
 }
 
-void ParseRestExpr () {
+void ParseRestExpr() {
+	// RestExpr ::=  Operador Expresion Expresion
 	if (tokens.token == T_OPERATOR){
 		char operator;
 		if (tokens.token == T_OPERATOR) {
 			operator = tokens.token_val;
 			MatchSymbol(T_OPERATOR);
-			
 		}
 		ParseExpresion();
 		printf("%c ", operator);
 		fflush(stdout);
 		ParseExpresion();
 	} else {
+		// RestExpr ::= "=" Alphanum Expresion
 		if (tokens.token == '=') {
 			MatchSymbol('=');
 
-		if (tokens.token == T_VARIABLE){
-			printf("%s ", tokens.variable_name);
-			MatchSymbol(T_VARIABLE);
-		}	else {
-			fprintf (stderr, "ERROR in line %d ", line_counter) ;
-			fprintf (stderr, "ERROR invalid gramar (Asignación de variables es solo para variables)") ;
-			exit (0) ;
-		}
+			if (tokens.token == T_VARIABLE){
+				printf("%s ", tokens.variable_name);
+				MatchSymbol(T_VARIABLE);
+			} else {
+				fprintf (stderr, "ERROR in line %d ", line_counter) ;
+				fprintf (stderr, "ERROR invalid gramar (Asignación de variables es solo para variables)") ;
+				exit (0) ;
+			}
 		printf("= ");
 		ParseExpresion();
-
 		} else {
 			fprintf (stderr, "ERROR in line %d ", line_counter) ;
 			fprintf (stderr, "ERROR invalid gramar") ;
 			exit (0) ;
 		}
-
 	} 
-
 }
 
 void ParseParameter() {
+	// Parametro ::= Numero
 	if (tokens.token == T_NUMBER){
 		printf("%d ", tokens.number);
 		MatchSymbol(T_NUMBER);
-	} else {	
+	} else {
+		// Parametro ::= Alphanum
 		if (tokens.token == T_VARIABLE){
 			printf("%s ", tokens.variable_name);
 			MatchSymbol(T_VARIABLE);
-	
-	}
+		}
 	}
 	// No hay detección de errores ya que no es posible que no sea uno de las dos.
 }
 
 
-void ParseAxiom () 		
-{									/// Axiom ::= \n
+void ParseAxiom() {
+	// Axiom ::= Expresion "\n"
 	ParseExpresion () ;		
 	printf ("\n") ; 				// 	Imprimimos el salto de linea antes de saber si es salto de linea o error
 									//  Por que en ambos casos necesitamos el resultado tiene que esta legible						
