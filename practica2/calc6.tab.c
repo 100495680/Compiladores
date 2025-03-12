@@ -1140,7 +1140,7 @@ yyreduce:
     {
   case 2: /* $@1: %empty  */
 #line 24 "calc6.y"
-                                          { printf (" .\n") ; }
+                                          { printf (".\n") ; }
 #line 1145 "calc6.tab.c"
     break;
 
@@ -1196,7 +1196,7 @@ yyreduce:
 
   case 15: /* termino: '-' operando  */
 #line 45 "calc6.y"
-                                                 {  printf( "-%d ", (yyvsp[0].valor)); }
+                                                 {  printf( " negate "); }
 #line 1201 "calc6.tab.c"
     break;
 
