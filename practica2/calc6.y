@@ -2,6 +2,9 @@
 /* 100495723@alumnos.uc3m.es 100495680@alumnos.uc3m.es */
 %{                   // SECCION 1 - Definiciones
 #include <stdio.h>
+int yylex () ;
+int yyparse () ;
+int yyerror (char *) ;
 int memoria [26] ;      // Se define una zona de memoria para las variables 
 %}                   // SECCION 2 - Directivas
 %union {                // El tipo de la pila (del AP) tiene caracter dual 
@@ -18,10 +21,10 @@ int memoria [26] ;      // Se define una zona de memoria para las variables
 %left   SIGNO_UNARIO    //  mayor orden de precedencia 
 %%
                      // SECCION 3: Gramatica - Semantico 
-axioma:       expresion '\n'              { printf ("Expresion=%d\n", $1) ; } 
+axioma:       expresion '\n'              { printf (".\n") ; } 
                        r_expr
-            | VARIABLE '=' expresion '\n' { memoria [$1] = $3;
-                                            printf ("%c=%d\n", $1+'A', $3);
+            | VARIABLE '=' expresion '\n' { 
+                                            printf ("%c !\n", 'A' + $1);
                                           }
                        r_expr
             ;
@@ -31,20 +34,20 @@ r_expr:                      /* lambda */
             ;
 
 expresion:    termino                    { $$ = $1 ; }
-            | expresion '+' expresion    { $$ = $1 + $3 ;  }
-            | expresion '-' expresion    { $$ = $1 - $3 ;  }
-            | expresion '*' expresion    { $$ = $1 * $3 ;  }
-            | expresion '/' expresion    { $$ = $1 / $3 ;  }
+            | expresion '+' expresion    {  printf( "+ "); }
+            | expresion '-' expresion    {  printf( "- "); }
+            | expresion '*' expresion    {  printf( "* "); }
+            | expresion '/' expresion    {  printf( "/ "); }
             ;
 
 termino:      operando                           { $$ = $1 ; }
-            | '+' operando %prec SIGNO_UNARIO    { $$ = $2 ; }
-            | '-' operando %prec SIGNO_UNARIO    { $$ = -$2 ; }
+            | '+' operando %prec SIGNO_UNARIO    {  printf( "%d ", $2); }
+            | '-' operando %prec SIGNO_UNARIO    {  printf( "-%d ", $2); }
             ;
 
-operando:     VARIABLE                   { $$ = memoria [$1] ; }
-            | NUMERO                     { $$ = $1 ; }
-            | '(' expresion ')'          { $$ = $2 ; }
+operando:     VARIABLE                   { printf("%c@ ", 'A' + $1) ; }
+            | NUMERO                     { printf( "%d ", $1); }
+            | '(' expresion ')'          { printf( "(%d ) ", $2); }
             ;
 
 %%
