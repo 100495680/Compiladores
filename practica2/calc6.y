@@ -1,3 +1,5 @@
+/* 113 Liang Ji Zhu Ignacio Leal Sánchez */
+/* 100495723@alumnos.uc3m.es 100495680@alumnos.uc3m.es */
 %{                   // SECCION 1 - Definiciones
 #include <stdio.h>
 int memoria [26] ;      // Se define una zona de memoria para las variables 
