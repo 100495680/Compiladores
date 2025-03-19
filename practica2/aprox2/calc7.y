@@ -99,9 +99,11 @@ typedef struct s_attr {
 
 
 axioma:         expresion '\n'				{ printf("%s \n", $1.cadena); }
-                r_expr					{ printf("%s \n", $3.cadena); }
-            |   VARIABLE '=' expresion '\n'		{ printf("%s = %s \n", $1.cadena, $3.cadena); }
-                r_expr					{ printf("%s \n", $5.cadena); }
+                r_expr					{ ; }
+            |   VARIABLE '=' expresion '\n'		{ printf("(setq %c %s) \n", $1.indice, $3.cadena); }
+                r_expr					{ ; }
+            |   '@' expresion '\n'			{ printf("(print %s) \n", $2.cadena); }
+                r_expr					{ ; }
             ;
 
 
@@ -110,10 +112,10 @@ r_expr:         /* lambda */				{ ; }
             ;
 
 expresion:      termino					{ $$.cadena = $1.cadena; }
-            |   expresion '+' expresion   		{ sprintf (temp, "+ %s %s",$1.cadena,$3.cadena) ; $$.cadena = genera_cadena (temp); }
-            |   expresion '*' expresion   		{ sprintf (temp, "* %s %s",$1.cadena,$3.cadena) ; $$.cadena = genera_cadena (temp); }
-            |   expresion '-' expresion   		{ sprintf (temp, "- %s %s",$1.cadena,$3.cadena) ; $$.cadena = genera_cadena (temp); }
-            |   expresion '/' expresion   		{ sprintf (temp, "/ %s %s",$1.cadena,$3.cadena) ; $$.cadena = genera_cadena (temp); }
+            |   expresion '+' expresion   		{ sprintf (temp, "(+ %s %s)",$1.cadena,$3.cadena) ; $$.cadena = genera_cadena (temp); }
+            |   expresion '*' expresion   		{ sprintf (temp, "(* %s %s)",$1.cadena,$3.cadena) ; $$.cadena = genera_cadena (temp); }
+            |   expresion '-' expresion   		{ sprintf (temp, "(- %s %s)",$1.cadena,$3.cadena) ; $$.cadena = genera_cadena (temp); }
+            |   expresion '/' expresion   		{ sprintf (temp, "(/ %s %s)",$1.cadena,$3.cadena) ; $$.cadena = genera_cadena (temp); }
             ;
 
 termino:        operando				{ $$.cadena = $1.cadena; }                          
@@ -123,7 +125,7 @@ termino:        operando				{ $$.cadena = $1.cadena; }
                                                  
             ;
 
-operando:       VARIABLE				{ $$.cadena = int_to_string($1.indice); }
+operando:       VARIABLE				{ sprintf (temp, "%c",$1.indice); $$.cadena = genera_cadena (temp); }
             |   NUMERO					{ $$.cadena = int_to_string($1.valor);  }
             |   '(' expresion ')'			{ sprintf (temp, "(%s)",$2.cadena) ; $$.cadena = genera_cadena (temp); }
             ;
