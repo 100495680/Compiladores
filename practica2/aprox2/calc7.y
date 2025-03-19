@@ -98,10 +98,10 @@ typedef struct s_attr {
                         // SECCION 3: Gramatica - Semantico
 
 
-axioma:         expresion '\n'				{ ; }
-                r_expr					{ ; }
-            |   VARIABLE '=' expresion '\n'		{ ; }
-                r_expr					{ ; }
+axioma:         expresion '\n'				{ printf("%s \n", $1.cadena); }
+                r_expr					{ printf("%s \n", $3.cadena); }
+            |   VARIABLE '=' expresion '\n'		{ printf("%s = %s \n", $1.cadena, $3.cadena); }
+                r_expr					{ printf("%s \n", $5.cadena); }
             ;
 
 
@@ -109,23 +109,23 @@ r_expr:         /* lambda */				{ ; }
             |   axioma					{ ; }
             ;
 
-expresion:      termino					{ ; }
-            |   expresion '+' expresion   		{ ; }
-            |   expresion '-' expresion   		{ ; }
-            |   expresion '*' expresion   		{ ; }
-            |   expresion '/' expresion   		{ ; }
+expresion:      termino					{ $$.cadena = $1.cadena; }
+            |   expresion '+' expresion   		{ sprintf (temp, "+ %s %s",$1.cadena,$3.cadena) ; $$.cadena = genera_cadena (temp); }
+            |   expresion '*' expresion   		{ sprintf (temp, "* %s %s",$1.cadena,$3.cadena) ; $$.cadena = genera_cadena (temp); }
+            |   expresion '-' expresion   		{ sprintf (temp, "- %s %s",$1.cadena,$3.cadena) ; $$.cadena = genera_cadena (temp); }
+            |   expresion '/' expresion   		{ sprintf (temp, "/ %s %s",$1.cadena,$3.cadena) ; $$.cadena = genera_cadena (temp); }
             ;
 
-termino:        operando				{ ; }                          
-            |   '+' operando %prec SIGNO_UNARIO		{ ; }
-            |   '-' operando %prec SIGNO_UNARIO		{ ; }    
+termino:        operando				{ $$.cadena = $1.cadena; }                          
+            |   '+' operando %prec SIGNO_UNARIO		{ sprintf (temp, "-%s",$2.cadena) ; $$.cadena = genera_cadena (temp); }
+            |   '-' operando %prec SIGNO_UNARIO		{ sprintf (temp, "+%s",$2.cadena) ; $$.cadena = genera_cadena (temp); }    
                                                     
                                                  
             ;
 
-operando:       VARIABLE				{ ; }
-            |   NUMERO					{ ; }
-            |   '(' expresion ')'			{ ; }
+operando:       VARIABLE				{ $$.cadena = int_to_string($1.indice); }
+            |   NUMERO					{ $$.cadena = int_to_string($1.valor);  }
+            |   '(' expresion ')'			{ sprintf (temp, "(%s)",$2.cadena) ; $$.cadena = genera_cadena (temp); }
             ;
 
 %%
