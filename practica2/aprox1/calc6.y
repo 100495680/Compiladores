@@ -42,7 +42,7 @@ expresion:    termino                    { $$ = $1 ; }
 
 termino:      operando                           { $$ = $1 ; }
             | '+' operando %prec SIGNO_UNARIO    {  printf( "%d ", $2); }
-            | '-' operando %prec SIGNO_UNARIO    {  printf( "-%d ", $2); }
+            | '-' operando %prec SIGNO_UNARIO    {  printf( " negate"); }
             ;
 
 operando:     VARIABLE                   { printf("%c@ ", 'A' + $1) ; }
