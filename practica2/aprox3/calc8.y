@@ -55,14 +55,64 @@ char *char_to_string(char c)
 }
 
 
+typedef struct ASTnode t_node ;
+
+struct ASTnode {
+    char *op ; // simplified node information in form as a string
+    int type ; // leaf, unary or binary nodes (0/1/2)
+    t_node *left ;
+    t_node *right ;
+} ;
+
+// Function to create a new AST node
+
+t_node * createASTNode (char *op, int type, t_node *left, t_node *right) {
+    t_node *node ;
+    node = (t_node*) malloc (sizeof (t_node)) ;
+    node->op = strdup (op) ; // duplicates string in memory
+    node->type = type ; // binary, unary or leaf node
+    node->left = left ;
+    node->right = right ;
+    return node ;
+}
+
+// Function to free AST
+void freeAST (t_node *node) {
+    if (node != NULL) {
+        freeAST (node->left) ;
+        freeAST (node->right) ;
+        free (node->op) ;
+        free (node) ;
+    }
+}
+
+// Function to print AST in prefix notation
+
+void printAST2Prefix (t_node *node) {
+    if (node == NULL) {
+        return ;
+    } else if (node->type == 0) {
+        printf ("%s ", node->op) ; // Leaf node
+    } else if (node->type == 1) {
+        printf ("( %s ", node->op) ; // Unary node
+        printAST2Prefix (node->left) ;
+        printf (") ") ;
+    } else {
+        printf ("( %s ", node->op) ; // Binary node
+        printAST2Prefix (node->left) ;
+        printAST2Prefix (node->right) ;
+        printf (") ") ;
+    }
+}
+
 typedef struct s_attr {
         int valor ;
-	int indice ;
+	    int indice ;
         char *cadena ;
+        t_node *node ;
 } t_attr ;
 
 #define YYSTYPE t_attr
-
 
 
 %}
@@ -146,28 +196,27 @@ char *mensaje ;
 int yylex ()
 {
     unsigned char c ;
-
     do {
-         c = getchar () ;
-    } while (c == ' ' || c == '\r') ;
-
+        c = getchar () ;
+    } while (c == ' ') ;
+    
     if (c == '.' || (c >= '0' && c <= '9')) {
-         ungetc (c, stdin) ;
-         scanf ("%d", &yylval.valor) ;
-         return NUMERO ;
+        ungetc (c, stdin) ;
+        scanf ("%d", &yylval.value) ;
+        return NUMBER ;
     }
-
-    if ((c >= 'A' && c <= 'Z') ||
-    		 (c >= 'a' && c <= 'z')) {
-         yylval.indice = c;
-         return VARIABLE ;
+    if (c >= 'A' && c <= 'Z') {
+        yylval.index = c - 'A' ;
+        return VARIABLE ;
     }
-
+    if (c >= 'a' && c <= 'z') {
+        yylval.index = c - 'a' ;
+        return VARIABLE ;
+    }
     if (c == '\n')
-          n_linea++ ;
+        n_line++ ;
     return c ;
 }
-
 
 int main ()
 {
