@@ -153,10 +153,10 @@ axioma:         expresion '\n'				{ printAST2Prefix($1.node);
                                                 freeAST($1.node); }
                 r_expr					{ ; }
 
-            |   '@' expresion '\n'			{ printf("(print ");
-                                                  printAST2Prefix($2.node);
+            |   '@' expresion '\n'			{     t_node* node= createASTNode ("print", 2, $2.node, NULL) ;
+                                                  printAST2Prefix(node);
                                                   printf(") \n"); 
-                                                  freeAST($2.node); }
+                                                  freeAST(node); }
                 r_expr					{ ; }
             ;
 
@@ -177,10 +177,10 @@ expresion:      termino					{ $$.node = $1.node; }
 termino:        operando				{ $$.node = $1.node; }                          
             |   '-' operando %prec SIGNO_UNARIO		{ t_node* nodo_falso =createASTNode (int_to_string (0), 0, NULL, NULL) ; 
                                                         $$.node = createASTNode ("-", 2, nodo_falso, $2.node) ; 
-                                                        freeAST(nodo_falso); } 
+                                                        } 
             |   '+' operando %prec SIGNO_UNARIO		{ t_node* nodo_falso =createASTNode (int_to_string (0), 0, NULL, NULL) ; 
                                                         $$.node = createASTNode ("+", 2, nodo_falso, $2.node) ; 
-                                                        freeAST(nodo_falso); } 
+                                                        } 
                                                  
             ;
 

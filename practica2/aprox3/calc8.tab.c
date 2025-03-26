@@ -661,7 +661,7 @@ static const yytype_int8 yytranslate[] =
 static const yytype_uint8 yyrline[] =
 {
        0,   151,   151,   151,   156,   156,   164,   165,   168,   169,
-     170,   171,   172,   173,   178,   179,   182,   188,   189,   190
+     170,   171,   172,   173,   177,   178,   181,   187,   188,   189
 };
 #endif
 
@@ -1254,10 +1254,10 @@ yyreduce:
 
   case 4: /* $@2: %empty  */
 #line 156 "calc8.y"
-                                                        { printf("(print ");
-                                                  printAST2Prefix(yyvsp[-1].node);
+                                                        {     t_node* node= createASTNode ("print", 2, yyvsp[-1].node, NULL) ;
+                                                  printAST2Prefix(node);
                                                   printf(") \n"); 
-                                                  freeAST(yyvsp[-1].node); }
+                                                  freeAST(node); }
 #line 1262 "calc8.tab.c"
     break;
 
@@ -1312,53 +1312,52 @@ yyreduce:
   case 13: /* expresion: VARIABLE '=' expresion  */
 #line 173 "calc8.y"
                                                 { t_node* nodo_variable = createASTNode (char_to_string (yyvsp[-2].indice + 'A'), 0, NULL, NULL) ;
-                                                  yyval.node= createASTNode ("setq", 2, nodo_variable, yyvsp[0].node) ;
-                                                  }
-#line 1318 "calc8.tab.c"
+                                                  yyval.node= createASTNode ("setq", 2, nodo_variable, yyvsp[0].node) ;}
+#line 1317 "calc8.tab.c"
     break;
 
   case 14: /* termino: operando  */
-#line 178 "calc8.y"
+#line 177 "calc8.y"
                                                         { yyval.node = yyvsp[0].node; }
-#line 1324 "calc8.tab.c"
+#line 1323 "calc8.tab.c"
     break;
 
   case 15: /* termino: '-' operando  */
-#line 179 "calc8.y"
+#line 178 "calc8.y"
                                                         { t_node* nodo_falso =createASTNode (int_to_string (0), 0, NULL, NULL) ; 
                                                         yyval.node = createASTNode ("-", 2, nodo_falso, yyvsp[0].node) ; 
-                                                        freeAST(nodo_falso); }
-#line 1332 "calc8.tab.c"
+                                                        }
+#line 1331 "calc8.tab.c"
     break;
 
   case 16: /* termino: '+' operando  */
-#line 182 "calc8.y"
+#line 181 "calc8.y"
                                                         { t_node* nodo_falso =createASTNode (int_to_string (0), 0, NULL, NULL) ; 
                                                         yyval.node = createASTNode ("+", 2, nodo_falso, yyvsp[0].node) ; 
-                                                        freeAST(nodo_falso); }
-#line 1340 "calc8.tab.c"
+                                                        }
+#line 1339 "calc8.tab.c"
     break;
 
   case 17: /* operando: VARIABLE  */
-#line 188 "calc8.y"
+#line 187 "calc8.y"
                                                         { yyval.node = createASTNode (char_to_string (yyvsp[0].indice + 'a'), 0, NULL, NULL) ; }
-#line 1346 "calc8.tab.c"
+#line 1345 "calc8.tab.c"
     break;
 
   case 18: /* operando: NUMERO  */
-#line 189 "calc8.y"
+#line 188 "calc8.y"
                                                         { yyval.node = createASTNode (int_to_string (yyvsp[0].valor), 0, NULL, NULL) ; }
-#line 1352 "calc8.tab.c"
+#line 1351 "calc8.tab.c"
     break;
 
   case 19: /* operando: '(' expresion ')'  */
-#line 190 "calc8.y"
+#line 189 "calc8.y"
                                                         { yyval.node = yyvsp[-1].node ; }
-#line 1358 "calc8.tab.c"
+#line 1357 "calc8.tab.c"
     break;
 
 
-#line 1362 "calc8.tab.c"
+#line 1361 "calc8.tab.c"
 
       default: break;
     }
@@ -1551,7 +1550,7 @@ yyreturnlab:
   return yyresult;
 }
 
-#line 193 "calc8.y"
+#line 192 "calc8.y"
 
 
                         /* SECCION 4  Codigo en C */
