@@ -148,9 +148,10 @@ typedef struct s_attr {
                         // SECCION 3: Gramatica - Semantico
 
 
-axioma:         expresion '\n'				{ printAST2Prefix($1.node); }
+axioma:         expresion '\n'				{ printAST2Prefix($1.node); 
+                                                printf("\n") ; }
                 r_expr					{ ; }
-            |   VARIABLE '=' expresion '\n'		{ printf("(setq %c " , $1.valor + 'a');
+            |   VARIABLE '=' expresion '\n'		{ printf("(setq %c " , $1.indice +'A') ;
                                                   printAST2Prefix($3.node);
                                                   printf(") \n"); }
                 r_expr					{ ; }
@@ -180,7 +181,7 @@ termino:        operando				{ $$.node = $1.node; }
                                                  
             ;
 
-operando:       VARIABLE				{ $$.node = createASTNode (char_to_string ($1.indice +'A'), 0, NULL, NULL) ; }
+operando:       VARIABLE				{ $$.node = createASTNode (char_to_string ($1.indice + 'a'), 0, NULL, NULL) ; }
             |   NUMERO					{ $$.node = createASTNode (int_to_string ($1.valor), 0, NULL, NULL) ; }
             |   '(' expresion ')'			{ $$.node = $2.node ; }
             ;

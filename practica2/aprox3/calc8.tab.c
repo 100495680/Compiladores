@@ -661,9 +661,9 @@ static const yytype_int8 yytranslate[] =
 /* YYRLINE[YYN] -- Source line where rule number YYN was defined.  */
 static const yytype_uint8 yyrline[] =
 {
-       0,   151,   151,   151,   153,   153,   157,   157,   164,   165,
-     168,   169,   170,   171,   172,   175,   176,   178,   183,   184,
-     185
+       0,   151,   151,   151,   154,   154,   158,   158,   165,   166,
+     169,   170,   171,   172,   173,   176,   177,   179,   184,   185,
+     186
 };
 #endif
 
@@ -1246,126 +1246,127 @@ yyreduce:
     {
   case 2: /* $@1: %empty  */
 #line 151 "calc8.y"
-                                                        { printAST2Prefix(yyvsp[-1].node); }
-#line 1251 "calc8.tab.c"
+                                                        { printAST2Prefix(yyvsp[-1].node); 
+                                                printf("\n") ; }
+#line 1252 "calc8.tab.c"
     break;
 
   case 3: /* axioma: expresion '\n' $@1 r_expr  */
-#line 152 "calc8.y"
+#line 153 "calc8.y"
                                                         { ; }
-#line 1257 "calc8.tab.c"
+#line 1258 "calc8.tab.c"
     break;
 
   case 4: /* $@2: %empty  */
-#line 153 "calc8.y"
-                                                        { printf("(setq %c " , yyvsp[-3].valor + 'a');
+#line 154 "calc8.y"
+                                                        { printf("(setq %c " , yyvsp[-3].indice +'A') ;
                                                   printAST2Prefix(yyvsp[-1].node);
                                                   printf(") \n"); }
-#line 1265 "calc8.tab.c"
+#line 1266 "calc8.tab.c"
     break;
 
   case 5: /* axioma: VARIABLE '=' expresion '\n' $@2 r_expr  */
-#line 156 "calc8.y"
+#line 157 "calc8.y"
                                                         { ; }
-#line 1271 "calc8.tab.c"
+#line 1272 "calc8.tab.c"
     break;
 
   case 6: /* $@3: %empty  */
-#line 157 "calc8.y"
+#line 158 "calc8.y"
                                                         { printf("(print ");
                                                   printAST2Prefix(yyvsp[-1].node);
                                                   printf(") \n"); }
-#line 1279 "calc8.tab.c"
+#line 1280 "calc8.tab.c"
     break;
 
   case 7: /* axioma: '@' expresion '\n' $@3 r_expr  */
-#line 160 "calc8.y"
+#line 161 "calc8.y"
                                                         { ; }
-#line 1285 "calc8.tab.c"
+#line 1286 "calc8.tab.c"
     break;
 
   case 8: /* r_expr: %empty  */
-#line 164 "calc8.y"
+#line 165 "calc8.y"
                                                         { ; }
-#line 1291 "calc8.tab.c"
+#line 1292 "calc8.tab.c"
     break;
 
   case 9: /* r_expr: axioma  */
-#line 165 "calc8.y"
+#line 166 "calc8.y"
                                                         { ; }
-#line 1297 "calc8.tab.c"
+#line 1298 "calc8.tab.c"
     break;
 
   case 10: /* expresion: termino  */
-#line 168 "calc8.y"
+#line 169 "calc8.y"
                                                         { yyval.node = yyvsp[0].node; }
-#line 1303 "calc8.tab.c"
+#line 1304 "calc8.tab.c"
     break;
 
   case 11: /* expresion: expresion '+' expresion  */
-#line 169 "calc8.y"
+#line 170 "calc8.y"
                                                         { yyval.node = createASTNode ("+", 2, yyvsp[-2].node, yyvsp[0].node) ;  }
-#line 1309 "calc8.tab.c"
+#line 1310 "calc8.tab.c"
     break;
 
   case 12: /* expresion: expresion '-' expresion  */
-#line 170 "calc8.y"
+#line 171 "calc8.y"
                                                         { yyval.node = createASTNode ("-", 2, yyvsp[-2].node, yyvsp[0].node) ;   }
-#line 1315 "calc8.tab.c"
+#line 1316 "calc8.tab.c"
     break;
 
   case 13: /* expresion: expresion '*' expresion  */
-#line 171 "calc8.y"
+#line 172 "calc8.y"
                                                         { yyval.node = createASTNode ("*", 2, yyvsp[-2].node, yyvsp[0].node) ;   }
-#line 1321 "calc8.tab.c"
+#line 1322 "calc8.tab.c"
     break;
 
   case 14: /* expresion: expresion '/' expresion  */
-#line 172 "calc8.y"
+#line 173 "calc8.y"
                                                         { yyval.node = createASTNode ("/", 2, yyvsp[-2].node, yyvsp[0].node) ;   }
-#line 1327 "calc8.tab.c"
+#line 1328 "calc8.tab.c"
     break;
 
   case 15: /* termino: operando  */
-#line 175 "calc8.y"
+#line 176 "calc8.y"
                                                         { yyval.node = yyvsp[0].node; }
-#line 1333 "calc8.tab.c"
+#line 1334 "calc8.tab.c"
     break;
 
   case 16: /* termino: '-' operando  */
-#line 176 "calc8.y"
+#line 177 "calc8.y"
                                                         { t_node* nodo_falso =createASTNode (int_to_string (0), 0, NULL, NULL) ; 
                                                         yyval.node = createASTNode ("-", 2, nodo_falso, yyvsp[0].node) ; }
-#line 1340 "calc8.tab.c"
+#line 1341 "calc8.tab.c"
     break;
 
   case 17: /* termino: '+' operando  */
-#line 178 "calc8.y"
+#line 179 "calc8.y"
                                                         { t_node* nodo_falso =createASTNode (int_to_string (0), 0, NULL, NULL) ; 
                                                         yyval.node = createASTNode ("+", 2, nodo_falso, yyvsp[0].node) ; }
-#line 1347 "calc8.tab.c"
+#line 1348 "calc8.tab.c"
     break;
 
   case 18: /* operando: VARIABLE  */
-#line 183 "calc8.y"
-                                                        { yyval.node = createASTNode (char_to_string (yyvsp[0].indice +'A'), 0, NULL, NULL) ; }
-#line 1353 "calc8.tab.c"
+#line 184 "calc8.y"
+                                                        { yyval.node = createASTNode (char_to_string (yyvsp[0].indice + 'a'), 0, NULL, NULL) ; }
+#line 1354 "calc8.tab.c"
     break;
 
   case 19: /* operando: NUMERO  */
-#line 184 "calc8.y"
+#line 185 "calc8.y"
                                                         { yyval.node = createASTNode (int_to_string (yyvsp[0].valor), 0, NULL, NULL) ; }
-#line 1359 "calc8.tab.c"
+#line 1360 "calc8.tab.c"
     break;
 
   case 20: /* operando: '(' expresion ')'  */
-#line 185 "calc8.y"
+#line 186 "calc8.y"
                                                         { yyval.node = yyvsp[-1].node ; }
-#line 1365 "calc8.tab.c"
+#line 1366 "calc8.tab.c"
     break;
 
 
-#line 1369 "calc8.tab.c"
+#line 1370 "calc8.tab.c"
 
       default: break;
     }
@@ -1558,7 +1559,7 @@ yyreturnlab:
   return yyresult;
 }
 
-#line 188 "calc8.y"
+#line 189 "calc8.y"
 
 
                         /* SECCION 4  Codigo en C */
