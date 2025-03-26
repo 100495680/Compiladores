@@ -148,11 +148,15 @@ typedef struct s_attr {
                         // SECCION 3: Gramatica - Semantico
 
 
-axioma:         expresion '\n'				{ printf("%s \n", $1.cadena); }
+axioma:         expresion '\n'				{ printAST2Prefix($1.node); }
                 r_expr					{ ; }
-            |   VARIABLE '=' expresion '\n'		{ printf("(setq %c %s) \n", $1.indice, $3.cadena); }
+            |   VARIABLE '=' expresion '\n'		{ printf("(setq %c " , $1.valor + 'a');
+                                                  printAST2Prefix($3.node);
+                                                  printf(") \n"); }
                 r_expr					{ ; }
-            |   '@' expresion '\n'			{ printf("(print %s) \n", $2.cadena); }
+            |   '@' expresion '\n'			{ printf("(print ");
+                                                  printAST2Prefix($2.node);
+                                                  printf(") \n"); }
                 r_expr					{ ; }
             ;
 
@@ -161,23 +165,24 @@ r_expr:         /* lambda */				{ ; }
             |   axioma					{ ; }
             ;
 
-expresion:      termino					{ $$.cadena = $1.cadena; }
-            |   expresion '+' expresion   		{ sprintf (temp, "(+ %s %s)",$1.cadena,$3.cadena) ; $$.cadena = genera_cadena (temp); }
-            |   expresion '*' expresion   		{ sprintf (temp, "(* %s %s)",$1.cadena,$3.cadena) ; $$.cadena = genera_cadena (temp); }
-            |   expresion '-' expresion   		{ sprintf (temp, "(- %s %s)",$1.cadena,$3.cadena) ; $$.cadena = genera_cadena (temp); }
-            |   expresion '/' expresion   		{ sprintf (temp, "(/ %s %s)",$1.cadena,$3.cadena) ; $$.cadena = genera_cadena (temp); }
+expresion:      termino					{ $$.node = $1.node; }
+            |   expresion '+' expresion   		{ $$.node = createASTNode ("+", 2, $1.node, $3.node) ;  }
+            |   expresion '-' expresion   		{ $$.node = createASTNode ("-", 2, $1.node, $3.node) ;   }
+            |   expresion '*' expresion   		{ $$.node = createASTNode ("*", 2, $1.node, $3.node) ;   }
+            |   expresion '/' expresion   		{ $$.node = createASTNode ("/", 2, $1.node, $3.node) ;   }
             ;
 
-termino:        operando				{ $$.cadena = $1.cadena; }                          
-            |   '+' operando %prec SIGNO_UNARIO		{ sprintf (temp, "-%s",$2.cadena) ; $$.cadena = genera_cadena (temp); }
-            |   '-' operando %prec SIGNO_UNARIO		{ sprintf (temp, "+%s",$2.cadena) ; $$.cadena = genera_cadena (temp); }    
-                                                    
+termino:        operando				{ $$.node = $1.node; }                          
+            |   '-' operando %prec SIGNO_UNARIO		{ t_node* nodo_falso =createASTNode (int_to_string (0), 0, NULL, NULL) ; 
+                                                        $$.node = createASTNode ("-", 2, nodo_falso, $2.node) ; } 
+            |   '+' operando %prec SIGNO_UNARIO		{ t_node* nodo_falso =createASTNode (int_to_string (0), 0, NULL, NULL) ; 
+                                                        $$.node = createASTNode ("+", 2, nodo_falso, $2.node) ; } 
                                                  
             ;
 
-operando:       VARIABLE				{ sprintf (temp, "%c",$1.indice); $$.cadena = genera_cadena (temp); }
-            |   NUMERO					{ $$.cadena = int_to_string($1.valor);  }
-            |   '(' expresion ')'			{ sprintf (temp, "(%s)",$2.cadena) ; $$.cadena = genera_cadena (temp); }
+operando:       VARIABLE				{ $$.node = createASTNode (char_to_string ($1.indice +'A'), 0, NULL, NULL) ; }
+            |   NUMERO					{ $$.node = createASTNode (int_to_string ($1.valor), 0, NULL, NULL) ; }
+            |   '(' expresion ')'			{ $$.node = $2.node ; }
             ;
 
 %%
@@ -202,19 +207,19 @@ int yylex ()
     
     if (c == '.' || (c >= '0' && c <= '9')) {
         ungetc (c, stdin) ;
-        scanf ("%d", &yylval.value) ;
-        return NUMBER ;
+        scanf ("%d", &yylval.valor) ;
+        return NUMERO ;
     }
     if (c >= 'A' && c <= 'Z') {
-        yylval.index = c - 'A' ;
+        yylval.indice = c - 'A' ;
         return VARIABLE ;
     }
     if (c >= 'a' && c <= 'z') {
-        yylval.index = c - 'a' ;
+        yylval.indice = c - 'a' ;
         return VARIABLE ;
     }
     if (c == '\n')
-        n_line++ ;
+        n_linea++ ;
     return c ;
 }
 
