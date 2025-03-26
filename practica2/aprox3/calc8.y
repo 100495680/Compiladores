@@ -149,15 +149,14 @@ typedef struct s_attr {
 
 
 axioma:         expresion '\n'				{ printAST2Prefix($1.node); 
-                                                printf("\n") ; }
+                                                printf("\n") ; 
+                                                freeAST($1.node); }
                 r_expr					{ ; }
-            |   VARIABLE '=' expresion '\n'		{ printf("(setq %c " , $1.indice +'A') ;
-                                                  printAST2Prefix($3.node);
-                                                  printf(") \n"); }
-                r_expr					{ ; }
+
             |   '@' expresion '\n'			{ printf("(print ");
                                                   printAST2Prefix($2.node);
-                                                  printf(") \n"); }
+                                                  printf(") \n"); 
+                                                  freeAST($2.node); }
                 r_expr					{ ; }
             ;
 
@@ -171,13 +170,17 @@ expresion:      termino					{ $$.node = $1.node; }
             |   expresion '-' expresion   		{ $$.node = createASTNode ("-", 2, $1.node, $3.node) ;   }
             |   expresion '*' expresion   		{ $$.node = createASTNode ("*", 2, $1.node, $3.node) ;   }
             |   expresion '/' expresion   		{ $$.node = createASTNode ("/", 2, $1.node, $3.node) ;   }
+            |   VARIABLE '=' expresion      	{ t_node* nodo_variable = createASTNode (char_to_string ($1.indice + 'A'), 0, NULL, NULL) ;
+                                                  $$.node= createASTNode ("setq", 2, nodo_variable, $3.node) ;}
             ;
 
 termino:        operando				{ $$.node = $1.node; }                          
             |   '-' operando %prec SIGNO_UNARIO		{ t_node* nodo_falso =createASTNode (int_to_string (0), 0, NULL, NULL) ; 
-                                                        $$.node = createASTNode ("-", 2, nodo_falso, $2.node) ; } 
+                                                        $$.node = createASTNode ("-", 2, nodo_falso, $2.node) ; 
+                                                        freeAST(nodo_falso); } 
             |   '+' operando %prec SIGNO_UNARIO		{ t_node* nodo_falso =createASTNode (int_to_string (0), 0, NULL, NULL) ; 
-                                                        $$.node = createASTNode ("+", 2, nodo_falso, $2.node) ; } 
+                                                        $$.node = createASTNode ("+", 2, nodo_falso, $2.node) ; 
+                                                        freeAST(nodo_falso); } 
                                                  
             ;
 
