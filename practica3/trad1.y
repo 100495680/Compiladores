@@ -1,3 +1,5 @@
+/* 113 Liang Ji Zhu Ignacio Leal Sánchez */
+/* 100495723@alumnos.uc3m.es 100495680@alumnos.uc3m.es */
 %{                          // SECCION 1 Declaraciones de C-Yacc
 
 #include <stdio.h>
@@ -58,13 +60,44 @@ typedef struct s_attr {
 
 %%                            // Seccion 3 Gramatica - Semantico
 
-axioma:       sentencia ';'              { printf ("%s\n", $1.code) ; }
+axioma:     var_global  funcion ';'              { printf ("%s%s\n", $1.code, $2.code) ; }
                 r_axioma                 { ; }
             ;
+var_global:   declaracion ';'            { sprintf (temp, "%s\n", $1.code) ;
+                                          $$.code = gen_code (temp) ; }
+               | { $$.code = ""; }         
 
+funcion:      MAIN '(' ')' '{' cuerpo '}' { sprintf (temp, "(defun main ()\n\t%s\n)\n(main);", $5.code) ;
+                                          $$.code = gen_code (temp) ; }
+            ;
+
+cuerpo:        sentencia ';' cuerpo      { sprintf (temp, "%s\n\t%s", $1.code, $3.code) ;
+                                          $$.code = gen_code (temp) ; }
+            |                           { ; }
 r_axioma:                                { ; }
             |   axioma                   { ; }
             ;
+
+declaracion:   INTEGER  IDENTIF valor  { sprintf (temp, "(setq %s %s", $2.code, $3.code) ; 
+                                          $$.code = gen_code (temp) ; }
+            ;
+
+valor:      r_declaracion                    {  sprintf (temp, "%d%s", 0, $1.code) ; 
+                                          $$.code = gen_code (temp) ;}
+            |  '=' NUMBER  r_declaracion { sprintf (temp, "%d%s", $2.value, $3.code) ; 
+                                          $$.code = gen_code (temp) ;  }
+
+r_declaracion:  ',' nueva_declaracion         {  $$.code = $2.code ; }
+            | { $$.code = ")\n"; }
+            ;
+
+nueva_declaracion:  IDENTIF valor { sprintf (temp, ")\n(setq %s %s", $1.code, $2.code) ; 
+                                          $$.code = gen_code (temp) ; }
+
+
+
+
+
 
 sentencia:    IDENTIF '=' expresion      { sprintf (temp, "(setq %s %s)", $1.code, $3.code) ; 
                                            $$.code = gen_code (temp) ; }
