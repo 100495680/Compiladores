@@ -17,7 +17,6 @@ char *int_to_string (int) ;
 char *char_to_string (char) ;
 
 char temp [2048] ;
-
 // Abstract Syntax Tree (AST) Node Structure
 
 typedef struct ASTnode t_node ;
@@ -60,73 +59,74 @@ typedef struct s_attr {
 
 %%                            // Seccion 3 Gramatica - Semantico
 
-axioma:     var_global  funcion ';'              { printf ("%s%s\n", $1.code, $2.code) ; }
-                r_axioma                 { ; }
+axioma:     var_global funcion ';'                          { printf ("%s%s\n", $1.code, $2.code) ; }
+            r_axioma                                        { ; }
             ;
-var_global:   declaracion ';'            { sprintf (temp, "%s\n", $1.code) ;
-                                          $$.code = gen_code (temp) ; }
+var_global:   declaracion ';'                               { sprintf (temp, "%s\n", $1.code) ;
+                                                            $$.code = gen_code (temp) ; }
                | { $$.code = ""; }         
 
-funcion:      MAIN '(' ')' '{' cuerpo '}' { sprintf (temp, "(defun main ()\n\t%s\n)\n(main);", $5.code) ;
-                                          $$.code = gen_code (temp) ; }
+funcion:      MAIN '(' ')' '{' cuerpo '}'                   { sprintf (temp, "(defun main ()\n\t%s\n)\n(main);", $5.code) ;
+                                                            $$.code = gen_code (temp) ; }
             ;
 
-cuerpo:        sentencia ';' cuerpo      { sprintf (temp, "%s\n\t%s", $1.code, $3.code) ;
-                                          $$.code = gen_code (temp) ; }
-            |                           { ; }
-r_axioma:                                { ; }
-            |   axioma                   { ; }
+cuerpo:        sentencia ';' cuerpo                         { sprintf (temp, "%s\n\t%s", $1.code, $3.code) ;
+                                                            $$.code = gen_code (temp) ; }
+            |  sentencia ';'                                { sprintf(temp, "%s", $1.code);
+                                                            $$.code = gen_code(temp); }
+r_axioma:                                                   { ; }
+            |   axioma                                      { ; }
             ;
 
-declaracion:   INTEGER  IDENTIF valor  { sprintf (temp, "(setq %s %s", $2.code, $3.code) ; 
-                                          $$.code = gen_code (temp) ; }
+declaracion:   INTEGER  IDENTIF valor                       { sprintf (temp, "(setq %s %s", $2.code, $3.code) ; 
+                                                            $$.code = gen_code (temp) ; }
             ;
 
-valor:      r_declaracion                    {  sprintf (temp, "%d%s", 0, $1.code) ; 
-                                          $$.code = gen_code (temp) ;}
-            |  '=' NUMBER  r_declaracion { sprintf (temp, "%d%s", $2.value, $3.code) ; 
-                                          $$.code = gen_code (temp) ;  }
+valor:      r_declaracion                                   { sprintf (temp, "%d%s", 0, $1.code) ; 
+                                                            $$.code = gen_code (temp) ;}
+            |  '=' NUMBER  r_declaracion                    { sprintf (temp, "%d%s", $2.value, $3.code) ; 
+                                                            $$.code = gen_code (temp) ;  }
 
-r_declaracion:  ',' nueva_declaracion         {  $$.code = $2.code ; }
-            | { $$.code = ")\n"; }
+r_declaracion:  ',' nueva_declaracion                       { $$.code = $2.code ; }
+            |                                               { $$.code = ")\n"; }
             ;
 
-nueva_declaracion:  IDENTIF valor { sprintf (temp, ")\n(setq %s %s", $1.code, $2.code) ; 
-                                          $$.code = gen_code (temp) ; }
+nueva_declaracion:  IDENTIF valor                           { sprintf (temp, ")\n(setq %s %s", $1.code, $2.code) ; 
+                                                            $$.code = gen_code (temp) ; }
 
 
 
 
 
 
-sentencia:    IDENTIF '=' expresion      { sprintf (temp, "(setq %s %s)", $1.code, $3.code) ; 
-                                           $$.code = gen_code (temp) ; }
-            | '@' expresion              { sprintf (temp, "(print %s)", $2.code) ;  
-                                           $$.code = gen_code (temp) ; }
+sentencia:    IDENTIF '=' expresion                         { sprintf (temp, "(setq %s %s)", $1.code, $3.code) ; 
+                                                            $$.code = gen_code (temp) ; }
+            | '@' expresion                                 { sprintf (temp, "(print %s)", $2.code) ;  
+                                                            $$.code = gen_code (temp) ; }
             ;
           
-expresion:      termino                  { $$ = $1 ; }
-            |   expresion '+' expresion  { sprintf (temp, "(+ %s %s)", $1.code, $3.code) ;
-                                           $$.code = gen_code (temp) ; }
-            |   expresion '-' expresion  { sprintf (temp, "(- %s %s)", $1.code, $3.code) ;
-                                           $$.code = gen_code (temp) ; }
-            |   expresion '*' expresion  { sprintf (temp, "(* %s %s)", $1.code, $3.code) ;
-                                           $$.code = gen_code (temp) ; }
-            |   expresion '/' expresion  { sprintf (temp, "(/ %s %s)", $1.code, $3.code) ;
-                                           $$.code = gen_code (temp) ; }
+expresion:      termino                                     { $$ = $1 ; }
+            |   expresion '+' expresion                     { sprintf (temp, "(+ %s %s)", $1.code, $3.code) ;
+                                                            $$.code = gen_code (temp) ; }
+            |   expresion '-' expresion                     { sprintf (temp, "(- %s %s)", $1.code, $3.code) ;
+                                                            $$.code = gen_code (temp) ; }
+            |   expresion '*' expresion                     { sprintf (temp, "(* %s %s)", $1.code, $3.code) ;
+                                                            $$.code = gen_code (temp) ; }
+            |   expresion '/' expresion                     { sprintf (temp, "(/ %s %s)", $1.code, $3.code) ;
+                                                            $$.code = gen_code (temp) ; }
             ;
 
-termino:        operando                           { $$ = $1 ; }                          
-            |   '+' operando %prec UNARY_SIGN      { $$ = $1 ; }
-            |   '-' operando %prec UNARY_SIGN      { sprintf (temp, "(- %s)", $2.code) ;
-                                                     $$.code = gen_code (temp) ; }    
+termino:        operando                                    { $$ = $1 ; }                          
+            |   '+' operando %prec UNARY_SIGN               { $$ = $1 ; }
+            |   '-' operando %prec UNARY_SIGN               { sprintf (temp, "(- %s)", $2.code) ;
+                                                            $$.code = gen_code (temp) ; }    
             ;
 
-operando:       IDENTIF                  { sprintf (temp, "%s", $1.code) ;
-                                           $$.code = gen_code (temp) ; }
-            |   NUMBER                   { sprintf (temp, "%d", $1.value) ;
-                                           $$.code = gen_code (temp) ; }
-            |   '(' expresion ')'        { $$ = $2 ; }
+operando:       IDENTIF                                     { sprintf (temp, "%s", $1.code) ;
+                                                            $$.code = gen_code (temp) ; }
+            |   NUMBER                                      { sprintf (temp, "%d", $1.value) ;
+                                                            $$.code = gen_code (temp) ; }
+            |   '(' expresion ')'                           { $$ = $2 ; }
             ;
 
 

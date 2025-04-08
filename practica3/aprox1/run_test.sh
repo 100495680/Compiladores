@@ -2,30 +2,24 @@
 
 # Compilar con Bison
 echo "Compilando con bison..."
-bison trad2.y
+bison trad1.y
 
 # Compilar con GCC
 echo "Compilando con gcc..."
-gcc trad2.tab.c -o trad2
+gcc trad1.tab.c -o trad1
 
 # Crear archivo de entrada con el código de prueba
 echo "Generando archivo de entrada: prueba.txt"
 cat <<EOF > prueba.txt
 int a, b = 11, c;
 main () {
-    # @ 1 + 1;
-    # @ 1 - 1;
-    # a = 1;
-    # a = b + c;
-    # puts("hola");
-    # puts("adios");
-    # puts("olol");
-    # printf("abcd", "22");
-    printf("abcd", "asdasdasd", "12312");
+    @ 1 + 1;
+    @ 1 - 1;
+    a = 1;
+    a = b + c;
 };
-//@ (main)
 EOF
 
 # Ejecutar el programa y redirigirle la entrada
-echo "Ejecutando ./trad2 con prueba.txt"
-./trad2 < prueba.txt
+echo "Ejecutando ./trad1 con prueba.txt"
+./trad1 < prueba.txt
