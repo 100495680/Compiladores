@@ -16,10 +16,15 @@ echo "Generando archivo de entrada: prueba.txt"
 cat <<EOF > prueba.txt
 int a, b = 11, c;
 main () {
-    @ 1 + 1;
-    @ 1 - 1;
-    a = 1;
-    a = b + c;
+    # @ 1 + 1;
+    # @ 1 - 1;
+    # a = 1;
+    # a = b + c;
+    # puts("hola");
+    # puts("adios");
+    # puts("olol");
+    # printf("abcd", "22");
+    printf("abcd", "asdasdasd", "12312");
 };
 //@ (main)
 EOF

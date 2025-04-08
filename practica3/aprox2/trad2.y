@@ -50,8 +50,8 @@ typedef struct s_attr {
 %token STRING
 %token MAIN          // identifica el comienzo del proc. main
 %token WHILE         // identifica el bucle main
-
-
+%token PUTS          // identifica la función puts()
+%token PRINTF        // identifica la funcion printf()
 
 %right '='                    // es la ultima operacion que se debe realizar
 %left '+' '-'                 // menor orden de precedencia
@@ -74,6 +74,7 @@ funcion:      MAIN '(' ')' '{' cuerpo '}' { sprintf (temp, "(defun main ()\n\t%s
 cuerpo:        sentencia ';' cuerpo      { sprintf (temp, "%s\n\t%s", $1.code, $3.code) ;
                                           $$.code = gen_code (temp) ; }
             |                           { ; }
+
 r_axioma:                                { ; }
             |   axioma                   { ; }
             ;
@@ -103,8 +104,20 @@ sentencia:    IDENTIF '=' expresion      { sprintf (temp, "(setq %s %s)", $1.cod
                                            $$.code = gen_code (temp) ; }
             | '@' expresion              { sprintf (temp, "(print %s)", $2.code) ;  
                                            $$.code = gen_code (temp) ; }
+            | PUTS '(' STRING ')'        { sprintf (temp, "(print \"%s\")", $3.code) ;  
+                                           $$.code = gen_code (temp) ;}
+            | PRINTF printf              { ; }
             ;
-          
+
+printf:     '(' r_printf          { sprintf (temp, "(princ %s", $2.code) ; 
+                                           $$.code = gen_code (temp) ; }
+
+r_printf:   STRING r_printf               {sprintf (temp, "%s)", $2.code) ;
+                                          $$.code = gen_code (temp) ; }
+            | ',' expresion r_printf     {sprintf (temp, "%s)\n\t(princ %s", $2.code, $3.code) ; 
+                                          $$.code = gen_code (temp) ; }
+            | ')'                            { ; }
+
 expresion:      termino                  { $$ = $1 ; }
             |   expresion '+' expresion  { sprintf (temp, "(+ %s %s)", $1.code, $3.code) ;
                                            $$.code = gen_code (temp) ; }
@@ -114,6 +127,7 @@ expresion:      termino                  { $$ = $1 ; }
                                            $$.code = gen_code (temp) ; }
             |   expresion '/' expresion  { sprintf (temp, "(/ %s %s)", $1.code, $3.code) ;
                                            $$.code = gen_code (temp) ; }
+            |   STRING                   { $$ = $1 ; }
             ;
 
 termino:        operando                           { $$ = $1 ; }                          
@@ -184,6 +198,8 @@ typedef struct s_keyword { // para las palabras reservadas de C
 t_keyword keywords [] = { // define las palabras reservadas y los
     "main",        MAIN,           // y los token asociados
     "int",         INTEGER,
+    "puts",        PUTS,
+    "printf",       PRINTF,
     NULL,          0               // para marcar el fin de la tabla
 } ;
 
