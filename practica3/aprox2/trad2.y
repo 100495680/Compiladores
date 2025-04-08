@@ -67,7 +67,7 @@ var_global:         declaracion ';'                                     { sprint
                                                                         $$.code = gen_code (temp); }
                     |                                                   { $$.code = ""; }         
                     ;
-funcion:            MAIN '(' ')' '{' cuerpo '}'                         { sprintf (temp, "(defun main ()\n\t%s\n);", $5.code);
+funcion:            MAIN '(' ')' '{' cuerpo '}'                         { sprintf (temp, "(defun main ()\n%s);", $5.code);
                                                                         $$.code = gen_code (temp); }
                     ;
 
@@ -102,18 +102,15 @@ sentencia:          IDENTIF '=' expresion                               { sprint
                                                                         $$.code = gen_code (temp); }
                     | PUTS '(' STRING ')'                               { sprintf (temp, "(print \"%s\")", $3.code);  
                                                                         $$.code = gen_code (temp) ;}
-                    | PRINTF printf                                     { ; }
+                    | PRINTF printf                                     { $$.code = $2.code; }
                     ;
 
-printf:             '(' r_printf                                        { sprintf (temp, "(princ %s", $2.code); 
-                                                                        $$.code = gen_code (temp); }
+printf:             '(' STRING r_printf ')'                             { $$.code = $3.code; }
                     ;
 
-r_printf:           STRING r_printf                                     { printf (temp, "%s)", $2.code);
-                                                                        $$.code = gen_code (temp); }
-                    | ',' expresion r_printf                            { sprintf (temp, "%s)\n(princ %s", $2.code, $3.code); 
-                                                                        $$.code = gen_code (temp) ; }
-                    | ')'                                               { ; }
+r_printf:           ',' expresion r_printf                              { sprintf(temp, "(princ %s)\n%s", $2.code, $3.code);
+                                                                        $$.code = gen_code(temp); }
+                    |                                                   { $$.code = gen_code(""); }
                     ;
 expresion:          termino                                             { $$ = $1; }
                     | expresion '+' expresion                           { sprintf (temp, "(+ %s %s)", $1.code, $3.code);
