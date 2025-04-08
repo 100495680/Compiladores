@@ -7,7 +7,7 @@ main () {
     puts("hola");
     puts("adios");
     puts("olol");
-    # printf("abcd", "22");
+    printf("abcd", "22");
     printf("abcd", "asdasdasd", "12312");
 };
 //@ (main)
