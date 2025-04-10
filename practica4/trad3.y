@@ -67,30 +67,21 @@ typedef struct s_attr {
 axioma:             var_global  funcion ';'                             { printf ("%s%s\n", $1.code, $2.code); }
                     r_axioma                                            { ; }
                     ;
-var_global:         declaracion ';'                                     { sprintf (temp, "%s", $1.code);
-                                                                        $$.code = gen_code (temp); }
-                    |                                                   { $$.code = ""; }         
-                    ;
-funcion:            MAIN '(' ')' '{' var_local cuerpo '}'                         { sprintf (temp, "(defun main ()\n%s%s);", $5.code, $6.code);
-                                                                        $$.code = gen_code (temp); }
-                    ;
-
-var_local:          declaracion ';'                                 { $$ = $1; }
-                    |                                                   { $$.code = ""; }
-                    ;
-
-cuerpo:             sentencia ';' cuerpo                                { sprintf (temp, "%s\n%s", $1.code, $3.code);
-                                                                        $$.code = gen_code (temp); }
-                    | sentencia ';'                                     { $$ = $1; }
-                    | estructura cuerpo                                   { sprintf (temp, "%s\n%s", $1.code, $2.code);
-                                                                        $$.code = gen_code (temp); }
-                    | estructura                                        { $$ = $1; }
-                    ;
 r_axioma:                                                               { ; }
                     |   axioma                                          { ; }
                     ;
 
+
+
+
+var_global:         declaracion ';'                                     { sprintf (temp, "%s", $1.code);
+                                                                        $$.code = gen_code (temp); }
+                    |                                                   { $$.code = ""; }         
+                    ;
+
 declaracion:        INTEGER  IDENTIF valor                              { sprintf (temp, "(setq %s %s", $2.code, $3.code); 
+                                                                        $$.code = gen_code (temp); }
+                    | INTEGER  STRING valor                              { sprintf (temp, "(setq %s %s", $2.code, $3.code); 
                                                                         $$.code = gen_code (temp); }
                     ;
 
@@ -107,6 +98,96 @@ nueva_declaracion:  IDENTIF valor                                       { sprint
                                                                         $$.code = gen_code (temp); }
                     ;
 
+
+
+
+
+funcion:            MAIN '(' ')' '{' var_local cuerpo '}'                         { char variable_string[250]; // No pueden ser 256 por que da error en el último sprintf
+                                                                                    char variables[1000];
+                                                                                    char nombre_var[100];
+                                                                                    char valor_variable[100];
+                                                                                    // Como ponemos las variables como var=digito<espacio>var=digito tenemos
+                                                                                    // añadir 1 por el último espacio. 
+                                                                                    
+                                                                                    while (*($5.code) != '\0') {
+                                                                                        // Para obtener el nombre de la variable iteramos hasta el =
+                                                                                        int i = 0;
+                                                                                        while (*($5.code) != '=') {
+                                                                                            nombre_var[i++] = *($5.code);
+                                                                                            $5.code++;
+                                                                                        }
+                                                                                        nombre_var[i] = '\0'; // Cerramos el string
+
+                                                                                        $5.code++; // Saltamos el '='
+
+                                                                                        // Obtenermos el valor de la variable
+                                                                                        i = 0;
+                                                                                        while (*($5.code) != ' ') {
+                                                                                            valor_variable[i++] = *($5.code);
+                                                                                            $5.code++;
+                                                                                        }
+                                                                                        valor_variable[i] = '\0'; // Cerramos el string
+
+                                                                                        $5.code++;
+                                                                                        
+                                                                                        sprintf(variable_string, "(setq %s_%s %s)\n", $1.code, nombre_var, valor_variable);
+                                                                                        strcat(variables, variable_string);
+                                                                                    }
+                                                                        sprintf (temp, "(defun main ()\n%s%s);", variables, $6.code);
+                                                                        $$.code = gen_code (temp); }
+                    | STRING '(' ')' '{' var_local cuerpo '}'                         { char variable_string[200]; // No pueden ser 256 por que da error en el último sprintf
+                                                                                    char variables[1000];
+                                                                                    char nombre_var[100];
+                                                                                    int valor_variable;
+                                                                                    // Como ponemos las variables como var=digito<espacio>var=digito tenemos
+                                                                                    // añadir 1 por el último espacio. 
+                                                                                    size_t numero_variables = (strlen($5.code)+1)/4;
+                                                                                    for (int i = 0; i < numero_variables; i++) {
+                                                                                        sscanf($5.code + i * 4, "%s=%d", nombre_var, &valor_variable);
+                                                                                        sprintf(variable_string, "(setq %s_%s %d)\n", $1.code, nombre_var, valor_variable);
+                                                                                        strcat(variables, variable_string);
+                                                                                    }
+                                                                        sprintf (temp, "(defun main ()\n%s%s);", variables, $6.code);
+                                                                        $$.code = gen_code (temp); }
+                    ;
+
+
+var_local:          declaracion_local ';'                                 { $$ = $1; }
+                    |                                                   { $$.code = ""; }
+                    ;
+
+declaracion_local:  INTEGER  IDENTIF valor_local                              { sprintf (temp, "%s%s", $2.code, $3.code); 
+                                                                        $$.code = gen_code (temp); }
+                    | INTEGER  STRING valor_local                              { sprintf (temp, "%s%s", $2.code, $3.code); 
+                                                                        $$.code = gen_code (temp); }
+                    ;
+
+valor_local:              r_declaracion_local                                       { sprintf (temp, "=%d %s", 0, $1.code); 
+                                                                        $$.code = gen_code (temp);}
+                    | '=' NUMBER  r_declaracion_local                         { sprintf (temp, "=%d %s", $2.value, $3.code); 
+                                                                        $$.code = gen_code (temp);  }
+                    ;
+r_declaracion_local:      ',' IDENTIF valor_local                               { sprintf (temp, " %s%s",$2.code, $3.code); 
+                                                                        $$.code = gen_code (temp); }
+                    |                                                   { $$.code = ""; }
+                    ;
+
+
+
+
+
+
+
+cuerpo:             sentencia ';' cuerpo                                { sprintf (temp, "%s\n%s", $1.code, $3.code);
+                                                                        $$.code = gen_code (temp); }
+                    | sentencia ';'                                     { $$ = $1; }
+                    | estructura cuerpo                                   { sprintf (temp, "%s\n%s", $1.code, $2.code);
+                                                                        $$.code = gen_code (temp); }
+                    | estructura                                        { $$ = $1; }
+                    ;
+
+
+
 estructura:        WHILE '(' condicion ')' '{' cuerpo_estructura '}'               { sprintf (temp, "(loop while %s do\n%s)", $3.code, $6.code);
                                                                         $$.code = gen_code (temp); }
                     | IF '(' condicion ')' '{' cuerpo_estructura '}'             { sprintf (temp, "(if %s\n%s)", $3.code, $6.code);
@@ -122,7 +203,7 @@ cuerpo_estructura:  sentencia ';'                                       { $$ = $
                     | estructura cuerpo                                 { sprintf (temp, "(progn\t%s\n%s)", $1.code, $2.code); 
                                                                         $$.code = gen_code (temp); }
                     ;
-sentencia:          IDENTIF '=' expresion                               { sprintf (temp, "(setq %s %s)", $1.code, $3.code); 
+sentencia:          IDENTIF '=' expresion                               { sprintf (temp, "(setf %s %s)", $1.code, $3.code); 
                                                                         $$.code = gen_code (temp); }
                     | '@' expresion                                     { sprintf (temp, "(print %s)", $2.code);  
                                                                         $$.code = gen_code (temp); }
