@@ -55,7 +55,8 @@ typedef struct s_attr {
 
 %right '='                    // es la ultima operacion que se debe realizar
 %left '+' '-'                 // menor orden de precedencia
-%left '*' '/'                 // orden de precedencia intermedio
+%left '*' '/' '%'                // orden de precedencia intermedio
+%left '>' '<' ">=" "<=" "!=" "==" '!' "&&" "||"     // orden de precedencia de comparacion
 %left UNARY_SIGN              // mayor orden de precedencia
 
 %%                            // Seccion 3 Gramatica - Semantico
@@ -112,16 +113,42 @@ r_printf:           ',' expresion r_printf                              { sprint
                                                                         $$.code = gen_code(temp); }
                     |                                                   { $$.code = gen_code(""); }
                     ;
-expresion:          termino                                             { $$ = $1; }
-                    | expresion '+' expresion                           { sprintf (temp, "(+ %s %s)", $1.code, $3.code);
-                                                                        $$.code = gen_code (temp); }
-                    | expresion '-' expresion                           { sprintf (temp, "(- %s %s)", $1.code, $3.code);
-                                                                        $$.code = gen_code (temp); }
-                    | expresion '*' expresion                           { sprintf (temp, "(* %s %s)", $1.code, $3.code);
-                                                                        $$.code = gen_code (temp); }
-                    | expresion '/' expresion                           { sprintf (temp, "(/ %s %s)", $1.code, $3.code);
-                                                                        $$.code = gen_code (temp); }
+expresion:          operacion                                         { $$ = $1; }
+                    | condicion                                         { $$ = $1; }
                     ;
+
+operacion:          operacion '+' operacion                           { sprintf (temp, "(+ %s %s)", $1.code, $3.code);
+                                                                        $$.code = gen_code (temp); }
+                    | operacion '-' operacion                           { sprintf (temp, "(- %s %s)", $1.code, $3.code);
+                                                                        $$.code = gen_code (temp); }
+                    | operacion '*' operacion                           { sprintf (temp, "(* %s %s)", $1.code, $3.code);
+                                                                        $$.code = gen_code (temp); }
+                    | operacion '/' operacion                           { sprintf (temp, "(/ %s %s)", $1.code, $3.code);
+                                                                        $$.code = gen_code (temp); }
+                    | operacion '%' operacion                           { sprintf (temp, "(mod %s %s)", $1.code, $3.code);
+                                                                        $$.code = gen_code (temp); }
+                    | termino                                           { $$ = $1; }
+                    ;
+
+condicion:            termino '&''&' termino                           { sprintf (temp, "(and %s %s)", $1.code, $4.code);
+                                                                        $$.code = gen_code (temp); }
+                    | termino '|''|' termino                           { sprintf (temp, "(or %s %s)", $1.code, $4.code);
+                                                                        $$.code = gen_code (temp); }
+                    | '!' termino                                      { sprintf (temp, "(not %s)", $1.code);
+                                                                        $$.code = gen_code (temp); }
+                    | termino '!''=' termino                           { sprintf (temp, "(/= %s %s)", $1.code, $4.code);
+                                                                        $$.code = gen_code (temp); }
+                    | termino '=''=' termino                           { sprintf (temp, "(= %s %s)", $1.code, $4.code);
+                                                                        $$.code = gen_code (temp); }
+                    | termino '<' termino                            { sprintf (temp, "(< %s %s)", $1.code, $3.code);
+                                                                        $$.code = gen_code (temp); }
+                    | termino '<''=' termino                           { sprintf (temp, "(<= %s %s)", $1.code, $4.code);
+                                                                        $$.code = gen_code (temp); }
+                    | termino '>' termino                            { sprintf (temp, "(> %s %s)", $1.code, $3.code);
+                                                                        $$.code = gen_code (temp); }
+                    | termino '>''=' termino                           { sprintf (temp, "(>= %s %s)", $1.code, $4.code);
+                                                                        $$.code = gen_code (temp); }
+
 
 termino:            operando                                            { $$ = $1; }                          
                     | '+' operando %prec UNARY_SIGN                     { $$ = $1; }
@@ -133,7 +160,7 @@ operando:           IDENTIF                                             { sprint
                                                                         $$.code = gen_code (temp); }
                     | NUMBER                                            { sprintf (temp, "%d", $1.value);
                                                                         $$.code = gen_code (temp); }
-                    | '(' expresion ')'                                 { $$ = $2; }
+                    | '(' operacion ')'                                 { $$ = $2; }
                     ;
 
 
