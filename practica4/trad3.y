@@ -135,20 +135,39 @@ funcion:            MAIN '(' ')' '{' var_local cuerpo '}'                       
                                                                                     }
                                                                         sprintf (temp, "(defun main ()\n%s%s);", variables, $6.code);
                                                                         $$.code = gen_code (temp); }
-                    | STRING '(' ')' '{' var_local cuerpo '}'                         { char variable_string[200]; // No pueden ser 256 por que da error en el último sprintf
+                    | STRING '(' ')' '{' var_local cuerpo '}'                         { char variable_string[250]; // No pueden ser 256 por que da error en el último sprintf
                                                                                     char variables[1000];
                                                                                     char nombre_var[100];
-                                                                                    int valor_variable;
+                                                                                    char valor_variable[100];
                                                                                     // Como ponemos las variables como var=digito<espacio>var=digito tenemos
                                                                                     // añadir 1 por el último espacio. 
-                                                                                    size_t numero_variables = (strlen($5.code)+1)/4;
-                                                                                    for (int i = 0; i < numero_variables; i++) {
-                                                                                        sscanf($5.code + i * 4, "%s=%d", nombre_var, &valor_variable);
-                                                                                        sprintf(variable_string, "(setq %s_%s %d)\n", $1.code, nombre_var, valor_variable);
+                                                                                    
+                                                                                    while (*($5.code) != '\0') {
+                                                                                        // Para obtener el nombre de la variable iteramos hasta el =
+                                                                                        int i = 0;
+                                                                                        while (*($5.code) != '=') {
+                                                                                            nombre_var[i++] = *($5.code);
+                                                                                            $5.code++;
+                                                                                        }
+                                                                                        nombre_var[i] = '\0'; // Cerramos el string
+
+                                                                                        $5.code++; // Saltamos el '='
+
+                                                                                        // Obtenermos el valor de la variable
+                                                                                        i = 0;
+                                                                                        while (*($5.code) != ' ') {
+                                                                                            valor_variable[i++] = *($5.code);
+                                                                                            $5.code++;
+                                                                                        }
+                                                                                        valor_variable[i] = '\0'; // Cerramos el string
+
+                                                                                        $5.code++;
+                                                                                        
+                                                                                        sprintf(variable_string, "(setq %s_%s %s)\n", $1.code, nombre_var, valor_variable);
                                                                                         strcat(variables, variable_string);
                                                                                     }
-                                                                        sprintf (temp, "(defun main ()\n%s%s);", variables, $6.code);
-                                                                        $$.code = gen_code (temp); }
+                                                                        sprintf (temp, "(defun %s ()\n%s%s);",$1.code, variables, $6.code);
+                                                                        $$.code = gen_code (temp); } 
                     ;
 
 
