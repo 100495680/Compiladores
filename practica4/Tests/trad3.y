@@ -121,7 +121,6 @@ expresion:          termino                                             { $$ = $
                                                                         $$.code = gen_code (temp); }
                     | expresion '/' expresion                           { sprintf (temp, "(/ %s %s)", $1.code, $3.code);
                                                                         $$.code = gen_code (temp); }
-                    | STRING                                            { $$ = $1 ; }
                     ;
 
 termino:            operando                                            { $$ = $1; }                          
