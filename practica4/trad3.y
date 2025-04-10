@@ -50,6 +50,9 @@ typedef struct s_attr {
 %token STRING
 %token MAIN          // identifica el comienzo del proc. main
 %token WHILE         // identifica el bucle main
+%token FOR           // identifica el bucle for
+%token IF            // identifica el if
+%token ELSE          // identifica el else
 %token PUTS          // identifica la función puts()
 %token PRINTF        // identifica la funcion printf()
 
@@ -68,13 +71,20 @@ var_global:         declaracion ';'                                     { sprint
                                                                         $$.code = gen_code (temp); }
                     |                                                   { $$.code = ""; }         
                     ;
-funcion:            MAIN '(' ')' '{' cuerpo '}'                         { sprintf (temp, "(defun main ()\n%s);", $5.code);
+funcion:            MAIN '(' ')' '{' var_local cuerpo '}'                         { sprintf (temp, "(defun main ()\n%s%s);", $5.code, $6.code);
                                                                         $$.code = gen_code (temp); }
+                    ;
+
+var_local:          declaracion ';'                                 { $$ = $1; }
+                    |                                                   { $$.code = ""; }
                     ;
 
 cuerpo:             sentencia ';' cuerpo                                { sprintf (temp, "%s\n%s", $1.code, $3.code);
                                                                         $$.code = gen_code (temp); }
-                    | sentencia ';'                                     { sprintf(temp, "%s", $1.code); $$.code = gen_code(temp); }
+                    | sentencia ';'                                     { $$ = $1; }
+                    | estructura cuerpo                                   { sprintf (temp, "%s\n%s", $1.code, $2.code);
+                                                                        $$.code = gen_code (temp); }
+                    | estructura                                        { $$ = $1; }
                     ;
 r_axioma:                                                               { ; }
                     |   axioma                                          { ; }
@@ -97,6 +107,21 @@ nueva_declaracion:  IDENTIF valor                                       { sprint
                                                                         $$.code = gen_code (temp); }
                     ;
 
+estructura:        WHILE '(' condicion ')' '{' cuerpo_estructura '}'               { sprintf (temp, "(loop while %s do\n%s)", $3.code, $6.code);
+                                                                        $$.code = gen_code (temp); }
+                    | IF '(' condicion ')' '{' cuerpo_estructura '}'             { sprintf (temp, "(if %s\n%s)", $3.code, $6.code);
+                                                                        $$.code = gen_code (temp); }
+                    | IF '(' condicion ')' '{' cuerpo_estructura '}' ELSE '{' cuerpo_estructura '}' { sprintf (temp, "(if %s\n%s\n%s)", $3.code, $6.code, $10.code);
+                                                                        $$.code = gen_code (temp); }
+                    ;
+
+cuerpo_estructura:  sentencia ';'                                       { $$ = $1; }
+                    | estructura                                        { $$ = $1; }
+                    | sentencia ';' cuerpo                              { sprintf (temp, "(progn\t%s\n%s)", $1.code, $3.code); 
+                                                                        $$.code = gen_code (temp); }
+                    | estructura cuerpo                                 { sprintf (temp, "(progn\t%s\n%s)", $1.code, $2.code); 
+                                                                        $$.code = gen_code (temp); }
+                    ;
 sentencia:          IDENTIF '=' expresion                               { sprintf (temp, "(setq %s %s)", $1.code, $3.code); 
                                                                         $$.code = gen_code (temp); }
                     | '@' expresion                                     { sprintf (temp, "(print %s)", $2.code);  
@@ -220,6 +245,10 @@ t_keyword keywords [] = { // define las palabras reservadas y los
     "int",         INTEGER,
     "puts",        PUTS,
     "printf",       PRINTF,
+    "while",      WHILE,
+    "if",         IF,
+    "else",       ELSE,
+    "for",        FOR,
     NULL,          0               // para marcar el fin de la tabla
 } ;
 

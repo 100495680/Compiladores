@@ -12,8 +12,7 @@ main ()
         resultado = resultado * n ;
         n = n - 1 ;
     }
-    printf("%d\n", resultado) ;
-    
+    printf("%d\n", resultado) ; 
 //    system ("pause") ;
 }
 
