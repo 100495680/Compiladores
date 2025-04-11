@@ -81,8 +81,6 @@ var_global:         declaracion ';'                                     { sprint
 
 declaracion:        INTEGER  IDENTIF valor                              { sprintf (temp, "(setq %s %s", $2.code, $3.code); 
                                                                         $$.code = gen_code (temp); }
-                    | INTEGER  STRING valor                              { sprintf (temp, "(setq %s %s", $2.code, $3.code); 
-                                                                        $$.code = gen_code (temp); }
                     ;
 
 valor:              r_declaracion                                       { sprintf (temp, "%d%s", 0, $1.code); 
@@ -135,7 +133,7 @@ funcion:            MAIN '(' ')' '{' var_local cuerpo '}'                       
                                                                                     }
                                                                         sprintf (temp, "(defun main ()\n%s%s);", variables, $6.code);
                                                                         $$.code = gen_code (temp); }
-                    | STRING '(' ')' '{' var_local cuerpo '}'                         { char variable_string[250]; // No pueden ser 256 por que da error en el último sprintf
+                    | IDENTIF '(' ')' '{' var_local cuerpo '}'                         { char variable_string[250]; // No pueden ser 256 por que da error en el último sprintf
                                                                                     char variables[1000];
                                                                                     char nombre_var[100];
                                                                                     char valor_variable[100];
@@ -176,8 +174,6 @@ var_local:          declaracion_local ';'                                 { $$ =
                     ;
 
 declaracion_local:  INTEGER  IDENTIF valor_local                              { sprintf (temp, "%s%s", $2.code, $3.code); 
-                                                                        $$.code = gen_code (temp); }
-                    | INTEGER  STRING valor_local                              { sprintf (temp, "%s%s", $2.code, $3.code); 
                                                                         $$.code = gen_code (temp); }
                     ;
 
