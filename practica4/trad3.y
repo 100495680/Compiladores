@@ -221,7 +221,6 @@ asignacion:           IDENTIF '=' expresion                               { spri
 
 expresion:          operacion                                         { $$ = $1; }
                     | condicion                                         { $$ = $1; }
-                    | llamada                                           { $$ = $1; }
                     ;
 
 llamada:            IDENTIF '(' argumento ')'                                 { sprintf (temp, "(%s %s)", $1.code, $3.code); 
@@ -263,10 +262,12 @@ condicion:            termino '&''&' termino                           { sprintf
 termino:            operando                                            { $$ = $1; }                          
                     | '+' operando %prec UNARY_SIGN                     { $$ = $1; }
                     | '-' operando %prec UNARY_SIGN                     { sprintf (temp, "(- %s)", $2.code);
-                                                                        $$.code = gen_code (temp); }    
+                                                                        $$.code = gen_code (temp); }  
                     ;
 
 operando:           IDENTIF                                             { sprintf (temp, "%s_%s", funcion_name ,$1.code);
+                                                                        $$.code = gen_code (temp); }
+                    | IDENTIF '(' argumento ')'                         { sprintf (temp, "(%s %s)", $1.code, $3.code); 
                                                                         $$.code = gen_code (temp); }
                     | NUMBER                                            { sprintf (temp, "%d", $1.value);
                                                                         $$.code = gen_code (temp); }
