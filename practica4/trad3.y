@@ -102,7 +102,7 @@ nueva_declaracion:  IDENTIF valor_global                                      { 
 
 
 
-funcion:            IDENTIF { strcpy(funcion_name, $1.code);  } '(' argumento ')' '{' var_local cuerpo '}' funcion_principal          { sprintf (temp, "(defun %s (%s)\n%s%s);\n\n%s", $1.code, $4.code, $7.code, $8.code, $10.code);
+funcion:            IDENTIF { strcpy(funcion_name, $1.code);  } '(' argumento ')' '{' var_local cuerpo '}' funcion          { sprintf (temp, "(defun %s (%s)\n%s%s);\n\n%s", $1.code, $4.code, $7.code, $8.code, $10.code);
                                                                                                                                         $$.code = gen_code (temp); } 
                     | funcion_principal                                                                                               { $$ = $1; }
                     ;
@@ -160,13 +160,13 @@ cuerpo:             sentencia ';' cuerpo                                { sprint
 
 
 
-estructura:        WHILE '(' condicion ')' '{' cuerpo_estructura '}'               { sprintf (temp, "(loop while %s do\n%s)", $3.code, $6.code);
+estructura:        WHILE '(' expresion ')' '{' cuerpo_estructura '}'               { sprintf (temp, "(loop while %s do\n%s)", $3.code, $6.code);
                                                                         $$.code = gen_code (temp); }
-                    | IF '(' condicion ')' '{' cuerpo_estructura '}'             { sprintf (temp, "(if %s\n%s)", $3.code, $6.code);
+                    | IF '(' expresion ')' '{' cuerpo_estructura '}'             { sprintf (temp, "(if %s\n%s)", $3.code, $6.code);
                                                                         $$.code = gen_code (temp); }
-                    | IF '(' condicion ')' '{' cuerpo_estructura '}' ELSE '{' cuerpo_estructura '}' { sprintf (temp, "(if %s\n%s\n%s)", $3.code, $6.code, $10.code);
+                    | IF '(' expresion ')' '{' cuerpo_estructura '}' ELSE '{' cuerpo_estructura '}' { sprintf (temp, "(if %s\n%s\n%s)", $3.code, $6.code, $10.code);
                                                                         $$.code = gen_code (temp); }
-                    | FOR '(' declaracion_for ';' condicion ';' asignacion ')' '{' cuerpo_estructura '}' { sprintf (temp, "%s\n(loop while %s do\n%s\n%s)", $3.code, $5.code, $10.code, $7.code);
+                    | FOR '(' declaracion_for ';' expresion ';' asignacion ')' '{' cuerpo_estructura '}' { sprintf (temp, "%s\n(loop while %s do\n%s\n%s)", $3.code, $5.code, $10.code, $7.code);
                                                                         $$.code = gen_code (temp); }
                     ;
 
@@ -226,36 +226,36 @@ expresion:          operacion                                         { $$ = $1;
 llamada:            IDENTIF '(' argumento ')'                                 { sprintf (temp, "(%s %s)", $1.code, $3.code); 
                                                                         $$.code = gen_code (temp); }
 
-operacion:          operacion '+' operacion                           { sprintf (temp, "(+ %s %s)", $1.code, $3.code);
+operacion:          termino '+' expresion                           { sprintf (temp, "(+ %s %s)", $1.code, $3.code);
                                                                         $$.code = gen_code (temp); }
-                    | operacion '-' operacion                           { sprintf (temp, "(- %s %s)", $1.code, $3.code);
+                    | termino '-' expresion                           { sprintf (temp, "(- %s %s)", $1.code, $3.code);
                                                                         $$.code = gen_code (temp); }
-                    | operacion '*' operacion                           { sprintf (temp, "(* %s %s)", $1.code, $3.code);
+                    | termino '*' expresion                           { sprintf (temp, "(* %s %s)", $1.code, $3.code);
                                                                         $$.code = gen_code (temp); }
-                    | operacion '/' operacion                           { sprintf (temp, "(/ %s %s)", $1.code, $3.code);
+                    | termino '/' expresion                           { sprintf (temp, "(/ %s %s)", $1.code, $3.code);
                                                                         $$.code = gen_code (temp); }
-                    | operacion '%' operacion                           { sprintf (temp, "(mod %s %s)", $1.code, $3.code);
+                    | termino '%' expresion                           { sprintf (temp, "(mod %s %s)", $1.code, $3.code);
                                                                         $$.code = gen_code (temp); }
                     | termino                                           { $$ = $1; }
                     ;
 
-condicion:            termino '&''&' termino                           { sprintf (temp, "(and %s %s)", $1.code, $4.code);
+condicion:            termino '&''&' expresion                           { sprintf (temp, "(and %s %s)", $1.code, $4.code);
                                                                         $$.code = gen_code (temp); }
-                    | termino '|''|' termino                           { sprintf (temp, "(or %s %s)", $1.code, $4.code);
+                    | termino '|''|' expresion                           { sprintf (temp, "(or %s %s)", $1.code, $4.code);
                                                                         $$.code = gen_code (temp); }
-                    | '!' termino                                      { sprintf (temp, "(not %s)", $1.code);
+                    | '!' expresion                                      { sprintf (temp, "(not %s)", $1.code);
                                                                         $$.code = gen_code (temp); }
-                    | termino '!''=' termino                           { sprintf (temp, "(/= %s %s)", $1.code, $4.code);
+                    | termino '!''=' expresion                           { sprintf (temp, "(/= %s %s)", $1.code, $4.code);
                                                                         $$.code = gen_code (temp); }
-                    | termino '=''=' termino                           { sprintf (temp, "(= %s %s)", $1.code, $4.code);
+                    | termino '=''=' expresion                           { sprintf (temp, "(= %s %s)", $1.code, $4.code);
                                                                         $$.code = gen_code (temp); }
-                    | termino '<' termino                            { sprintf (temp, "(< %s %s)", $1.code, $3.code);
+                    | termino '<' expresion                            { sprintf (temp, "(< %s %s)", $1.code, $3.code);
                                                                         $$.code = gen_code (temp); }
-                    | termino '<''=' termino                           { sprintf (temp, "(<= %s %s)", $1.code, $4.code);
+                    | termino '<''=' expresion                           { sprintf (temp, "(<= %s %s)", $1.code, $4.code);
                                                                         $$.code = gen_code (temp); }
-                    | termino '>' termino                            { sprintf (temp, "(> %s %s)", $1.code, $3.code);
+                    | termino '>' expresion                            { sprintf (temp, "(> %s %s)", $1.code, $3.code);
                                                                         $$.code = gen_code (temp); }
-                    | termino '>''=' termino                           { sprintf (temp, "(>= %s %s)", $1.code, $4.code);
+                    | termino '>''=' expresion                           { sprintf (temp, "(>= %s %s)", $1.code, $4.code);
                                                                         $$.code = gen_code (temp); }
 
 
