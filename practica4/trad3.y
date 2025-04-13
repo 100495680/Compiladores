@@ -135,6 +135,8 @@ var_local:          declaracion_local ';' var_local                     { sprint
 
 declaracion_local:  INTEGER  IDENTIF valor_local r_declaracion_local    { sprintf (temp, "(setq %s_%s %s)%s", funcion_name, $2.code, $3.code, $4.code); 
                                                                         $$.code = gen_code (temp); }
+                    INTEGER  vector r_declaracion_local                  { sprintf (temp, "(setq %s (make-array %d))", $1.code, $1.value);
+                                                                        $$.code = gen_code (temp);  }
                     ;
 
 valor_local:                                             { sprintf (temp, "%d", 0); 
@@ -217,6 +219,7 @@ r_printf:           ',' expresion r_printf                              { sprint
 
 asignacion:           IDENTIF '=' expresion                               { sprintf (temp, "(setf %s_%s %s)", funcion_name, $1.code, $3.code); 
                                                                         $$.code = gen_code (temp); }
+                    
                     ;
 
 expresion:          operacion                                         { $$ = $1; }
@@ -272,8 +275,12 @@ operando:           IDENTIF                                             { sprint
                     | NUMBER                                            { sprintf (temp, "%d", $1.value);
                                                                         $$.code = gen_code (temp); }
                     | '(' operacion ')'                                 { $$ = $2; }
+                    |  vector                                           { sprintf (temp, "(aref %s_%s %d)",funcion_name, $1.code, $1.value);
+                                                                        $$.code = gen_code (temp); }
                     ;
 
+vector:             IDENTIF '[' NUMBER ']'                              { $$.value = $1.value;
+                                                                        $$.code = $1.code; }
 
 %%                            // SECCION 4    Codigo en C
 
