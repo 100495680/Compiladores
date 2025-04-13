@@ -62,12 +62,12 @@ typedef struct s_attr {
 %right '='                    // es la ultima operacion que se debe realizar
 %left '+' '-'                 // menor orden de precedencia
 %left '*' '/' '%'                // orden de precedencia intermedio
-%left '>' '<' ">=" "<=" "!=" "==" '!' "&&" "||"     // orden de precedencia de comparacion
+%left '>' '<' ">=" "<=" "!=" "==" "!" "&&" "||"   // orden de precedencia de comparacion
 %left UNARY_SIGN              // mayor orden de precedencia
 
 %%                            // Seccion 3 Gramatica - Semantico
 
-axioma:             var_global  funcion                             { printf ("%s%s\n", $1.code, $2.code); }
+axioma:             var_global  funcion                             { printf ("\n%s%s\n", $1.code, $2.code); }
                     r_axioma                                            { ; }
                     ;
 r_axioma:                                                               { ; }
@@ -77,28 +77,27 @@ r_axioma:                                                               { ; }
 
 
 
-var_global:         declaracion ';'  var_global                         { sprintf (temp, "%s", $1.code);
+var_global:         declaracion ';'  var_global                         { sprintf (temp, "%s\n%s", $1.code, $3.code);
                                                                         $$.code = gen_code (temp); }
                     |                                                   { $$.code = ""; }         
                     ;
 
-declaracion:        INTEGER  IDENTIF valor_global                             { sprintf (temp, "(setq %s %s", $2.code, $3.code); 
+declaracion:        INTEGER  IDENTIF valor_global r_declaracion         { sprintf (temp, "(setq %s %s)%s", $2.code, $3.code, $4.code); 
                                                                         $$.code = gen_code (temp); }
-                    | INTEGER  vector r_declaracion                  { sprintf (temp, "(setq %s (make-array %d))", $2.code, $2.value);
+                    | INTEGER  IDENTIF '[' NUMBER ']' r_declaracion     { sprintf (temp, "(setq %s (make-array %d))\n%s", $2.code, $4.value, $6.code);
                                                                         $$.code = gen_code (temp);  }
                     ;
 
-valor_global:              r_declaracion                                       { sprintf (temp, "%d%s", 0, $1.code); 
+valor_global:                                                           { sprintf (temp, "%d", 0 ); 
                                                                         $$.code = gen_code (temp);}
-                    | '=' NUMBER  r_declaracion                         { sprintf (temp, "%d%s", $2.value, $3.code); 
+                    | '=' NUMBER                                        { sprintf (temp, "%d", $2.value); 
                                                                         $$.code = gen_code (temp);  }
                     ;
-r_declaracion:      ',' nueva_declaracion                               { $$.code = $2.code; }
-                    |                                                   { $$.code = ")\n\t"; }
-                    ;
-
-nueva_declaracion:  IDENTIF valor_global                                      { sprintf (temp, ")\n\t(setq %s %s", $1.code, $2.code); 
+r_declaracion:        ',' IDENTIF valor_global r_declaracion            { sprintf (temp, "\n(setq %s %s)%s", $2.code, $3.code, $4.code); 
                                                                         $$.code = gen_code (temp); }
+                    | ',' IDENTIF '[' NUMBER ']' r_declaracion          { sprintf (temp, "\n(setq %s (make-array %d))%s", $1.code, $3.value, $5.code);
+                                                                        $$.code = gen_code (temp);  }
+                    |                                                   { $$.code = ""; }
                     ;
 
 
@@ -136,10 +135,10 @@ var_local:          declaracion_local ';' var_local                     { sprint
                     |                                                   { $$.code = ""; }
                     ;
 
-declaracion_local:  INTEGER  IDENTIF valor_local r_declaracion_local    { sprintf (temp, "(setq %s_%s %s)%s", funcion_name, $2.code, $3.code, $4.code); 
-                                                                        $$.code = gen_code (temp); }
-                    | INTEGER  vector r_declaracion_local                  { sprintf (temp, "(setq %s (make-array %d))", $1.code, $1.value);
-                                                                        $$.code = gen_code (temp);  }
+declaracion_local:  INTEGER  IDENTIF valor_local r_declaracion_local      { sprintf (temp, "(setq %s_%s %s)%s", funcion_name, $2.code, $3.code, $4.code); 
+                                                                          $$.code = gen_code (temp); }
+                    | INTEGER  IDENTIF '[' NUMBER ']' r_declaracion_local { sprintf (temp, "(setq %s (make-array %d))\n%s", $2.code, $4.value, $6.code);
+                                                                          $$.code = gen_code (temp);  }
                     ;
 
 valor_local:                                             { sprintf (temp, "%d", 0); 
@@ -149,6 +148,8 @@ valor_local:                                             { sprintf (temp, "%d", 
                     ;
 r_declaracion_local:      ',' IDENTIF valor_local r_declaracion_local   { sprintf (temp, "\n\t(setq %s_%s %s)", funcion_name, $2.code, $3.code); 
                                                                         $$.code = gen_code (temp); }
+                    |     ',' IDENTIF '[' NUMBER ']' r_declaracion_local{ sprintf (temp, "(setq %s (make-array %d))\n%s", $2.code, $4.value, $6.code);
+                                                                        $$.code = gen_code (temp);  }
                     |                                                   { $$.code = ""; }
                     ;
 
@@ -174,6 +175,7 @@ estructura:        WHILE '(' expresion ')' '{' cuerpo_estructura '}'            
                     | FOR '(' declaracion_for ';' expresion ';' asignacion ')' '{' cuerpo_estructura '}' { sprintf (temp, "%s\n\t(loop while %s do\n\t%s\n\t%s)", $3.code, $5.code, $10.code, $7.code);
                                                                         $$.code = gen_code (temp); }
                     ;
+
 
 declaracion_for:  INTEGER  IDENTIF valor_for r_declaracion_for          { sprintf (temp, "(setq %s_%s %s)%s", funcion_name, $2.code, $3.code, $4.code); 
                                                                         $$.code = gen_code (temp); }
@@ -224,7 +226,7 @@ r_printf:           ',' expresion r_printf                              { sprint
 
 asignacion:           IDENTIF '=' expresion                               { sprintf (temp, "(setf %s_%s %s)", funcion_name, $1.code, $3.code); 
                                                                         $$.code = gen_code (temp); }
-                    | vector '=' expresion                               { sprintf (temp, "(setf (aref %s %d) %s)", $1.code, $1.value, $3.code); 
+                    | vector '=' expresion                               { sprintf (temp, "(setf %s %s)", $1.code, $3.code); 
                                                                         $$.code = gen_code (temp); }
                     
                     ;
@@ -281,13 +283,12 @@ operando:           IDENTIF                                             { sprint
                                                                         $$.code = gen_code (temp); }
                     | NUMBER                                            { sprintf (temp, "%d", $1.value);
                                                                         $$.code = gen_code (temp); }
-                    | '(' operacion ')'                                 { $$ = $2; }
-                    |  vector                                           { sprintf (temp, "(aref %s %d)", $1.code, $1.value);
-                                                                        $$.code = gen_code (temp); }
+                    | '(' expresion ')'                                 { $$ = $2; }
+                    |  vector                                           { $$ = $1; }
                     ;
 
-vector:             IDENTIF '[' operacion ']'                              { $$.value = $3.value;
-                                                                        $$.code = $1.code; }
+vector:             IDENTIF '[' operacion ']'                              { sprintf (temp, "(aref %s %s)", $1.code, $3.code);
+                                                                        $$.code = gen_code (temp); }
 
 %%                            // SECCION 4    Codigo en C
 
