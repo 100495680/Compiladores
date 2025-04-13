@@ -1,1 +1,0 @@
-las llamadas a las funciones las separamos por el tema de los conflictos en operant

@@ -232,42 +232,45 @@ asignacion:           IDENTIF '=' expresion                               { spri
                     ;
 
 expresion:          operacion                                         { $$ = $1; }
-                    | condicion                                         { $$ = $1; }
+                    | condiciones                                         { $$ = $1; }
                     ;
 
 llamada:            IDENTIF '(' argumento ')'                                 { sprintf (temp, "(%s %s)", $1.code, $3.code); 
                                                                         $$.code = gen_code (temp); }
 
-operacion:          termino '+' expresion                           { sprintf (temp, "(+ %s %s)", $1.code, $3.code);
+operacion:          expresion '+' termino                           { sprintf (temp, "(+ %s %s)", $1.code, $3.code);
                                                                         $$.code = gen_code (temp); }
-                    | termino '-' expresion                           { sprintf (temp, "(- %s %s)", $1.code, $3.code);
+                    | expresion '-' termino                           { sprintf (temp, "(- %s %s)", $1.code, $3.code);
                                                                         $$.code = gen_code (temp); }
-                    | termino '*' expresion                           { sprintf (temp, "(* %s %s)", $1.code, $3.code);
+                    | expresion '*' termino                           { sprintf (temp, "(* %s %s)", $1.code, $3.code);
                                                                         $$.code = gen_code (temp); }
-                    | termino '/' expresion                           { sprintf (temp, "(/ %s %s)", $1.code, $3.code);
+                    | expresion '/' termino                           { sprintf (temp, "(/ %s %s)", $1.code, $3.code);
                                                                         $$.code = gen_code (temp); }
-                    | termino '%' expresion                           { sprintf (temp, "(mod %s %s)", $1.code, $3.code);
+                    | expresion '%' termino                           { sprintf (temp, "(mod %s %s)", $1.code, $3.code);
                                                                         $$.code = gen_code (temp); }
                     | termino                                           { $$ = $1; }
                     ;
 
-condicion:            termino '&''&' expresion                           { sprintf (temp, "(and %s %s)", $1.code, $4.code);
+condiciones:        condicion '&''&' condiciones                           { sprintf (temp, "(and %s %s)", $1.code, $4.code);
                                                                         $$.code = gen_code (temp); }
-                    | termino '|''|' expresion                           { sprintf (temp, "(or %s %s)", $1.code, $4.code);
+                    | condicion '|''|' condiciones                           { sprintf (temp, "(or %s %s)", $1.code, $4.code);
                                                                         $$.code = gen_code (temp); }
-                    | '!' expresion                                      { sprintf (temp, "(not %s)", $1.code);
+                    | '!' condicion                                      { sprintf (temp, "(not %s)", $1.code);
                                                                         $$.code = gen_code (temp); }
-                    | termino '!''=' expresion                           { sprintf (temp, "(/= %s %s)", $1.code, $4.code);
+                    | condicion                                         { $$ = $1; }
+                    ;
+                    
+condicion:          operacion '!''=' termino                           { sprintf (temp, "(/= %s %s)", $1.code, $4.code);
                                                                         $$.code = gen_code (temp); }
-                    | termino '=''=' expresion                           { sprintf (temp, "(= %s %s)", $1.code, $4.code);
+                    | operacion '=''=' termino                           { sprintf (temp, "(= %s %s)", $1.code, $4.code);
                                                                         $$.code = gen_code (temp); }
-                    | termino '<' expresion                            { sprintf (temp, "(< %s %s)", $1.code, $3.code);
+                    | operacion '<' termino                            { sprintf (temp, "(< %s %s)", $1.code, $3.code);
                                                                         $$.code = gen_code (temp); }
-                    | termino '<''=' expresion                           { sprintf (temp, "(<= %s %s)", $1.code, $4.code);
+                    | operacion '<''=' termino                           { sprintf (temp, "(<= %s %s)", $1.code, $4.code);
                                                                         $$.code = gen_code (temp); }
-                    | termino '>' expresion                            { sprintf (temp, "(> %s %s)", $1.code, $3.code);
+                    | operacion '>' termino                            { sprintf (temp, "(> %s %s)", $1.code, $3.code);
                                                                         $$.code = gen_code (temp); }
-                    | termino '>''=' expresion                           { sprintf (temp, "(>= %s %s)", $1.code, $4.code);
+                    | operacion '>''=' termino                           { sprintf (temp, "(>= %s %s)", $1.code, $4.code);
                                                                         $$.code = gen_code (temp); }
 
 
