@@ -238,50 +238,54 @@ asignacion:         IDENTIF '=' expresion                               { sprint
                     
                     ;
 
-expresion:          operacion                                           { $$ = $1; }
-                    | condiciones                                       { $$ = $1; }
+expresion:          logical_or                                          { $$ = $1; }
                     ;
 
 llamada:            IDENTIF '(' argumento ')'                           { sprintf (temp, "(%s %s)", $1.code, $3.code); 
                                                                         $$.code = gen_code (temp); }
-
-operacion:          expresion '+' termino                               { sprintf (temp, "(+ %s %s)", $1.code, $3.code);
-                                                                        $$.code = gen_code (temp); }
-                    | expresion '-' termino                             { sprintf (temp, "(- %s %s)", $1.code, $3.code);
-                                                                        $$.code = gen_code (temp); }
-                    | expresion '*' termino                             { sprintf (temp, "(* %s %s)", $1.code, $3.code);
-                                                                        $$.code = gen_code (temp); }
-                    | expresion '/' termino                             { sprintf (temp, "(/ %s %s)", $1.code, $3.code);
-                                                                        $$.code = gen_code (temp); }
-                    | expresion '%' termino                             { sprintf (temp, "(mod %s %s)", $1.code, $3.code);
-                                                                        $$.code = gen_code (temp); }
-                    | termino                                           { $$ = $1; }
                     ;
 
-condiciones:        condicion '&''&' condiciones                        { sprintf (temp, "(and %s %s)", $1.code, $4.code);
+logical_or:         logical_and                                         { $$ = $1; }
+                    | logical_or '|''|' logical_and                     { sprintf (temp, "(or %s %s)", $1.code, $4.code);
                                                                         $$.code = gen_code (temp); }
-                    | condicion '|''|' condiciones                      { sprintf (temp, "(or %s %s)", $1.code, $4.code);
-                                                                        $$.code = gen_code (temp); }
-                    | '!' condicion                                     { sprintf (temp, "(not %s)", $1.code);
-                                                                        $$.code = gen_code (temp); }
-                    | condicion                                         { $$ = $1; }
                     ;
-
-condicion:          operacion '!''=' termino                            { sprintf (temp, "(/= %s %s)", $1.code, $4.code);
+logical_and:        igualdad                                            { $$ = $1; }
+                    | logical_and '&''&' igualdad                       { sprintf (temp, "(and %s %s)", $1.code, $4.code);
                                                                         $$.code = gen_code (temp); }
-                    | operacion '=''=' termino                          { sprintf (temp, "(= %s %s)", $1.code, $4.code);
+                    ;
+igualdad:           relacional                                          { $$ = $1; }
+                    | igualdad '=''=' relacional                        { sprintf (temp, "(= %s %s)", $1.code, $4.code);
                                                                         $$.code = gen_code (temp); }
-                    | operacion '<' termino                             { sprintf (temp, "(< %s %s)", $1.code, $3.code);
+                    | igualdad '!''=' relacional                        { sprintf (temp, "(/= %s %s)", $1.code, $4.code);
                                                                         $$.code = gen_code (temp); }
-                    | operacion '<''=' termino                          { sprintf (temp, "(<= %s %s)", $1.code, $4.code);
+                    ;
+relacional:         aditivo                                             { $$ = $1; }
+                    | relacional '<' aditivo                            { sprintf (temp, "(< %s %s)", $1.code, $3.code);
                                                                         $$.code = gen_code (temp); }
-                    | operacion '>' termino                             { sprintf (temp, "(> %s %s)", $1.code, $3.code);
+                    | relacional '>' aditivo                            { sprintf (temp, "(> %s %s)", $1.code, $3.code);
                                                                         $$.code = gen_code (temp); }
-                    | operacion '>''=' termino                          { sprintf (temp, "(>= %s %s)", $1.code, $4.code);
+                    | relacional '<''=' aditivo                         { sprintf (temp, "(<= %s %s)", $1.code, $4.code);
                                                                         $$.code = gen_code (temp); }
-
-
-termino:            operando                                            { $$ = $1; }                          
+                    | relacional '>''=' aditivo                         { sprintf (temp, "(>= %s %s)", $1.code, $4.code);
+                                                                        $$.code = gen_code (temp); }
+                    ;
+aditivo:            multiplicativo                                      { $$ = $1; }
+                    | aditivo '+' multiplicativo                        { sprintf (temp, "(+ %s %s)", $1.code, $3.code);
+                                                                        $$.code = gen_code (temp); }
+                    | aditivo '-' multiplicativo                        { sprintf (temp, "(- %s %s)", $1.code, $3.code);
+                                                                        $$.code = gen_code (temp); }
+                    ;
+multiplicativo:     unario                                              { $$ = $1; }
+                    | multiplicativo '*' unario                         { sprintf (temp, "(* %s %s)", $1.code, $3.code);
+                                                                        $$.code = gen_code (temp); }
+                    | multiplicativo '/' unario                         { sprintf (temp, "(/ %s %s)", $1.code, $3.code);
+                                                                        $$.code = gen_code (temp); }
+                    | multiplicativo '%' unario                         { sprintf (temp, "(mod %s %s)", $1.code, $3.code);
+                                                                        $$.code = gen_code (temp); }
+                    ;
+unario:             operando                                            { $$ = $1; }
+                    | '!' unario                                        { sprintf (temp, "(not %s)", $1.code);
+                                                                        $$.code = gen_code (temp); }
                     | '+' operando %prec UNARY_SIGN                     { $$ = $1; }
                     | '-' operando %prec UNARY_SIGN                     { sprintf (temp, "(- %s)", $2.code);
                                                                         $$.code = gen_code (temp); }  
@@ -293,13 +297,13 @@ operando:           IDENTIF                                             { sprint
                                                                         $$.code = gen_code (temp); }
                     | NUMBER                                            { sprintf (temp, "%d", $1.value);
                                                                         $$.code = gen_code (temp); }
-                    | '(' expresion ')'                                 { $$ = $2; }
+                    | '(' logical_or ')'                                { $$ = $2; }
                     |  vector                                           { $$ = $1; }
                     ;
 
-vector:             IDENTIF '[' operacion ']'                           { sprintf (temp, "(aref %s %s)", $1.code, $3.code);
+vector:             IDENTIF '[' logical_or ']'                          { sprintf (temp, "(aref %s %s)", $1.code, $3.code);
                                                                         $$.code = gen_code (temp); }
-
+                    ;
 %%                            // SECCION 4    Codigo en C
 
 int n_line = 1 ;
