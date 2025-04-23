@@ -1,0 +1,11 @@
+(setq a 0)
+(setq b 11)
+(setq c 0)
+
+(defun main ()
+        (print (+ 1 1))
+        (print (- 1 1))
+        (setq a 1)
+        (setq a (+ b c))
+)
+(main);
