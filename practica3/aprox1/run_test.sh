@@ -14,9 +14,9 @@ cat <<EOF > prueba.txt
 int a, b = 11, c;
 main () {
     @ 1 + 1;
-    @ 1 - 1;
-    a = 1;
-    a = b + c;
+    # @ 1 - 1;
+    # a = 1;
+    # a = b + c;
 };
 EOF
 
