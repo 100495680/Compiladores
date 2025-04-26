@@ -16,12 +16,8 @@ cat <<EOF > prueba.txt
 (setq c 0)
 
 (defun main ()
-        (print (+ 1 1))
-        (print (- 1 1))
-        (setq a 1)
-        (setq a (+ b c))
 )
-(main);
+// @ (main)
 EOF
 
 # Ejecutar el programa y redirigirle la entrada

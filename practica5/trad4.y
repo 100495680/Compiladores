@@ -76,7 +76,7 @@ typedef struct s_attr {
 
 %%                            // Seccion 3 Gramatica - Semantico
 
-axioma:             var_global  funcion                                 { printf ("\n%s%s\n", $1.code, $2.code); }
+axioma:             var_global funcion                                  { printf ("\n%s%s\n", $1.code, $2.code); }
                     r_axioma                                            { ; }
                     ;
 r_axioma:                                                               { ; }
