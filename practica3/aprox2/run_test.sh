@@ -15,6 +15,7 @@ int a, b = 11, c;
 main () {
     a = 1;
     a = b + c;
+    a = c;
 };
 //@ (main)
 EOF

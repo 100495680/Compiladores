@@ -70,7 +70,7 @@ var_global:                 declaracion                                         
                             | var_global declaracion                                    { sprintf (temp, "%s\n%s", $1.code, $2.code);
                                                                                         $$.code = gen_code (temp); }
                             ;       
-declaracion:                '(' SETQ IDENTIF NUMBER ')'                                 { sprintf (temp, "variable %s\n%d %s !", $3.code, $4.value, $3.code);
+declaracion:                '(' SETQ IDENTIF expresion ')'                              { sprintf (temp, "variable %s\n%s %s !", $3.code, $4.code, $3.code);
                                                                                         $$.code = gen_code (temp); }
                             ;
 /* =================== =================== =================== */
@@ -98,6 +98,8 @@ lista_sentencia:            sentencia                                           
 sentencia:                  '(' PRINT expresion ')'                                     { sprintf (temp, ".\" %s\"", $3.code);  
                                                                                         $$.code = gen_code (temp); }
                             | '(' PRINC expresion ')'                                   { sprintf (temp, "%s .", $3.code);  
+                                                                                        $$.code = gen_code (temp); }
+                            | '(' SETQ IDENTIF expresion ')'                            { sprintf (temp, "%s %s !", $4.code, $3.code);  
                                                                                         $$.code = gen_code (temp); }
                             ;       
 

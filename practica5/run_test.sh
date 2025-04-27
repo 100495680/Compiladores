@@ -2,23 +2,24 @@
 
 # Compilar con Bison
 echo "Compilando con bison..."
-bison back1.y
+bison back4.y
 
 # Compilar con GCC
 echo "Compilando con gcc..."
-gcc back1.tab.c -o back1
+gcc back4.tab.c -o back4
 
 # Crear archivo de entrada con el código de prueba
 echo "Generando archivo de entrada: prueba.txt"
 cat <<EOF > prueba.txt
+(setq a 0)
+(setq b 11)
+(setq c 0)
 (defun main ()
-  (print (* (+ a b) c))   
-  (print (- c b))
-  (princ 22)
-  (princ asdasdasd)
-)
+(setq a 1)
+(setq a (+ b c))
+(setq a c))
 EOF
 
 # Ejecutar el programa y redirigirle la entrada
-echo "Ejecutando ./back1 con prueba.txt"
-./back1 < prueba.txt
+echo "Ejecutando ./back4 con prueba.txt"
+./back4 < prueba.txt
