@@ -11,17 +11,20 @@ gcc back1.tab.c -o back1
 # Crear archivo de entrada con el código de prueba
 echo "Generando archivo de entrada: prueba.txt"
 cat <<EOF > prueba.txt
-(setq a 3)
-(setq b 4)
+(setq a 1)
+(setq b 2)
 (setq c 10)
-
+(defun square ()
+  (print (* a a))            
+  (print (+ b b))            
+)
+(defun sum_and_diff ()
+  (print (+ a b))            
+  (print (- c a))            
+)
 (defun main ()
-  (print (+ a b))               
-  (print (* a b))               
-  (print (- c a))               
-  (print (/ (* c 2) (+ b 2)))   
-  (print (- b))                 
-  (print (/ (+ a (* b c)) 5))  
+  (print (* (+ a b) c))   
+  (print (- c b))           
 )
 EOF
 

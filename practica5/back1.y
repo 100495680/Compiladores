@@ -15,7 +15,8 @@ char *int_to_string (int) ;
 char *char_to_string (char) ;
 
 char temp [2048] ;
-
+char funcion_name[100];
+int operaciones;
 // Abstract Syntax Tree (AST) Node Structure
 
 typedef struct ASTnode t_node ;
@@ -59,8 +60,8 @@ typedef struct s_attr {
 
 %%                            // Seccion 3 Gramatica - Semantico
 
-axioma:                     var_global funciones                                        { printf ("\n%s%s\n", $1.code, $2.code); }
-                            | funciones                                                 { printf ("%s\n", $1.code); }
+axioma:                     var_global def_funcs                                        { printf ("\n%s\n%s\n", $1.code, $2.code); }
+                            | def_funcs                                                 { printf ("%s\n", $1.code); }
                             ;     
 
 /* =================== Varibles globales =================== */     
@@ -73,10 +74,18 @@ declaracion:                '(' SETQ IDENTIF NUMBER ')'                         
                             ;
 /* =================== =================== =================== */
 
-/* =================== Funcion main =================== */
-funciones:                  '(' DEFUN MAIN '(' ')' cuerpo ')'                           { sprintf (temp, ": main %s ;", $6.code);
+/* =================== Funcion main y genérico =================== */
+def_funcs:                  def_funcs def_func                                          { sprintf (temp, "%s\n%s", $1.code, $2.code);
                                                                                         $$.code = gen_code (temp); }
-                            ;       
+                            | def_func                                                  { $$ = $1; }
+                            ;                                         
+def_func:                   '(' DEFUN MAIN '(' ')' cuerpo ')'                           { sprintf (temp, ": main %s ;", $6.code);
+                                                                                        $$.code = gen_code (temp); }
+                            | '(' DEFUN IDENTIF '(' ')' cuerpo ')'                      { sprintf (temp, ": %s %s ;", $3.code, $6.code);
+                                                                                        $$.code = gen_code (temp); }
+                            ;
+
+
 cuerpo:                     lista_sentencia                                             { $$ = $1; }
                             ;       
 lista_sentencia:            sentencia                                                   { $$ = $1; }
@@ -89,13 +98,13 @@ sentencia:                  '(' PRINT expresion ')'                             
                             ;       
 
 expresion:                  termino                                                     { $$ = $1; }
-                            | '(' '+' expresion expresion ')'                           { sprintf (temp, "%s %s +", $2.code, $3.code);
+                            | '(' '+' expresion expresion ')'                           { sprintf (temp, "%s %s +", $3.code, $4.code);
                                                                                         $$.code = gen_code (temp); }
-                            | '(' '-' expresion expresion ')'                           { sprintf (temp, "%s %s -", $2.code, $3.code);
+                            | '(' '-' expresion expresion ')'                           { sprintf (temp, "%s %s -", $3.code, $4.code);
                                                                                         $$.code = gen_code (temp); }
-                            | '(' '*' expresion expresion ')'                           { sprintf (temp, "%s %s *", $2.code, $3.code);
+                            | '(' '*' expresion expresion ')'                           { sprintf (temp, "%s %s *", $3.code, $4.code);
                                                                                         $$.code = gen_code (temp); }
-                            | '(' '/' expresion expresion ')'                           { sprintf (temp, "%s %s /", $2.code, $3.code);
+                            | '(' '/' expresion expresion ')'                           { sprintf (temp, "%s %s /", $3.code, $4.code);
                                                                                         $$.code = gen_code (temp); }
                             ;       
 termino:                    operando                                                    { $$ = $1; }                          
