@@ -52,6 +52,7 @@ typedef struct s_attr {
 %token DEFUN         
 %token MAIN          // identifica el comienzo del proc. main
 %token PRINT
+%token PRINC
 
 %right '='                    // es la ultima operacion que se debe realizar
 %left '+' '-'                 // menor orden de precedencia
@@ -93,7 +94,10 @@ lista_sentencia:            sentencia                                           
                                                                                         $$.code = gen_code (temp); }
                             ;
 
+/* =================== Impresion: print y princ =================== */
 sentencia:                  '(' PRINT expresion ')'                                     { sprintf (temp, ".\" %s\"", $3.code);  
+                                                                                        $$.code = gen_code (temp); }
+                            | '(' PRINC expresion ')'                                   { sprintf (temp, "%s .", $3.code);  
                                                                                         $$.code = gen_code (temp); }
                             ;       
 
@@ -178,6 +182,7 @@ t_keyword keywords [] = { // define las palabras reservadas y los
     "setq",         SETQ,               // a = 1;   -> setq a 1     -> variable a\n a 1 !
     "defun",        DEFUN,              // main();  -> (defun main) -> : main <code> ;
     "print",        PRINT,              // (print "Hola Mundo") -> ." <string>"
+    "princ",        PRINC,              // (princ 22) -> <string> .
     NULL,           0                   // para marcar el fin de la tabla
 
 } ;

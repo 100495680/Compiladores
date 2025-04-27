@@ -11,5 +11,7 @@
 )
 (defun main ()
   (print (* (+ a b) c))   
-  (print (- c b))           
+  (print (- c b))
+  (princ 22)
+  (princ asdasdasd)
 )
