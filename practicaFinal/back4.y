@@ -111,7 +111,8 @@ lista_sentencia:            sentencia                                           
                                                                                                                 $$.code = gen_code (temp); }
                             ;                       
 
-/* =================== Impresion: print y princ =================== */                      
+/* =================== Impresion: print y princ =================== */
+/* =================== Estructuras de Control: loop while, if then, if else then =================== */                      
 sentencia:                  '(' PRINT STRING ')'                                                                { sprintf (temp, ".\" %s\"", $3.code);  
                                                                                                                 $$.code = gen_code (temp); }
                             | '(' PRINC logical_or ')'                                                          { sprintf (temp, "%s .", $3.code);  
