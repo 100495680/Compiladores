@@ -107,6 +107,8 @@ lista_sentencia:            sentencia                                           
                                                                                                                 $$.code = gen_code (temp); }
                             | '(' PROGN lista_sentencia ')'                                                     { sprintf (temp, "%s", $3.code);
                                                                                                                 $$.code = gen_code (temp); }
+                            | '(' lista_sentencia ')'                                                           { sprintf (temp, "%s", $2.code);
+                                                                                                                $$.code = gen_code (temp); }
                             ;                       
 
 /* =================== Impresion: print y princ =================== */                      
@@ -118,9 +120,9 @@ sentencia:                  '(' PRINT STRING ')'                                
                                                                                                                 $$.code = gen_code (temp); }
                             | '(' LOOP WHILE logical_or DO lista_sentencia ')'                                  { sprintf (temp, "begin\n\t%s\n\t%s\nrepeat", $4.code, $6.code);  
                                                                                                                 $$.code = gen_code (temp); }
-                            | '(' IF logical_or lista_sentencia ')'                                             { sprintf (temp, "%s if %s then", $3.code, $4.code);  
+                            | '(' IF logical_or lista_sentencia ')'                                             { sprintf (temp, "%s if \n\t%s \nthen", $3.code, $4.code);  
                                                                                                                 $$.code = gen_code (temp); }
-                            | '(' IF logical_or lista_sentencia lista_sentencia ')'                             { sprintf (temp, "%s if \n\t%s \nelse \n\t%s then", $3.code, $4.code, $5.code);  
+                            | '(' IF logical_or lista_sentencia lista_sentencia ')'                             { sprintf (temp, "%s if \n\t%s \nelse \n\t%s \nthen", $3.code, $4.code, $5.code);  
                                                                                                                 $$.code = gen_code (temp); }
                             ;                               
 
