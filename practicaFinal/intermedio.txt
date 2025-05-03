@@ -38,5 +38,6 @@
 	(progn	(print "while")))
 	(if (mod main_a 2)
 	(progn	(print "PAR"))
-	(progn	(print "IMPAR"))))
+	(progn	(print "IMPAR")))
+)
  //@ main

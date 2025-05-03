@@ -111,12 +111,12 @@ r_declaracion:        ',' IDENTIF valor_global r_declaracion            { sprint
 
 
 
-funcion:            IDENTIF { strcpy(funcion_name, $1.code); operaciones = 1; } '(' argumento ')' '{' var_local cuerpo '}' funcion          { sprintf (temp, "(defun %s (%s)\n\t%s%s);\n\t\n\t%s", $1.code, $4.code, $7.code, $8.code, $10.code);
+funcion:            IDENTIF { strcpy(funcion_name, $1.code); operaciones = 1; } '(' argumento ')' '{' var_local cuerpo '}' funcion          { sprintf (temp, "(defun %s (%s)\n\t%s%s\n)\n\t\n%s", $1.code, $4.code, $7.code, $8.code, $10.code);
                                                                                                                                             $$.code = gen_code (temp); } 
                     | funcion_principal                                                                                                     { $$ = $1; }
                     ;
 
-funcion_principal:  MAIN { strcpy(funcion_name, $1.code); operaciones = 1; }      '(' argumento ')' '{' var_local cuerpo '}'                { sprintf (temp, "(defun main (%s)\n\t%s%s)", $4.code, $7.code, $8.code);
+funcion_principal:  MAIN { strcpy(funcion_name, $1.code); operaciones = 1; }      '(' argumento ')' '{' var_local cuerpo '}'                { sprintf (temp, "(defun main (%s)\n\t%s%s\n)", $4.code, $7.code, $8.code);
                                                                                                                                             $$.code = gen_code (temp); }
                     ;
 

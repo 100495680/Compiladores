@@ -1468,7 +1468,7 @@ yyreduce:
 
   case 16: /* funcion: IDENTIF $@2 '(' argumento ')' '{' var_local cuerpo '}' funcion  */
 #line 114 "trad.y"
-                                                                                                                                            { sprintf (temp, "(defun %s (%s)\n\t%s%s);\n\t\n\t%s", yyvsp[-9].code, yyvsp[-6].code, yyvsp[-3].code, yyvsp[-2].code, yyvsp[0].code);
+                                                                                                                                            { sprintf (temp, "(defun %s (%s)\n\t%s%s\n)\n\t\n%s", yyvsp[-9].code, yyvsp[-6].code, yyvsp[-3].code, yyvsp[-2].code, yyvsp[0].code);
                                                                                                                                             yyval.code = gen_code (temp); }
 #line 1474 "trad.tab.c"
     break;
@@ -1487,7 +1487,7 @@ yyreduce:
 
   case 19: /* funcion_principal: MAIN $@3 '(' argumento ')' '{' var_local cuerpo '}'  */
 #line 119 "trad.y"
-                                                                                                                                            { sprintf (temp, "(defun main (%s)\n\t%s%s)", yyvsp[-5].code, yyvsp[-2].code, yyvsp[-1].code);
+                                                                                                                                            { sprintf (temp, "(defun main (%s)\n\t%s%s\n)", yyvsp[-5].code, yyvsp[-2].code, yyvsp[-1].code);
                                                                                                                                             yyval.code = gen_code (temp); }
 #line 1493 "trad.tab.c"
     break;
