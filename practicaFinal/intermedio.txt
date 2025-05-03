@@ -35,5 +35,8 @@
 	(setf main_a 29)
 	(setf main_a (- 29))
 	(loop while (< main_a 5) do
-	(progn	(print "while"))))
+	(progn	(print "while")))
+	(if (mod main_a 2)
+	(progn	(print "PAR"))
+	(progn	(print "IMPAR"))))
  //@ main

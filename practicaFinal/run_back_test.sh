@@ -68,6 +68,11 @@ main(){
     while (a < 5){
         puts("while");
     }
+    if (a % 2){
+        puts("PAR");
+    } else {
+        puts("IMPAR");
+    }
 }
 //@ //@ main
 EOF

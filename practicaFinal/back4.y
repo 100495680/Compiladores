@@ -120,6 +120,8 @@ sentencia:                  '(' PRINT STRING ')'                                
                                                                                                                 $$.code = gen_code (temp); }
                             | '(' IF logical_or lista_sentencia ')'                                             { sprintf (temp, "%s if %s then", $3.code, $4.code);  
                                                                                                                 $$.code = gen_code (temp); }
+                            | '(' IF logical_or lista_sentencia lista_sentencia ')'                             { sprintf (temp, "%s if \n\t%s \nelse \n\t%s then", $3.code, $4.code, $5.code);  
+                                                                                                                $$.code = gen_code (temp); }
                             ;                               
 
 /* =================== Operadores, precedencia y asociatividad =================== */
