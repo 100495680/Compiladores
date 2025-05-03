@@ -76,7 +76,7 @@ typedef struct s_attr {
 
 %%                            // Seccion 3 Gramatica - Semantico
 
-axioma:             var_global funcion                                  { printf ("\n%s%s\n", $1.code, $2.code); }
+axioma:             var_global funcion                                  { printf ("%s%s\n", $1.code, $2.code); }
                     r_axioma                                            { ; }
                     ;
 r_axioma:                                                               { ; }
@@ -116,7 +116,7 @@ funcion:            IDENTIF { strcpy(funcion_name, $1.code); operaciones = 1; } 
                     | funcion_principal                                                                                                     { $$ = $1; }
                     ;
 
-funcion_principal:  MAIN { strcpy(funcion_name, $1.code); operaciones = 1; }      '(' argumento ')' '{' var_local cuerpo '}'                { sprintf (temp, "(defun main (%s)\n\t%s%s);", $4.code, $7.code, $8.code);
+funcion_principal:  MAIN { strcpy(funcion_name, $1.code); operaciones = 1; }      '(' argumento ')' '{' var_local cuerpo '}'                { sprintf (temp, "(defun main (%s)\n\t%s%s)", $4.code, $7.code, $8.code);
                                                                                                                                             $$.code = gen_code (temp); }
                     ;
 
@@ -248,7 +248,8 @@ expresion:          logical_or                                          { $$ = $
 llamada:            IDENTIF '(' argumento ')'                           { sprintf (temp, "(%s %s)", $1.code, $3.code); 
                                                                         $$.code = gen_code (temp); }
                     ;
-/* 5. Operadores, precedencia y asociatividad */
+
+/* =================== Operadores, precedencia y asociatividad =================== */
 logical_or:         logical_and                                         { $$ = $1; }
                     | logical_or '|''|' logical_and                     { sprintf (temp, "(or %s %s)", $1.code, $4.code);
                                                                         $$.code = gen_code (temp); }
@@ -290,7 +291,7 @@ multiplicativo:     unario                                              { $$ = $
 unario:             operando                                            { $$ = $1; }
                     | '!' unario                                        { sprintf (temp, "(not %s)", $2.code);
                                                                         $$.code = gen_code (temp); }
-                    | '+' operando %prec UNARY_SIGN                     { $$ = $1; }
+                    | '+' operando %prec UNARY_SIGN                     { $$ = $2; }
                     | '-' operando %prec UNARY_SIGN                     { sprintf (temp, "(- %s)", $2.code);
                                                                         $$.code = gen_code (temp); }  
                     ;

@@ -123,8 +123,19 @@ main() {
 # 11. Vectores (arrays) dentro de main
 gen_test 11 'int a[5];
 main() {
-  a[2] = 123;
-  printf("%d", a[2]);
+    a[2] = 123;
+    printf("%d", a[2]);
+}'
+gen_test 12 'int a[5];
+main() {
+    B=A*10+(23/10);
+    printf("%d", a[2]);
 }'
 
+gen_test 13 '
+int B;
+int A;
+main(){
+    B=A*10+(23/10);
+}'
 echo "=== Fin de pruebas en ./$DIR ==="
