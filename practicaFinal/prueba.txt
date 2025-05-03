@@ -1,0 +1,7 @@
+(setq a 0)
+(setq b 11)
+(setq c 0)
+(defun main ()
+(setq a 1)
+(setq a (+ b c))
+(setq a c))
