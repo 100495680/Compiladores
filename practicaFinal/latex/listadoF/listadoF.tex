@@ -1,0 +1,54 @@
+% fichero: listadoF.tex
+\documentclass[a4paper,landscape]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+% Márgenes algo mayores en los laterales y margen inferior amplio para los números
+\usepackage[left=1.5cm,right=1.5cm,top=2cm,bottom=2cm]{geometry}
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage{graphicx}
+\lstset{
+  basicstyle=\ttfamily\small,
+  breaklines=true,
+  numbers=left,
+  numberstyle=\tiny\color{gray},
+  keywordstyle=\color{blue},
+  commentstyle=\color{gray},
+  stringstyle=\color{red},
+  frame=single,
+  language=C,
+  xleftmargin=5pt,           % un pequeño margen interior
+  xrightmargin=5pt,
+  linewidth=\textwidth       % ahora \textwidth ya descuenta los 1.5cm de cada lado
+}
+
+\title{Práctica: Procesadores del Lenguaje}
+\author{Liang Ji Zhu \\ Ignacio Leal Sánchez}
+\date{Mayo 2025}
+
+\begin{document}
+
+%----------------- Portada -----------------%
+\pagestyle{empty}
+\begin{titlepage}
+    \centering
+    \vspace*{2cm}
+    {\Huge \bfseries Práctica: Procesadores del Lenguaje}\par
+    \vspace{1.5cm}
+    {\Large \bfseries Autores:}\par
+    {\large Liang Ji Zhu \\ Ignacio Leal Sánchez}\par
+    \vfill
+    \includegraphics[width=0.25\textwidth]{logo_universidad.png}
+    \vfill
+    {\large \bfseries Fecha de entrega:}\par
+    Mayo 2025\par
+    \vfill
+\end{titlepage}
+
+\newpage
+\pagestyle{plain} % activa número de página en el pie
+
+%----------------- Listado -----------------%
+\lstinputlisting[caption={Código de \texttt{trad.y}},label={lst:trady}]{trad.y}
+
+\end{document}

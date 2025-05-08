@@ -122,7 +122,7 @@ funcion:            IDENTIF { strcpy(funcion_name, $1.code); operaciones = 1; } 
 
 funcion_principal:  MAIN { strcpy(funcion_name, $1.code); operaciones = 1; }      '(' argumento ')' '{' var_local cuerpo '}'                
                         { sprintf (temp, "(defun main (%s)\n\t%s%s\n)", $4.code, $7.code, $8.code);
-                            $$.code = gen_code (temp); }
+                        $$.code = gen_code (temp); }
                     ;
 
 argumento:          INTEGER valor resto_argumento                       { sprintf (temp, "%s %s", $2.code, $3.code); 
@@ -199,7 +199,7 @@ estructura:         WHILE '(' expresion ')' '{' cuerpo_estructura '}'
 
 declaracion_for:    INTEGER  IDENTIF valor_for r_declaracion_for        
                         { sprintf (temp, "(setq %s_%s %s)%s", funcion_name, $2.code, $3.code, $4.code); 
-                            $$.code = gen_code (temp); }
+                        $$.code = gen_code (temp); }
                     | IDENTIF valor_for r_declaracion_for          
                         { sprintf (temp, "(setq %s_%s %s)%s", funcion_name, $1.code, $2.code, $3.code); 
                         $$.code = gen_code (temp); }
@@ -227,8 +227,9 @@ cuerpo_estructura:  sentencia ';'                                       { if (op
                                                                         $$.code = gen_code (temp); }
                     | estructura cuerpo_estructura                      { sprintf (temp, "(progn\t%s\n\t%s)", $1.code, $2.code); 
                                                                         $$.code = gen_code (temp); }
-                    | RETURN expresion ';'                              { sprintf (temp, "(return-from %s %s)", funcion_name, $2.code);
-                                                                        $$.code = gen_code (temp); }
+                    | RETURN expresion ';'                              
+                        { sprintf (temp, "(return-from %s %s)", funcion_name, $2.code);
+                        $$.code = gen_code (temp); }
                     ;
 sentencia:          asignacion                                          { $$ = $1; }
                     | '@' expresion                                     { sprintf (temp, "(print %s)", $2.code);  
