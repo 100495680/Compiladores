@@ -123,6 +123,9 @@ sentencia:          '(' PRINT STRING ')'
                     | '(' PRINC logical_or ')'                                          
                         { sprintf (temp, "%s .", $3.code);  
                         $$.code = gen_code (temp); }
+                    | '(' PRINC STRING ')'                                          
+                        { sprintf (temp, "%s .", $3.code);  
+                        $$.code = gen_code (temp); }
                     | '(' SETF IDENTIF logical_or ')'                                   
                         { sprintf (temp, "%s %s !", $4.code, $3.code);  
                         $$.code = gen_code (temp); }

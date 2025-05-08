@@ -1,0 +1,12 @@
+(setq resultado 0)
+(setq n 0)
+(defun main ()
+	(setf main_n 7)
+	(setf main_resultado 1)
+	(loop while (> main_n 1) do
+	(progn	(setf main_resultado (* main_resultado main_n))
+	(progn	(setf main_n (- main_n 1)))))
+	(princ main_resultado)
+	
+)
+ //@ (main) 
