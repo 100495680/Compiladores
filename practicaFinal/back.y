@@ -113,12 +113,6 @@ lista_sentencia:    sentencia                                                   
                     | lista_sentencia sentencia                                         
                         { sprintf (temp, "%s\n%s", $1.code, $2.code);
                         $$.code = gen_code (temp); }
-                    | '(' PROGN lista_sentencia ')'                                     
-                        { sprintf (temp, "%s", $3.code);
-                        $$.code = gen_code (temp); }
-                    | '(' lista_sentencia ')'                                           
-                        { sprintf (temp, "%s", $2.code);
-                        $$.code = gen_code (temp); }
                     ;                       
 
 /* =================== Impresion: print y princ =================== */
@@ -135,12 +129,13 @@ sentencia:          '(' PRINT STRING ')'
                     | '(' LOOP WHILE logical_or DO lista_sentencia ')'                  
                         { sprintf (temp, "begin\n\t%s\n\t%s\nrepeat", $4.code, $6.code);  
                         $$.code = gen_code (temp); }
-                    | '(' IF logical_or lista_sentencia ')'                             
+                    | '(' IF logical_or sentencia ')'                             
                         { sprintf (temp, "%s if \n\t%s \nthen", $3.code, $4.code);  
                         $$.code = gen_code (temp); }
-                    | '(' IF logical_or lista_sentencia lista_sentencia ')'             
+                    | '(' IF logical_or sentencia sentencia ')'             
                         { sprintf (temp, "%s if \n\t%s \nelse \n\t%s \nthen", $3.code, $4.code, $5.code);  
                         $$.code = gen_code (temp); }
+                    | '(' PROGN lista_sentencia ')'                                     { $$ = $3; }
                     ;                               
 
 /* =================== Operadores, precedencia y asociatividad =================== */
