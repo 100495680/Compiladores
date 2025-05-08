@@ -8,13 +8,13 @@ bison -o trad.tab.c trad.y
 echo "Compilando trad.tab.c con gcc..."
 gcc trad.tab.c -o trad
 
-# Compilar back4.y con Bison
-echo "Compilando back4.y con bison..."
-bison -o back4.tab.c back4.y
+# Compilar back.y con Bison
+echo "Compilando back.y con bison..."
+bison -o back.tab.c back.y
 
-# Compilar back4.tab.c con GCC
-echo "Compilando back4.tab.c con gcc..."
-gcc back4.tab.c -o back4
+# Compilar back.tab.c con GCC
+echo "Compilando back.tab.c con gcc..."
+gcc back.tab.c -o back
 
 # Crear archivo de entrada en C para trad.y
 echo "Generando archivo de entrada en C: entrada.c"
@@ -85,6 +85,6 @@ echo "Ejecutando ./trad con entrada.c"
 echo "Salida intermedia generada:"
 cat intermedio.txt
 
-# Ejecutar back4 con la salida de trad como entrada
-echo "Ejecutando ./back4 con intermedio.txt"
-./back4 < intermedio.txt
+# Ejecutar back con la salida de trad como entrada
+echo "Ejecutando ./back con intermedio.txt"
+./back < intermedio.txt
