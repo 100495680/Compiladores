@@ -71,11 +71,11 @@ typedef struct s_attr {
 %right '='                                  /* asignación */
 %left OR                                    /* lógico OR */
 %left AND                                   /* lógico AND */
-%nonassoc NE                                /* cuerpo */
-%nonassoc '<' '>' LE GE                     /* cuerpoes */
+%nonassoc NE                                /* igualdad */
+%nonassoc '<' '>' LE GE                     /* relacionales */
 %left '+' '-'                               /* suma/resta */
 %left '*' '/' MOD                           /* multiplic./módulo */
-%right UNARY_SIGN NOT                       /* cuerpos: +un, -un, ! */
+%right UNARY_SIGN NOT                       /* unarios: +un, -un, ! */
 
 %%                            // Seccion 3 Gramatica - Semantico
 
@@ -89,7 +89,7 @@ var_global:         declaracion                                                 
                         { sprintf (temp, "%s\n%s", $1.code, $2.code);
                         $$.code = gen_code (temp); }
                     ;                               
-declaracion:        '(' SETQ IDENTIF cuerpo ')'
+declaracion:        '(' SETQ IDENTIF logical_or ')'
                         { sprintf (temp, "variable %s\n%s %s !", $3.code, $4.code, $3.code);
                         $$.code = gen_code (temp); }
                     ;                       
@@ -130,72 +130,82 @@ lista_sentencia:    sentencia                                                   
 sentencia:          '(' PRINT STRING ')'                                                
                         { sprintf (temp, ".\" %s\"", $3.code);  
                         $$.code = gen_code (temp); }
-                    | '(' PRINC cuerpo ')'                                          
+                    | '(' PRINC logical_or ')'                                          
                         { sprintf (temp, "%s .", $3.code);  
                         $$.code = gen_code (temp); }
                     | '(' PRINC STRING ')'                                          
                         { sprintf (temp, "%s .", $3.code);  
                         $$.code = gen_code (temp); }
-                    | '(' SETF IDENTIF cuerpo ')'                                   
+                    | '(' SETF IDENTIF logical_or ')'                                   
                         { sprintf (temp, "%s %s !", $4.code, $3.code);  
                         $$.code = gen_code (temp); }
-                    | '(' SETQ IDENTIF cuerpo ')'                                   
+                    | '(' SETQ IDENTIF logical_or ')'                                   
                         { sprintf (temp, "%s %s !", $4.code, $3.code);  
                         $$.code = gen_code (temp); }
-                    | '(' LOOP WHILE cuerpo DO lista_sentencia ')'                  
+                    | '(' LOOP WHILE logical_or DO lista_sentencia ')'                  
                         { sprintf (temp, "begin\n\t%s\nwhile\n\t%s\nrepeat", $4.code, $6.code);  
                         $$.code = gen_code (temp); }
-                    | '(' IF cuerpo sentencia ')'                             
+                    | '(' IF logical_or sentencia ')'                             
                         { sprintf (temp, "%s if \n\t%s \nthen", $3.code, $4.code);  
                         $$.code = gen_code (temp); }
-                    | '(' IF cuerpo sentencia sentencia ')'             
+                    | '(' IF logical_or sentencia sentencia ')'             
                         { sprintf (temp, "%s if \n\t%s \nelse \n\t%s \nthen", $3.code, $4.code, $5.code);  
                         $$.code = gen_code (temp); }
                     | '(' PROGN lista_sentencia ')'                                     { $$ = $3; }
                     ;                               
 
 /* =================== Operadores, precedencia y asociatividad =================== */
-cuerpo:         operando                                                         { $$ = $1; }
-                    | '(' OR cuerpo cuerpo ')'                                 
+logical_or:         logical_and                                                         { $$ = $1; }
+                    | '(' OR logical_or logical_and ')'                                 
                         { sprintf (temp, "%s %s or", $3.code, $4.code);
                         $$.code = gen_code (temp); }
-                    | '(' AND cuerpo cuerpo ')'                                  
+                    ;                               
+logical_and:        igualdad                                                            { $$ = $1; }
+                    | '(' AND logical_and igualdad ')'                                  
                         { sprintf (temp, "%s %s and", $3.code, $4.code);
                         $$.code = gen_code (temp); }
-                    | '(' '=' cuerpo cuerpo ')'                                   
+                    ;                               
+igualdad:           relacional                                                          { $$ = $1; }
+                    | '(' '=' igualdad relacional ')'                                   
                         {sprintf (temp, "%s %s =", $3.code, $4.code);
                         $$.code = gen_code (temp); }
-                    | '(' NE cuerpo cuerpo ')'                               
+                    | '(' NE igualdad relacional ')'                               
                         { sprintf (temp, "%s %s = 0=", $3.code, $4.code);
                         $$.code = gen_code (temp); }
-                    | '(' '<' cuerpo cuerpo ')'                                    
+                    ;                               
+relacional:         operacion                                                           { $$ = $1; }
+                    | '(' '<' relacional operacion ')'                                    
                         { sprintf (temp, "%s %s <", $3.code, $4.code);
                         $$.code = gen_code (temp); }
-                    | '(' '>' cuerpo cuerpo ')'                                    
+                    | '(' '>' relacional operacion ')'                                    
                         { sprintf (temp, "%s %s >", $3.code, $4.code);
                         $$.code = gen_code (temp); }
-                    | '(' LE cuerpo cuerpo ')'                                
+                    | '(' LE relacional operacion ')'                                
                         { sprintf (temp, "%s %s <=", $3.code, $4.code);
                         $$.code = gen_code (temp); }
-                    | '(' GE cuerpo cuerpo ')'                                
+                    | '(' GE relacional operacion ')'                                
                         { sprintf (temp, "%s %s >=", $3.code, $4.code);
                         $$.code = gen_code (temp); }
-                    | '(' '+' cuerpo cuerpo ')'                                
+                    ;                               
+operacion:          unario                                                              { $$ = $1; }
+                    | '(' '+' operacion operacion ')'                                
                         { sprintf (temp, "%s %s +", $3.code, $4.code);
                         $$.code = gen_code (temp); }
-                    | '(' '-' cuerpo cuerpo ')'                                
+                    | '(' '-' operacion operacion ')'                                
                         { sprintf (temp, "%s %s -", $3.code, $4.code);
                         $$.code = gen_code (temp); }
-                    | '(' '*' cuerpo cuerpo ')'                                 
+                    | '(' '*' operacion operacion ')'                                 
                         { sprintf (temp, "%s %s *", $3.code, $4.code);
                         $$.code = gen_code (temp); }
-                    | '(' '/' cuerpo cuerpo ')'                                 
+                    | '(' '/' operacion operacion ')'                                 
                         { sprintf (temp, "%s %s /", $3.code, $4.code);
                         $$.code = gen_code (temp); }
-                    | '(' MOD cuerpo cuerpo ')'                                 
+                    | '(' MOD operacion operacion ')'                                 
                         { sprintf (temp, "%s %s mod", $3.code, $4.code);
                         $$.code = gen_code (temp); }
-                    | '(' NOT cuerpo ')'                                                
+                    ;                                                   
+unario:             operando                                                            { $$ = $1; }
+                    | '(' NOT unario ')'                                                
                         { sprintf (temp, "%s 0=", $3.code);
                         $$.code = gen_code (temp); }
                     | '+' operando %prec UNARY_SIGN                                     { $$ = $1; }
@@ -207,7 +217,7 @@ operando:           IDENTIF                                                     
                                                                                         $$.code = gen_code (temp); }
                     | NUMBER                                                            { sprintf (temp, "%d", $1.value);
                                                                                         $$.code = gen_code (temp); }
-                    | '(' cuerpo ')'                                                { $$ = $2; }
+                    | '(' logical_or ')'                                                { $$ = $2; }
                     ;
 
 

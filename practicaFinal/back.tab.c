@@ -67,7 +67,7 @@
 
 
 /* First part of user prologue.  */
-#line 3 "back.y"
+#line 3 "/home/liang-ji-zhu/Escritorio/2Cuatri/ProcesadoresDelLenguaje/Compiladores/practicaFinal/back.y"
                           // SECCION 1 Declaraciones de C-Yacc
 
 #include <stdio.h>
@@ -110,7 +110,7 @@ typedef struct s_attr {
 #define YYSTYPE t_attr
 
 
-#line 114 "back.tab.c"
+#line 114 "/home/liang-ji-zhu/Escritorio/2Cuatri/ProcesadoresDelLenguaje/Compiladores/practicaFinal/back.tab.c"
 
 # ifndef YY_CAST
 #  ifdef __cplusplus
@@ -242,7 +242,13 @@ enum yysymbol_kind_t
   YYSYMBOL_cuerpo = 42,                    /* cuerpo  */
   YYSYMBOL_lista_sentencia = 43,           /* lista_sentencia  */
   YYSYMBOL_sentencia = 44,                 /* sentencia  */
-  YYSYMBOL_operando = 45                   /* operando  */
+  YYSYMBOL_logical_or = 45,                /* logical_or  */
+  YYSYMBOL_logical_and = 46,               /* logical_and  */
+  YYSYMBOL_igualdad = 47,                  /* igualdad  */
+  YYSYMBOL_relacional = 48,                /* relacional  */
+  YYSYMBOL_operacion = 49,                 /* operacion  */
+  YYSYMBOL_unario = 50,                    /* unario  */
+  YYSYMBOL_operando = 51                   /* operando  */
 };
 typedef enum yysymbol_kind_t yysymbol_kind_t;
 
@@ -570,16 +576,16 @@ union yyalloc
 /* YYFINAL -- State number of the termination state.  */
 #define YYFINAL  11
 /* YYLAST -- Last index in YYTABLE.  */
-#define YYLAST   152
+#define YYLAST   222
 
 /* YYNTOKENS -- Number of terminals.  */
 #define YYNTOKENS  35
 /* YYNNTS -- Number of nonterminals.  */
-#define YYNNTS  11
+#define YYNNTS  17
 /* YYNRULES -- Number of rules.  */
-#define YYNRULES  45
+#define YYNRULES  50
 /* YYNSTATES -- Number of states.  */
-#define YYNSTATES  133
+#define YYNSTATES  145
 
 /* YYMAXUTOK -- Last valid token kind.  */
 #define YYMAXUTOK   280
@@ -633,9 +639,10 @@ static const yytype_uint8 yyrline[] =
 {
        0,    82,    82,    83,    87,    88,    92,    99,   102,   103,
      106,   108,   111,   114,   120,   122,   123,   130,   133,   136,
-     139,   142,   145,   148,   151,   154,   158,   159,   162,   165,
-     168,   171,   174,   177,   180,   183,   186,   189,   192,   195,
-     198,   201,   202,   206,   208,   210
+     139,   142,   145,   148,   151,   154,   158,   159,   163,   164,
+     168,   169,   172,   176,   177,   180,   183,   186,   190,   191,
+     194,   197,   200,   203,   207,   208,   211,   212,   216,   218,
+     220
 };
 #endif
 
@@ -657,7 +664,8 @@ static const char *const yytname[] =
   "LE", "GE", "'='", "'<'", "'>'", "'+'", "'-'", "'*'", "'/'",
   "UNARY_SIGN", "'('", "')'", "$accept", "axioma", "var_global",
   "declaracion", "def_funcs", "llamada_main", "def_func", "cuerpo",
-  "lista_sentencia", "sentencia", "operando", YY_NULLPTR
+  "lista_sentencia", "sentencia", "logical_or", "logical_and", "igualdad",
+  "relacional", "operacion", "unario", "operando", YY_NULLPTR
 };
 
 static const char *
@@ -667,34 +675,35 @@ yysymbol_name (yysymbol_kind_t yysymbol)
 }
 #endif
 
-#define YYPACT_NINF (-43)
+#define YYPACT_NINF (-99)
 
 #define yypact_value_is_default(Yyn) \
   ((Yyn) == YYPACT_NINF)
 
-#define YYTABLE_NINF (-42)
+#define YYTABLE_NINF (-47)
 
 #define yytable_value_is_error(Yyn) \
   0
 
 /* YYPACT[STATE-NUM] -- Index in YYTABLE of the portion describing
    STATE-NUM.  */
-static const yytype_int8 yypact[] =
+static const yytype_int16 yypact[] =
 {
-       0,    96,    40,     0,   -43,    24,   -43,   -43,    43,    33,
-      45,   -43,   -43,    24,    -5,   -43,   -43,     8,    67,    69,
-     -43,   -43,   -43,     1,    -1,    71,    74,   -43,   -43,    78,
-      79,     8,   -43,   106,   111,   112,   113,    95,     8,     8,
-       8,     8,     8,    74,     8,     8,     8,     8,     8,     8,
-       8,     8,     8,     8,    83,   -43,    28,   -43,     8,     8,
-       8,     8,     8,    84,    86,    87,     8,     8,     8,    88,
-      74,    35,     8,     8,     8,     8,     8,     8,     8,    91,
-       8,    92,     8,     8,   -43,    93,    97,   115,    98,    99,
-     -43,   -43,   -43,   100,   101,   102,   -43,    50,   -43,   103,
-     104,   105,   107,   108,   109,   110,   114,   -43,   116,   117,
-     -43,   -43,    74,   -43,   -43,   -43,   -43,   -43,   -43,   118,
-     -43,   -43,   -43,   -43,   -43,   -43,   -43,   -43,   -43,   -43,
-      77,   -43,   -43
+     -12,    77,    23,   -12,   -99,    13,   -99,   -99,    45,     6,
+      21,   -99,   -99,    13,    47,   -99,   -99,    24,    49,    55,
+     -99,   -99,   -99,     4,    50,    66,   -99,   -99,   -99,   -99,
+     -99,   -99,    67,    74,    24,   -99,    95,    24,    99,   126,
+     132,   163,   163,   132,   163,   163,    95,    95,    95,    95,
+      78,   -99,    98,    98,    14,    95,    99,    91,   132,   159,
+     100,   122,   163,   153,    95,    95,   163,    95,    95,    95,
+     103,    95,   105,    95,    95,   -99,   192,   106,    98,   -99,
+     108,   109,   124,   127,     4,   -99,   130,   134,   136,   137,
+     139,   140,   141,   151,   -99,   155,   160,   125,   107,   186,
+     187,    58,    24,    98,   -99,   -99,   -99,   -99,   -99,   -99,
+     105,   -99,   -99,   -99,   -99,   -99,   -99,   -99,   -99,   -99,
+     -99,    24,    24,    24,   161,   170,   171,    98,    37,   199,
+     175,   176,   -99,   -99,   -99,    59,   -99,    98,   -99,   -99,
+     -99,   177,    63,   -99,   -99
 };
 
 /* YYDEFACT[STATE-NUM] -- Default reduction number in state STATE-NUM.
@@ -704,32 +713,33 @@ static const yytype_int8 yydefact[] =
 {
        0,     0,     0,     0,     4,     3,    10,     8,     0,     0,
        0,     1,     5,     2,     0,     9,     7,     0,     0,     0,
-      11,    44,    43,     0,     0,     0,    14,    15,    26,     0,
-       0,     0,    41,     0,     0,     0,     0,     0,     0,     0,
+      11,    49,    48,     0,     0,     0,    26,    28,    30,    33,
+      38,    44,     0,     0,     0,    46,     0,     0,     0,     0,
        0,     0,     0,     0,     0,     0,     0,     0,     0,     0,
-       0,     0,     0,     0,     0,     6,     0,    16,     0,     0,
+       0,     6,     0,     0,     0,     0,     0,     0,     0,     0,
        0,     0,     0,     0,     0,     0,     0,     0,     0,     0,
-       0,     0,     0,     0,     0,     0,     0,     0,     0,    26,
-       0,    26,     0,     0,    45,     0,     0,     0,     0,     0,
-      17,    19,    18,     0,     0,     0,    40,     0,    25,     0,
-       0,     0,     0,     0,     0,     0,     0,    42,     0,     0,
-      13,    12,     0,    21,    20,    39,    27,    28,    23,     0,
-      30,    33,    34,    29,    31,    32,    35,    36,    37,    38,
-       0,    24,    22
+      44,     0,    44,     0,     0,    50,     0,     0,    14,    15,
+       0,     0,     0,     0,     0,    45,     0,     0,     0,     0,
+       0,     0,     0,     0,    47,     0,     0,     0,     0,     0,
+       0,     0,     0,     0,    13,    16,    12,    43,    27,    29,
+       0,    32,    36,    37,    31,    34,    35,    39,    40,    41,
+      42,     0,     0,     0,     0,     0,     0,     0,     0,     0,
+       0,     0,    17,    19,    18,     0,    25,     0,    21,    20,
+      23,     0,     0,    24,    22
 };
 
 /* YYPGOTO[NTERM-NUM].  */
-static const yytype_int8 yypgoto[] =
+static const yytype_int16 yypgoto[] =
 {
-     -43,   -43,   -43,   126,   127,    80,    90,    14,   -42,   -26,
-      27
+     -99,   -99,   -99,   211,   212,    -1,    43,   164,   -98,   -77,
+     -17,   -27,   -34,   156,   -33,   180,   -21
 };
 
 /* YYDEFGOTO[NTERM-NUM].  */
 static const yytype_int8 yydefgoto[] =
 {
-       0,     2,     3,     4,     5,     6,     7,    54,    26,    27,
-      28
+       0,     2,     3,     4,     5,     6,     7,    77,    78,    79,
+      50,    26,    27,    28,    29,    30,    31
 };
 
 /* YYTABLE[YYPACT[STATE-NUM]] -- What to do in state STATE-NUM.  If
@@ -737,42 +747,56 @@ static const yytype_int8 yydefgoto[] =
    number is the opposite.  If YYTABLE_NINF, syntax error.  */
 static const yytype_int16 yytable[] =
 {
-      57,    71,    21,    22,    21,    22,    33,     9,    10,    34,
-      35,    21,    22,    36,    37,    38,    39,    40,    41,    42,
-      43,    44,    45,    46,    47,    48,    49,    50,    51,    52,
-      53,    25,    24,     1,    31,    33,    23,    18,    34,    35,
-      11,    24,    36,    37,    97,    57,    19,    17,    42,    43,
-      32,    65,    66,    67,    68,    69,    70,    14,    72,    73,
-      74,    75,    76,    77,    78,    80,    82,    83,    56,    98,
-     130,   119,    85,    86,    87,    88,    89,    79,    81,    20,
-      93,    94,    95,    56,   118,    15,    99,   100,   101,   102,
-     103,   104,   105,    15,   106,    16,   108,   109,    21,    22,
-      29,    64,    30,    16,    57,    55,     8,    56,     9,    10,
-      56,   132,    58,    59,    60,    61,    62,    84,    90,    63,
-      91,    92,    96,    23,   112,   -41,   107,   110,    24,    12,
-      13,   111,   113,   114,   115,   116,   117,   120,   121,   122,
-       0,   123,   124,   125,   126,     0,     0,     0,   127,     0,
-     128,   129,   131
+      25,   105,    35,    55,    15,   128,    62,    21,    22,    66,
+      18,    58,    15,    69,    71,    73,    74,    21,    22,    19,
+      56,     1,    81,    11,    83,    70,    72,    21,    22,    82,
+      36,    87,    88,    39,    90,    91,    92,    34,    93,   142,
+      95,    96,    46,    47,    48,    49,    14,    24,    16,    17,
+     135,   105,    23,    21,    22,    20,    16,    24,   141,     9,
+      10,    21,    22,   110,   125,   105,    36,    37,    38,    39,
+      76,   136,    40,    41,    42,    43,    44,    45,    46,    47,
+      48,    49,    32,    24,   126,   127,    23,     8,    33,     9,
+      10,    24,    76,   140,    21,    22,    76,   144,    21,    22,
+      51,    52,    21,    22,   129,   130,   131,    36,    53,    38,
+      39,   122,    75,    40,    41,    42,    43,    44,    45,    46,
+      47,    48,    49,    23,    24,    21,    22,    23,    54,    21,
+      22,    76,    57,   121,    85,    21,    22,   -46,    36,    94,
+     104,    39,   106,   107,    40,    41,    42,    43,    44,    45,
+      46,    47,    48,    49,    23,    24,    21,    22,   108,    59,
+      23,   109,    21,    22,   111,    61,    21,    22,   112,    36,
+     113,   114,    39,   115,   116,   117,    41,    42,    39,    44,
+      45,    46,    47,    48,    49,   118,    24,    23,    84,   119,
+     123,    23,    24,   124,   120,   132,    63,    64,    65,    97,
+      67,    68,    98,    99,   133,   134,   100,   101,   137,   138,
+     139,   143,   102,   103,    12,    13,     0,    80,    86,    60,
+       0,     0,    89
 };
 
 static const yytype_int16 yycheck[] =
 {
-      26,    43,     3,     4,     3,     4,     7,    12,    13,    10,
-      11,     3,     4,    14,    15,    16,    17,    18,    19,    20,
-      21,    22,    23,    24,    25,    26,    27,    28,    29,    30,
-      31,    17,    33,    33,    33,     7,    28,     4,    10,    11,
-       0,    33,    14,    15,    70,    71,    13,     4,    20,    21,
-      23,    37,    38,    39,    40,    41,    42,    33,    44,    45,
-      46,    47,    48,    49,    50,    51,    52,    53,    33,    34,
-     112,    97,    58,    59,    60,    61,    62,    50,    51,    34,
-      66,    67,    68,    33,    34,     5,    72,    73,    74,    75,
-      76,    77,    78,    13,    80,     5,    82,    83,     3,     4,
-      33,     6,    33,    13,   130,    34,    10,    33,    12,    13,
-      33,    34,    34,    34,     8,     4,     4,    34,    34,     6,
-      34,    34,    34,    28,     9,    34,    34,    34,    33,     3,
-       3,    34,    34,    34,    34,    34,    34,    34,    34,    34,
-      -1,    34,    34,    34,    34,    -1,    -1,    -1,    34,    -1,
-      34,    34,    34
+      17,    78,    23,    36,     5,   103,    40,     3,     4,    43,
+       4,    38,    13,    46,    47,    48,    49,     3,     4,    13,
+      37,    33,    55,     0,    58,    46,    47,     3,     4,    56,
+      16,    64,    65,    19,    67,    68,    69,    33,    71,   137,
+      73,    74,    28,    29,    30,    31,    33,    33,     5,     4,
+     127,   128,    28,     3,     4,    34,    13,    33,   135,    12,
+      13,     3,     4,    84,     6,   142,    16,    17,    18,    19,
+      33,    34,    22,    23,    24,    25,    26,    27,    28,    29,
+      30,    31,    33,    33,   101,   102,    28,    10,    33,    12,
+      13,    33,    33,    34,     3,     4,    33,    34,     3,     4,
+      34,    34,     3,     4,   121,   122,   123,    16,    34,    18,
+      19,     4,    34,    22,    23,    24,    25,    26,    27,    28,
+      29,    30,    31,    28,    33,     3,     4,    28,    33,     3,
+       4,    33,    33,     8,    34,     3,     4,    34,    16,    34,
+      34,    19,    34,    34,    22,    23,    24,    25,    26,    27,
+      28,    29,    30,    31,    28,    33,     3,     4,    34,    33,
+      28,    34,     3,     4,    34,    33,     3,     4,    34,    16,
+      34,    34,    19,    34,    34,    34,    23,    24,    19,    26,
+      27,    28,    29,    30,    31,    34,    33,    28,    29,    34,
+       4,    28,    33,     6,    34,    34,    33,    41,    42,     7,
+      44,    45,    10,    11,    34,    34,    14,    15,     9,    34,
+      34,    34,    20,    21,     3,     3,    -1,    53,    62,    39,
+      -1,    -1,    66
 };
 
 /* YYSTOS[STATE-NUM] -- The symbol kind of the accessing symbol of
@@ -781,18 +805,19 @@ static const yytype_int8 yystos[] =
 {
        0,    33,    36,    37,    38,    39,    40,    41,    10,    12,
       13,     0,    38,    39,    33,    40,    41,     4,     4,    13,
-      34,     3,     4,    28,    33,    42,    43,    44,    45,    33,
-      33,    33,    45,     7,    10,    11,    14,    15,    16,    17,
-      18,    19,    20,    21,    22,    23,    24,    25,    26,    27,
-      28,    29,    30,    31,    42,    34,    33,    44,    34,    34,
-       8,     4,     4,     6,     6,    42,    42,    42,    42,    42,
-      42,    43,    42,    42,    42,    42,    42,    42,    42,    45,
-      42,    45,    42,    42,    34,    42,    42,    42,    42,    42,
-      34,    34,    34,    42,    42,    42,    34,    44,    34,    42,
-      42,    42,    42,    42,    42,    42,    42,    34,    42,    42,
-      34,    34,     9,    34,    34,    34,    34,    34,    34,    44,
-      34,    34,    34,    34,    34,    34,    34,    34,    34,    34,
-      43,    34,    34
+      34,     3,     4,    28,    33,    45,    46,    47,    48,    49,
+      50,    51,    33,    33,    33,    51,    16,    17,    18,    19,
+      22,    23,    24,    25,    26,    27,    28,    29,    30,    31,
+      45,    34,    34,    34,    33,    49,    45,    33,    46,    33,
+      50,    33,    47,    33,    48,    48,    47,    48,    48,    49,
+      51,    49,    51,    49,    49,    34,    33,    42,    43,    44,
+      42,    49,    46,    47,    29,    34,    48,    49,    49,    48,
+      49,    49,    49,    49,    34,    49,    49,     7,    10,    11,
+      14,    15,    20,    21,    34,    44,    34,    34,    34,    34,
+      51,    34,    34,    34,    34,    34,    34,    34,    34,    34,
+      34,     8,     4,     4,     6,     6,    45,    45,    43,    45,
+      45,    45,    34,    34,    34,    44,    34,     9,    34,    34,
+      34,    44,    43,    34,    34
 };
 
 /* YYR1[RULE-NUM] -- Symbol kind of the left-hand side of rule RULE-NUM.  */
@@ -800,9 +825,10 @@ static const yytype_int8 yyr1[] =
 {
        0,    35,    36,    36,    37,    37,    38,    39,    39,    39,
       39,    40,    41,    41,    42,    43,    43,    44,    44,    44,
-      44,    44,    44,    44,    44,    44,    42,    42,    42,    42,
-      42,    42,    42,    42,    42,    42,    42,    42,    42,    42,
-      42,    42,    42,    45,    45,    45
+      44,    44,    44,    44,    44,    44,    45,    45,    46,    46,
+      47,    47,    47,    48,    48,    48,    48,    48,    49,    49,
+      49,    49,    49,    49,    50,    50,    50,    50,    51,    51,
+      51
 };
 
 /* YYR2[RULE-NUM] -- Number of symbols on the right-hand side of rule RULE-NUM.  */
@@ -810,9 +836,10 @@ static const yytype_int8 yyr2[] =
 {
        0,     2,     2,     1,     1,     2,     5,     2,     1,     2,
        1,     3,     7,     7,     1,     1,     2,     4,     4,     4,
-       5,     5,     7,     5,     6,     4,     1,     5,     5,     5,
-       5,     5,     5,     5,     5,     5,     5,     5,     5,     5,
-       4,     2,     4,     1,     1,     3
+       5,     5,     7,     5,     6,     4,     1,     5,     1,     5,
+       1,     5,     5,     1,     5,     5,     5,     5,     1,     5,
+       5,     5,     5,     5,     1,     4,     2,     4,     1,     1,
+       3
 };
 
 
@@ -1276,304 +1303,334 @@ yyreduce:
   switch (yyn)
     {
   case 2: /* axioma: var_global def_funcs  */
-#line 82 "back.y"
+#line 82 "/home/liang-ji-zhu/Escritorio/2Cuatri/ProcesadoresDelLenguaje/Compiladores/practicaFinal/back.y"
                                                                                         { printf ("\n%s\n%s\n", yyvsp[-1].code, yyvsp[0].code); }
-#line 1282 "back.tab.c"
+#line 1309 "/home/liang-ji-zhu/Escritorio/2Cuatri/ProcesadoresDelLenguaje/Compiladores/practicaFinal/back.tab.c"
     break;
 
   case 3: /* axioma: def_funcs  */
-#line 83 "back.y"
+#line 83 "/home/liang-ji-zhu/Escritorio/2Cuatri/ProcesadoresDelLenguaje/Compiladores/practicaFinal/back.y"
                                                                                         { printf ("%s\n", yyvsp[0].code); }
-#line 1288 "back.tab.c"
+#line 1315 "/home/liang-ji-zhu/Escritorio/2Cuatri/ProcesadoresDelLenguaje/Compiladores/practicaFinal/back.tab.c"
     break;
 
   case 4: /* var_global: declaracion  */
-#line 87 "back.y"
+#line 87 "/home/liang-ji-zhu/Escritorio/2Cuatri/ProcesadoresDelLenguaje/Compiladores/practicaFinal/back.y"
                                                                                         { yyval = yyvsp[0]; }
-#line 1294 "back.tab.c"
+#line 1321 "/home/liang-ji-zhu/Escritorio/2Cuatri/ProcesadoresDelLenguaje/Compiladores/practicaFinal/back.tab.c"
     break;
 
   case 5: /* var_global: var_global declaracion  */
-#line 89 "back.y"
+#line 89 "/home/liang-ji-zhu/Escritorio/2Cuatri/ProcesadoresDelLenguaje/Compiladores/practicaFinal/back.y"
                         { sprintf (temp, "%s\n%s", yyvsp[-1].code, yyvsp[0].code);
                         yyval.code = gen_code (temp); }
-#line 1301 "back.tab.c"
+#line 1328 "/home/liang-ji-zhu/Escritorio/2Cuatri/ProcesadoresDelLenguaje/Compiladores/practicaFinal/back.tab.c"
     break;
 
-  case 6: /* declaracion: '(' SETQ IDENTIF cuerpo ')'  */
-#line 93 "back.y"
+  case 6: /* declaracion: '(' SETQ IDENTIF logical_or ')'  */
+#line 93 "/home/liang-ji-zhu/Escritorio/2Cuatri/ProcesadoresDelLenguaje/Compiladores/practicaFinal/back.y"
                         { sprintf (temp, "variable %s\n%s %s !", yyvsp[-2].code, yyvsp[-1].code, yyvsp[-2].code);
                         yyval.code = gen_code (temp); }
-#line 1308 "back.tab.c"
+#line 1335 "/home/liang-ji-zhu/Escritorio/2Cuatri/ProcesadoresDelLenguaje/Compiladores/practicaFinal/back.tab.c"
     break;
 
   case 7: /* def_funcs: def_funcs def_func  */
-#line 100 "back.y"
+#line 100 "/home/liang-ji-zhu/Escritorio/2Cuatri/ProcesadoresDelLenguaje/Compiladores/practicaFinal/back.y"
                         { sprintf (temp, "%s\n%s", yyvsp[-1].code, yyvsp[0].code);
                         yyval.code = gen_code (temp); }
-#line 1315 "back.tab.c"
+#line 1342 "/home/liang-ji-zhu/Escritorio/2Cuatri/ProcesadoresDelLenguaje/Compiladores/practicaFinal/back.tab.c"
     break;
 
   case 8: /* def_funcs: def_func  */
-#line 102 "back.y"
+#line 102 "/home/liang-ji-zhu/Escritorio/2Cuatri/ProcesadoresDelLenguaje/Compiladores/practicaFinal/back.y"
                                                                                         { yyval = yyvsp[0]; }
-#line 1321 "back.tab.c"
+#line 1348 "/home/liang-ji-zhu/Escritorio/2Cuatri/ProcesadoresDelLenguaje/Compiladores/practicaFinal/back.tab.c"
     break;
 
   case 9: /* def_funcs: def_funcs llamada_main  */
-#line 104 "back.y"
+#line 104 "/home/liang-ji-zhu/Escritorio/2Cuatri/ProcesadoresDelLenguaje/Compiladores/practicaFinal/back.y"
                         { sprintf(temp, "%s\n%s", yyvsp[-1].code, yyvsp[0].code);
                         yyval.code = gen_code(temp); }
-#line 1328 "back.tab.c"
+#line 1355 "/home/liang-ji-zhu/Escritorio/2Cuatri/ProcesadoresDelLenguaje/Compiladores/practicaFinal/back.tab.c"
     break;
 
   case 10: /* def_funcs: llamada_main  */
-#line 106 "back.y"
+#line 106 "/home/liang-ji-zhu/Escritorio/2Cuatri/ProcesadoresDelLenguaje/Compiladores/practicaFinal/back.y"
                                                                                         { yyval = yyvsp[0]; }
-#line 1334 "back.tab.c"
+#line 1361 "/home/liang-ji-zhu/Escritorio/2Cuatri/ProcesadoresDelLenguaje/Compiladores/practicaFinal/back.tab.c"
     break;
 
   case 11: /* llamada_main: '(' MAIN ')'  */
-#line 109 "back.y"
+#line 109 "/home/liang-ji-zhu/Escritorio/2Cuatri/ProcesadoresDelLenguaje/Compiladores/practicaFinal/back.y"
                         { sprintf(temp, "main");
                         yyval.code = gen_code(temp); }
-#line 1341 "back.tab.c"
+#line 1368 "/home/liang-ji-zhu/Escritorio/2Cuatri/ProcesadoresDelLenguaje/Compiladores/practicaFinal/back.tab.c"
     break;
 
   case 12: /* def_func: '(' DEFUN MAIN '(' ')' cuerpo ')'  */
-#line 112 "back.y"
+#line 112 "/home/liang-ji-zhu/Escritorio/2Cuatri/ProcesadoresDelLenguaje/Compiladores/practicaFinal/back.y"
                         { sprintf (temp, ": main %s ;", yyvsp[-1].code);
                         yyval.code = gen_code (temp); }
-#line 1348 "back.tab.c"
+#line 1375 "/home/liang-ji-zhu/Escritorio/2Cuatri/ProcesadoresDelLenguaje/Compiladores/practicaFinal/back.tab.c"
     break;
 
   case 13: /* def_func: '(' DEFUN IDENTIF '(' ')' cuerpo ')'  */
-#line 115 "back.y"
+#line 115 "/home/liang-ji-zhu/Escritorio/2Cuatri/ProcesadoresDelLenguaje/Compiladores/practicaFinal/back.y"
                         { sprintf (temp, ": %s %s ;", yyvsp[-4].code, yyvsp[-1].code);
                         yyval.code = gen_code (temp); }
-#line 1355 "back.tab.c"
+#line 1382 "/home/liang-ji-zhu/Escritorio/2Cuatri/ProcesadoresDelLenguaje/Compiladores/practicaFinal/back.tab.c"
     break;
 
   case 14: /* cuerpo: lista_sentencia  */
-#line 120 "back.y"
+#line 120 "/home/liang-ji-zhu/Escritorio/2Cuatri/ProcesadoresDelLenguaje/Compiladores/practicaFinal/back.y"
                                                                                         { yyval = yyvsp[0]; }
-#line 1361 "back.tab.c"
+#line 1388 "/home/liang-ji-zhu/Escritorio/2Cuatri/ProcesadoresDelLenguaje/Compiladores/practicaFinal/back.tab.c"
     break;
 
   case 15: /* lista_sentencia: sentencia  */
-#line 122 "back.y"
+#line 122 "/home/liang-ji-zhu/Escritorio/2Cuatri/ProcesadoresDelLenguaje/Compiladores/practicaFinal/back.y"
                                                                                         { yyval = yyvsp[0]; }
-#line 1367 "back.tab.c"
+#line 1394 "/home/liang-ji-zhu/Escritorio/2Cuatri/ProcesadoresDelLenguaje/Compiladores/practicaFinal/back.tab.c"
     break;
 
   case 16: /* lista_sentencia: lista_sentencia sentencia  */
-#line 124 "back.y"
+#line 124 "/home/liang-ji-zhu/Escritorio/2Cuatri/ProcesadoresDelLenguaje/Compiladores/practicaFinal/back.y"
                         { sprintf (temp, "%s\n%s", yyvsp[-1].code, yyvsp[0].code);
                         yyval.code = gen_code (temp); }
-#line 1374 "back.tab.c"
+#line 1401 "/home/liang-ji-zhu/Escritorio/2Cuatri/ProcesadoresDelLenguaje/Compiladores/practicaFinal/back.tab.c"
     break;
 
   case 17: /* sentencia: '(' PRINT STRING ')'  */
-#line 131 "back.y"
+#line 131 "/home/liang-ji-zhu/Escritorio/2Cuatri/ProcesadoresDelLenguaje/Compiladores/practicaFinal/back.y"
                         { sprintf (temp, ".\" %s\"", yyvsp[-1].code);  
                         yyval.code = gen_code (temp); }
-#line 1381 "back.tab.c"
+#line 1408 "/home/liang-ji-zhu/Escritorio/2Cuatri/ProcesadoresDelLenguaje/Compiladores/practicaFinal/back.tab.c"
     break;
 
-  case 18: /* sentencia: '(' PRINC cuerpo ')'  */
-#line 134 "back.y"
+  case 18: /* sentencia: '(' PRINC logical_or ')'  */
+#line 134 "/home/liang-ji-zhu/Escritorio/2Cuatri/ProcesadoresDelLenguaje/Compiladores/practicaFinal/back.y"
                         { sprintf (temp, "%s .", yyvsp[-1].code);  
                         yyval.code = gen_code (temp); }
-#line 1388 "back.tab.c"
+#line 1415 "/home/liang-ji-zhu/Escritorio/2Cuatri/ProcesadoresDelLenguaje/Compiladores/practicaFinal/back.tab.c"
     break;
 
   case 19: /* sentencia: '(' PRINC STRING ')'  */
-#line 137 "back.y"
+#line 137 "/home/liang-ji-zhu/Escritorio/2Cuatri/ProcesadoresDelLenguaje/Compiladores/practicaFinal/back.y"
                         { sprintf (temp, "%s .", yyvsp[-1].code);  
                         yyval.code = gen_code (temp); }
-#line 1395 "back.tab.c"
+#line 1422 "/home/liang-ji-zhu/Escritorio/2Cuatri/ProcesadoresDelLenguaje/Compiladores/practicaFinal/back.tab.c"
     break;
 
-  case 20: /* sentencia: '(' SETF IDENTIF cuerpo ')'  */
-#line 140 "back.y"
+  case 20: /* sentencia: '(' SETF IDENTIF logical_or ')'  */
+#line 140 "/home/liang-ji-zhu/Escritorio/2Cuatri/ProcesadoresDelLenguaje/Compiladores/practicaFinal/back.y"
                         { sprintf (temp, "%s %s !", yyvsp[-1].code, yyvsp[-2].code);  
                         yyval.code = gen_code (temp); }
-#line 1402 "back.tab.c"
+#line 1429 "/home/liang-ji-zhu/Escritorio/2Cuatri/ProcesadoresDelLenguaje/Compiladores/practicaFinal/back.tab.c"
     break;
 
-  case 21: /* sentencia: '(' SETQ IDENTIF cuerpo ')'  */
-#line 143 "back.y"
+  case 21: /* sentencia: '(' SETQ IDENTIF logical_or ')'  */
+#line 143 "/home/liang-ji-zhu/Escritorio/2Cuatri/ProcesadoresDelLenguaje/Compiladores/practicaFinal/back.y"
                         { sprintf (temp, "%s %s !", yyvsp[-1].code, yyvsp[-2].code);  
                         yyval.code = gen_code (temp); }
-#line 1409 "back.tab.c"
+#line 1436 "/home/liang-ji-zhu/Escritorio/2Cuatri/ProcesadoresDelLenguaje/Compiladores/practicaFinal/back.tab.c"
     break;
 
-  case 22: /* sentencia: '(' LOOP WHILE cuerpo DO lista_sentencia ')'  */
-#line 146 "back.y"
+  case 22: /* sentencia: '(' LOOP WHILE logical_or DO lista_sentencia ')'  */
+#line 146 "/home/liang-ji-zhu/Escritorio/2Cuatri/ProcesadoresDelLenguaje/Compiladores/practicaFinal/back.y"
                         { sprintf (temp, "begin\n\t%s\nwhile\n\t%s\nrepeat", yyvsp[-3].code, yyvsp[-1].code);  
                         yyval.code = gen_code (temp); }
-#line 1416 "back.tab.c"
+#line 1443 "/home/liang-ji-zhu/Escritorio/2Cuatri/ProcesadoresDelLenguaje/Compiladores/practicaFinal/back.tab.c"
     break;
 
-  case 23: /* sentencia: '(' IF cuerpo sentencia ')'  */
-#line 149 "back.y"
+  case 23: /* sentencia: '(' IF logical_or sentencia ')'  */
+#line 149 "/home/liang-ji-zhu/Escritorio/2Cuatri/ProcesadoresDelLenguaje/Compiladores/practicaFinal/back.y"
                         { sprintf (temp, "%s if \n\t%s \nthen", yyvsp[-2].code, yyvsp[-1].code);  
                         yyval.code = gen_code (temp); }
-#line 1423 "back.tab.c"
+#line 1450 "/home/liang-ji-zhu/Escritorio/2Cuatri/ProcesadoresDelLenguaje/Compiladores/practicaFinal/back.tab.c"
     break;
 
-  case 24: /* sentencia: '(' IF cuerpo sentencia sentencia ')'  */
-#line 152 "back.y"
+  case 24: /* sentencia: '(' IF logical_or sentencia sentencia ')'  */
+#line 152 "/home/liang-ji-zhu/Escritorio/2Cuatri/ProcesadoresDelLenguaje/Compiladores/practicaFinal/back.y"
                         { sprintf (temp, "%s if \n\t%s \nelse \n\t%s \nthen", yyvsp[-3].code, yyvsp[-2].code, yyvsp[-1].code);  
                         yyval.code = gen_code (temp); }
-#line 1430 "back.tab.c"
+#line 1457 "/home/liang-ji-zhu/Escritorio/2Cuatri/ProcesadoresDelLenguaje/Compiladores/practicaFinal/back.tab.c"
     break;
 
   case 25: /* sentencia: '(' PROGN lista_sentencia ')'  */
-#line 154 "back.y"
+#line 154 "/home/liang-ji-zhu/Escritorio/2Cuatri/ProcesadoresDelLenguaje/Compiladores/practicaFinal/back.y"
                                                                                         { yyval = yyvsp[-1]; }
-#line 1436 "back.tab.c"
+#line 1463 "/home/liang-ji-zhu/Escritorio/2Cuatri/ProcesadoresDelLenguaje/Compiladores/practicaFinal/back.tab.c"
     break;
 
-  case 26: /* cuerpo: operando  */
-#line 158 "back.y"
-                                                                                 { yyval = yyvsp[0]; }
-#line 1442 "back.tab.c"
+  case 26: /* logical_or: logical_and  */
+#line 158 "/home/liang-ji-zhu/Escritorio/2Cuatri/ProcesadoresDelLenguaje/Compiladores/practicaFinal/back.y"
+                                                                                        { yyval = yyvsp[0]; }
+#line 1469 "/home/liang-ji-zhu/Escritorio/2Cuatri/ProcesadoresDelLenguaje/Compiladores/practicaFinal/back.tab.c"
     break;
 
-  case 27: /* cuerpo: '(' OR cuerpo cuerpo ')'  */
-#line 160 "back.y"
+  case 27: /* logical_or: '(' OR logical_or logical_and ')'  */
+#line 160 "/home/liang-ji-zhu/Escritorio/2Cuatri/ProcesadoresDelLenguaje/Compiladores/practicaFinal/back.y"
                         { sprintf (temp, "%s %s or", yyvsp[-2].code, yyvsp[-1].code);
                         yyval.code = gen_code (temp); }
-#line 1449 "back.tab.c"
+#line 1476 "/home/liang-ji-zhu/Escritorio/2Cuatri/ProcesadoresDelLenguaje/Compiladores/practicaFinal/back.tab.c"
     break;
 
-  case 28: /* cuerpo: '(' AND cuerpo cuerpo ')'  */
-#line 163 "back.y"
+  case 28: /* logical_and: igualdad  */
+#line 163 "/home/liang-ji-zhu/Escritorio/2Cuatri/ProcesadoresDelLenguaje/Compiladores/practicaFinal/back.y"
+                                                                                        { yyval = yyvsp[0]; }
+#line 1482 "/home/liang-ji-zhu/Escritorio/2Cuatri/ProcesadoresDelLenguaje/Compiladores/practicaFinal/back.tab.c"
+    break;
+
+  case 29: /* logical_and: '(' AND logical_and igualdad ')'  */
+#line 165 "/home/liang-ji-zhu/Escritorio/2Cuatri/ProcesadoresDelLenguaje/Compiladores/practicaFinal/back.y"
                         { sprintf (temp, "%s %s and", yyvsp[-2].code, yyvsp[-1].code);
                         yyval.code = gen_code (temp); }
-#line 1456 "back.tab.c"
+#line 1489 "/home/liang-ji-zhu/Escritorio/2Cuatri/ProcesadoresDelLenguaje/Compiladores/practicaFinal/back.tab.c"
     break;
 
-  case 29: /* cuerpo: '(' '=' cuerpo cuerpo ')'  */
-#line 166 "back.y"
+  case 30: /* igualdad: relacional  */
+#line 168 "/home/liang-ji-zhu/Escritorio/2Cuatri/ProcesadoresDelLenguaje/Compiladores/practicaFinal/back.y"
+                                                                                        { yyval = yyvsp[0]; }
+#line 1495 "/home/liang-ji-zhu/Escritorio/2Cuatri/ProcesadoresDelLenguaje/Compiladores/practicaFinal/back.tab.c"
+    break;
+
+  case 31: /* igualdad: '(' '=' igualdad relacional ')'  */
+#line 170 "/home/liang-ji-zhu/Escritorio/2Cuatri/ProcesadoresDelLenguaje/Compiladores/practicaFinal/back.y"
                         {sprintf (temp, "%s %s =", yyvsp[-2].code, yyvsp[-1].code);
                         yyval.code = gen_code (temp); }
-#line 1463 "back.tab.c"
+#line 1502 "/home/liang-ji-zhu/Escritorio/2Cuatri/ProcesadoresDelLenguaje/Compiladores/practicaFinal/back.tab.c"
     break;
 
-  case 30: /* cuerpo: '(' NE cuerpo cuerpo ')'  */
-#line 169 "back.y"
+  case 32: /* igualdad: '(' NE igualdad relacional ')'  */
+#line 173 "/home/liang-ji-zhu/Escritorio/2Cuatri/ProcesadoresDelLenguaje/Compiladores/practicaFinal/back.y"
                         { sprintf (temp, "%s %s = 0=", yyvsp[-2].code, yyvsp[-1].code);
                         yyval.code = gen_code (temp); }
-#line 1470 "back.tab.c"
+#line 1509 "/home/liang-ji-zhu/Escritorio/2Cuatri/ProcesadoresDelLenguaje/Compiladores/practicaFinal/back.tab.c"
     break;
 
-  case 31: /* cuerpo: '(' '<' cuerpo cuerpo ')'  */
-#line 172 "back.y"
+  case 33: /* relacional: operacion  */
+#line 176 "/home/liang-ji-zhu/Escritorio/2Cuatri/ProcesadoresDelLenguaje/Compiladores/practicaFinal/back.y"
+                                                                                        { yyval = yyvsp[0]; }
+#line 1515 "/home/liang-ji-zhu/Escritorio/2Cuatri/ProcesadoresDelLenguaje/Compiladores/practicaFinal/back.tab.c"
+    break;
+
+  case 34: /* relacional: '(' '<' relacional operacion ')'  */
+#line 178 "/home/liang-ji-zhu/Escritorio/2Cuatri/ProcesadoresDelLenguaje/Compiladores/practicaFinal/back.y"
                         { sprintf (temp, "%s %s <", yyvsp[-2].code, yyvsp[-1].code);
                         yyval.code = gen_code (temp); }
-#line 1477 "back.tab.c"
+#line 1522 "/home/liang-ji-zhu/Escritorio/2Cuatri/ProcesadoresDelLenguaje/Compiladores/practicaFinal/back.tab.c"
     break;
 
-  case 32: /* cuerpo: '(' '>' cuerpo cuerpo ')'  */
-#line 175 "back.y"
+  case 35: /* relacional: '(' '>' relacional operacion ')'  */
+#line 181 "/home/liang-ji-zhu/Escritorio/2Cuatri/ProcesadoresDelLenguaje/Compiladores/practicaFinal/back.y"
                         { sprintf (temp, "%s %s >", yyvsp[-2].code, yyvsp[-1].code);
                         yyval.code = gen_code (temp); }
-#line 1484 "back.tab.c"
+#line 1529 "/home/liang-ji-zhu/Escritorio/2Cuatri/ProcesadoresDelLenguaje/Compiladores/practicaFinal/back.tab.c"
     break;
 
-  case 33: /* cuerpo: '(' LE cuerpo cuerpo ')'  */
-#line 178 "back.y"
+  case 36: /* relacional: '(' LE relacional operacion ')'  */
+#line 184 "/home/liang-ji-zhu/Escritorio/2Cuatri/ProcesadoresDelLenguaje/Compiladores/practicaFinal/back.y"
                         { sprintf (temp, "%s %s <=", yyvsp[-2].code, yyvsp[-1].code);
                         yyval.code = gen_code (temp); }
-#line 1491 "back.tab.c"
+#line 1536 "/home/liang-ji-zhu/Escritorio/2Cuatri/ProcesadoresDelLenguaje/Compiladores/practicaFinal/back.tab.c"
     break;
 
-  case 34: /* cuerpo: '(' GE cuerpo cuerpo ')'  */
-#line 181 "back.y"
+  case 37: /* relacional: '(' GE relacional operacion ')'  */
+#line 187 "/home/liang-ji-zhu/Escritorio/2Cuatri/ProcesadoresDelLenguaje/Compiladores/practicaFinal/back.y"
                         { sprintf (temp, "%s %s >=", yyvsp[-2].code, yyvsp[-1].code);
                         yyval.code = gen_code (temp); }
-#line 1498 "back.tab.c"
+#line 1543 "/home/liang-ji-zhu/Escritorio/2Cuatri/ProcesadoresDelLenguaje/Compiladores/practicaFinal/back.tab.c"
     break;
 
-  case 35: /* cuerpo: '(' '+' cuerpo cuerpo ')'  */
-#line 184 "back.y"
+  case 38: /* operacion: unario  */
+#line 190 "/home/liang-ji-zhu/Escritorio/2Cuatri/ProcesadoresDelLenguaje/Compiladores/practicaFinal/back.y"
+                                                                                        { yyval = yyvsp[0]; }
+#line 1549 "/home/liang-ji-zhu/Escritorio/2Cuatri/ProcesadoresDelLenguaje/Compiladores/practicaFinal/back.tab.c"
+    break;
+
+  case 39: /* operacion: '(' '+' operacion operacion ')'  */
+#line 192 "/home/liang-ji-zhu/Escritorio/2Cuatri/ProcesadoresDelLenguaje/Compiladores/practicaFinal/back.y"
                         { sprintf (temp, "%s %s +", yyvsp[-2].code, yyvsp[-1].code);
                         yyval.code = gen_code (temp); }
-#line 1505 "back.tab.c"
+#line 1556 "/home/liang-ji-zhu/Escritorio/2Cuatri/ProcesadoresDelLenguaje/Compiladores/practicaFinal/back.tab.c"
     break;
 
-  case 36: /* cuerpo: '(' '-' cuerpo cuerpo ')'  */
-#line 187 "back.y"
+  case 40: /* operacion: '(' '-' operacion operacion ')'  */
+#line 195 "/home/liang-ji-zhu/Escritorio/2Cuatri/ProcesadoresDelLenguaje/Compiladores/practicaFinal/back.y"
                         { sprintf (temp, "%s %s -", yyvsp[-2].code, yyvsp[-1].code);
                         yyval.code = gen_code (temp); }
-#line 1512 "back.tab.c"
+#line 1563 "/home/liang-ji-zhu/Escritorio/2Cuatri/ProcesadoresDelLenguaje/Compiladores/practicaFinal/back.tab.c"
     break;
 
-  case 37: /* cuerpo: '(' '*' cuerpo cuerpo ')'  */
-#line 190 "back.y"
+  case 41: /* operacion: '(' '*' operacion operacion ')'  */
+#line 198 "/home/liang-ji-zhu/Escritorio/2Cuatri/ProcesadoresDelLenguaje/Compiladores/practicaFinal/back.y"
                         { sprintf (temp, "%s %s *", yyvsp[-2].code, yyvsp[-1].code);
                         yyval.code = gen_code (temp); }
-#line 1519 "back.tab.c"
+#line 1570 "/home/liang-ji-zhu/Escritorio/2Cuatri/ProcesadoresDelLenguaje/Compiladores/practicaFinal/back.tab.c"
     break;
 
-  case 38: /* cuerpo: '(' '/' cuerpo cuerpo ')'  */
-#line 193 "back.y"
+  case 42: /* operacion: '(' '/' operacion operacion ')'  */
+#line 201 "/home/liang-ji-zhu/Escritorio/2Cuatri/ProcesadoresDelLenguaje/Compiladores/practicaFinal/back.y"
                         { sprintf (temp, "%s %s /", yyvsp[-2].code, yyvsp[-1].code);
                         yyval.code = gen_code (temp); }
-#line 1526 "back.tab.c"
+#line 1577 "/home/liang-ji-zhu/Escritorio/2Cuatri/ProcesadoresDelLenguaje/Compiladores/practicaFinal/back.tab.c"
     break;
 
-  case 39: /* cuerpo: '(' MOD cuerpo cuerpo ')'  */
-#line 196 "back.y"
+  case 43: /* operacion: '(' MOD operacion operacion ')'  */
+#line 204 "/home/liang-ji-zhu/Escritorio/2Cuatri/ProcesadoresDelLenguaje/Compiladores/practicaFinal/back.y"
                         { sprintf (temp, "%s %s mod", yyvsp[-2].code, yyvsp[-1].code);
                         yyval.code = gen_code (temp); }
-#line 1533 "back.tab.c"
+#line 1584 "/home/liang-ji-zhu/Escritorio/2Cuatri/ProcesadoresDelLenguaje/Compiladores/practicaFinal/back.tab.c"
     break;
 
-  case 40: /* cuerpo: '(' NOT cuerpo ')'  */
-#line 199 "back.y"
+  case 44: /* unario: operando  */
+#line 207 "/home/liang-ji-zhu/Escritorio/2Cuatri/ProcesadoresDelLenguaje/Compiladores/practicaFinal/back.y"
+                                                                                        { yyval = yyvsp[0]; }
+#line 1590 "/home/liang-ji-zhu/Escritorio/2Cuatri/ProcesadoresDelLenguaje/Compiladores/practicaFinal/back.tab.c"
+    break;
+
+  case 45: /* unario: '(' NOT unario ')'  */
+#line 209 "/home/liang-ji-zhu/Escritorio/2Cuatri/ProcesadoresDelLenguaje/Compiladores/practicaFinal/back.y"
                         { sprintf (temp, "%s 0=", yyvsp[-1].code);
                         yyval.code = gen_code (temp); }
-#line 1540 "back.tab.c"
+#line 1597 "/home/liang-ji-zhu/Escritorio/2Cuatri/ProcesadoresDelLenguaje/Compiladores/practicaFinal/back.tab.c"
     break;
 
-  case 41: /* cuerpo: '+' operando  */
-#line 201 "back.y"
+  case 46: /* unario: '+' operando  */
+#line 211 "/home/liang-ji-zhu/Escritorio/2Cuatri/ProcesadoresDelLenguaje/Compiladores/practicaFinal/back.y"
                                                                                         { yyval = yyvsp[-1]; }
-#line 1546 "back.tab.c"
+#line 1603 "/home/liang-ji-zhu/Escritorio/2Cuatri/ProcesadoresDelLenguaje/Compiladores/practicaFinal/back.tab.c"
     break;
 
-  case 42: /* cuerpo: '(' '-' operando ')'  */
-#line 203 "back.y"
+  case 47: /* unario: '(' '-' operando ')'  */
+#line 213 "/home/liang-ji-zhu/Escritorio/2Cuatri/ProcesadoresDelLenguaje/Compiladores/practicaFinal/back.y"
                         {sprintf (temp, "%s negate", yyvsp[-1].code);
                         yyval.code = gen_code (temp); }
-#line 1553 "back.tab.c"
+#line 1610 "/home/liang-ji-zhu/Escritorio/2Cuatri/ProcesadoresDelLenguaje/Compiladores/practicaFinal/back.tab.c"
     break;
 
-  case 43: /* operando: IDENTIF  */
-#line 206 "back.y"
+  case 48: /* operando: IDENTIF  */
+#line 216 "/home/liang-ji-zhu/Escritorio/2Cuatri/ProcesadoresDelLenguaje/Compiladores/practicaFinal/back.y"
                                                                                         { sprintf (temp, "%s @", yyvsp[0].code);
                                                                                         yyval.code = gen_code (temp); }
-#line 1560 "back.tab.c"
+#line 1617 "/home/liang-ji-zhu/Escritorio/2Cuatri/ProcesadoresDelLenguaje/Compiladores/practicaFinal/back.tab.c"
     break;
 
-  case 44: /* operando: NUMBER  */
-#line 208 "back.y"
+  case 49: /* operando: NUMBER  */
+#line 218 "/home/liang-ji-zhu/Escritorio/2Cuatri/ProcesadoresDelLenguaje/Compiladores/practicaFinal/back.y"
                                                                                         { sprintf (temp, "%d", yyvsp[0].value);
                                                                                         yyval.code = gen_code (temp); }
-#line 1567 "back.tab.c"
+#line 1624 "/home/liang-ji-zhu/Escritorio/2Cuatri/ProcesadoresDelLenguaje/Compiladores/practicaFinal/back.tab.c"
     break;
 
-  case 45: /* operando: '(' cuerpo ')'  */
-#line 210 "back.y"
-                                                                                    { yyval = yyvsp[-1]; }
-#line 1573 "back.tab.c"
+  case 50: /* operando: '(' logical_or ')'  */
+#line 220 "/home/liang-ji-zhu/Escritorio/2Cuatri/ProcesadoresDelLenguaje/Compiladores/practicaFinal/back.y"
+                                                                                        { yyval = yyvsp[-1]; }
+#line 1630 "/home/liang-ji-zhu/Escritorio/2Cuatri/ProcesadoresDelLenguaje/Compiladores/practicaFinal/back.tab.c"
     break;
 
 
-#line 1577 "back.tab.c"
+#line 1634 "/home/liang-ji-zhu/Escritorio/2Cuatri/ProcesadoresDelLenguaje/Compiladores/practicaFinal/back.tab.c"
 
       default: break;
     }
@@ -1766,7 +1823,7 @@ yyreturnlab:
   return yyresult;
 }
 
-#line 214 "back.y"
+#line 224 "/home/liang-ji-zhu/Escritorio/2Cuatri/ProcesadoresDelLenguaje/Compiladores/practicaFinal/back.y"
                             // SECCION 4    Codigo en C
 
 int n_line = 1 ;
