@@ -97,7 +97,14 @@ def_funcs:          def_funcs def_func
                         { sprintf (temp, "%s\n%s", $1.code, $2.code);
                         $$.code = gen_code (temp); }
                     | def_func                                                          { $$ = $1; }
-                    ;                                                               
+                    | def_funcs llamada_main       
+                        { sprintf(temp, "%s\n%s", $1.code, $2.code);
+                        $$.code = gen_code(temp); }
+                    | llamada_main                                                      { $$ = $1; }
+                    ;
+llamada_main:       '(' MAIN ')'
+                        { sprintf(temp, "main");
+                        $$.code = gen_code(temp); }
 def_func:           '(' DEFUN MAIN '(' ')' cuerpo ')'
                         { sprintf (temp, ": main %s ;", $6.code);
                         $$.code = gen_code (temp); }

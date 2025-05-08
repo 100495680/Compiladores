@@ -5,5 +5,5 @@ main ()
 	puts (" El texto se imprime ") ;
 }
 
-//@ //@ (main) 
+//@ (main) 
 

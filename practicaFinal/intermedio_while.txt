@@ -10,4 +10,4 @@
 	(print " es impar "))
 	(progn	(setf main_a (- main_a 1))))))
 )
- //@ (main) 
+ (main) 
