@@ -1,7 +1,0 @@
-: main 0 main_cnt !
-begin
-	main_cnt 3 <
-	main_cnt .
-main_cnt 1 + main_cnt !
-repeat ;
-main

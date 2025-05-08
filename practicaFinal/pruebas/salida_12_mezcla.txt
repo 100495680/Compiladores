@@ -1,0 +1,30 @@
+
+"|| ||" 
+"|| &&" 
+"||" 
+"==" 
+">=" 
+"<=" 
+"Operacion a = b + c" 
+"Valor de a:" 10
+"Operacion a = b - c" 
+"Valor de a:" 10
+"Operacion a = b * c" 
+"Valor de a:" 0
+"Operacion a = b / 3" 
+"Valor de a:" 10/3
+"Operacion a = b % 10" 
+"Valor de a:" 0
+"Operacion a = !b" 
+"Valor de a:" NIL
+"Operacion a = +29" 
+"Valor de a:" 29
+"Operacion a = -1" 
+"Valor de a:" -1
+"while" 
+"while" 
+"while" 
+"while" 
+"while" 
+"while" 
+"PAR" 

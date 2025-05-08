@@ -1,3 +1,0 @@
-: main 0 main_x !
-main_x 1 + . ;
-main

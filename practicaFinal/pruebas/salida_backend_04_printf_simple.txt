@@ -1,3 +1,0 @@
-: main 42 main_val !
-main_val . ;
-main
