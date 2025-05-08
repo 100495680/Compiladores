@@ -1,0 +1,8 @@
+: main 1 main_a !
+0 main_b !
+2 main_c !
+12 main_d !
+main_d 1 = main_b 0 = 0= and main_a main_c <= or if 
+	." OK" 
+then ;
+main

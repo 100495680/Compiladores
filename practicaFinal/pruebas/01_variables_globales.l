@@ -1,0 +1,8 @@
+(setq a 0)
+(setq b 10)
+(setq c 0)
+(setq d 5)
+(defun main ()
+	(print "Variables globales")
+)
+ (main)
