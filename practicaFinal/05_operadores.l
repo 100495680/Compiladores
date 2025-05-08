@@ -1,0 +1,8 @@
+(setq a 1)
+(setq b 0)
+(setq c 2)
+(defun main ()
+	(if (or (and (= (mod (+ a (* c 3)) 2) 1) (/= b 0)) (<= a c))
+	(progn	(print "OK")))
+)
+ (main)

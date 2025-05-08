@@ -1555,7 +1555,7 @@ yyreduce:
 
   case 29: /* declaracion_local: INTEGER IDENTIF valor_local r_decl_local  */
 #line 151 "/home/liang-ji-zhu/Escritorio/2Cuatri/ProcesadoresDelLenguaje/Compiladores/practicaFinal/trad.y"
-                        { sprintf (temp, "(setq %s_%s %s)%s", funcion_name, yyvsp[-2].code, yyvsp[-1].code, yyvsp[0].code); 
+                        { sprintf (temp, "(setq %s %s)%s", yyvsp[-2].code, yyvsp[-1].code, yyvsp[0].code); 
                         yyval.code = gen_code (temp); }
 #line 1561 "/home/liang-ji-zhu/Escritorio/2Cuatri/ProcesadoresDelLenguaje/Compiladores/practicaFinal/trad.tab.c"
     break;
@@ -1583,7 +1583,7 @@ yyreduce:
 
   case 33: /* r_decl_local: ',' IDENTIF valor_local r_decl_local  */
 #line 164 "/home/liang-ji-zhu/Escritorio/2Cuatri/ProcesadoresDelLenguaje/Compiladores/practicaFinal/trad.y"
-                        { sprintf (temp, "\n\t(setq %s_%s %s)", funcion_name, yyvsp[-2].code, yyvsp[-1].code); 
+                        { sprintf (temp, "\n\t(setq %s %s)", yyvsp[-2].code, yyvsp[-1].code); 
                         yyval.code = gen_code (temp); }
 #line 1589 "/home/liang-ji-zhu/Escritorio/2Cuatri/ProcesadoresDelLenguaje/Compiladores/practicaFinal/trad.tab.c"
     break;
@@ -1663,14 +1663,14 @@ yyreduce:
 
   case 45: /* declaracion_for: INTEGER IDENTIF valor_for r_declaracion_for  */
 #line 201 "/home/liang-ji-zhu/Escritorio/2Cuatri/ProcesadoresDelLenguaje/Compiladores/practicaFinal/trad.y"
-                        { sprintf (temp, "(setq %s_%s %s)%s", funcion_name, yyvsp[-2].code, yyvsp[-1].code, yyvsp[0].code); 
+                        { sprintf (temp, "(setq %s %s)%s", yyvsp[-2].code, yyvsp[-1].code, yyvsp[0].code); 
                         yyval.code = gen_code (temp); }
 #line 1669 "/home/liang-ji-zhu/Escritorio/2Cuatri/ProcesadoresDelLenguaje/Compiladores/practicaFinal/trad.tab.c"
     break;
 
   case 46: /* declaracion_for: IDENTIF valor_for r_declaracion_for  */
 #line 204 "/home/liang-ji-zhu/Escritorio/2Cuatri/ProcesadoresDelLenguaje/Compiladores/practicaFinal/trad.y"
-                        { sprintf (temp, "(setq %s_%s %s)%s", funcion_name, yyvsp[-2].code, yyvsp[-1].code, yyvsp[0].code); 
+                        { sprintf (temp, "(setq %s %s)%s", yyvsp[-2].code, yyvsp[-1].code, yyvsp[0].code); 
                         yyval.code = gen_code (temp); }
 #line 1676 "/home/liang-ji-zhu/Escritorio/2Cuatri/ProcesadoresDelLenguaje/Compiladores/practicaFinal/trad.tab.c"
     break;
@@ -1691,7 +1691,7 @@ yyreduce:
 
   case 49: /* r_declaracion_for: ',' IDENTIF valor_for r_declaracion_for  */
 #line 213 "/home/liang-ji-zhu/Escritorio/2Cuatri/ProcesadoresDelLenguaje/Compiladores/practicaFinal/trad.y"
-                        { sprintf (temp, "\n(setq %s_%s %s)%s", funcion_name, yyvsp[-2].code, yyvsp[-1].code, yyvsp[0].code); 
+                        { sprintf (temp, "\n(setq %s %s)%s", yyvsp[-2].code, yyvsp[-1].code, yyvsp[0].code); 
                         yyval.code = gen_code (temp); }
 #line 1697 "/home/liang-ji-zhu/Escritorio/2Cuatri/ProcesadoresDelLenguaje/Compiladores/practicaFinal/trad.tab.c"
     break;
@@ -1799,7 +1799,7 @@ yyreduce:
 
   case 65: /* asignacion: IDENTIF '=' expresion  */
 #line 258 "/home/liang-ji-zhu/Escritorio/2Cuatri/ProcesadoresDelLenguaje/Compiladores/practicaFinal/trad.y"
-                        { sprintf (temp, "(setf %s_%s %s)", funcion_name, yyvsp[-2].code, yyvsp[0].code); 
+                        { sprintf (temp, "(setf %s %s)",  yyvsp[-2].code, yyvsp[0].code); 
                         yyval.code = gen_code (temp); }
 #line 1805 "/home/liang-ji-zhu/Escritorio/2Cuatri/ProcesadoresDelLenguaje/Compiladores/practicaFinal/trad.tab.c"
     break;
@@ -1979,7 +1979,7 @@ yyreduce:
 
   case 92: /* operando: IDENTIF  */
 #line 320 "/home/liang-ji-zhu/Escritorio/2Cuatri/ProcesadoresDelLenguaje/Compiladores/practicaFinal/trad.y"
-                                                                        { sprintf (temp, "%s_%s", funcion_name ,yyvsp[0].code);
+                                                                        { sprintf (temp, "%s",yyvsp[0].code);
                                                                         yyval.code = gen_code (temp); }
 #line 1985 "/home/liang-ji-zhu/Escritorio/2Cuatri/ProcesadoresDelLenguaje/Compiladores/practicaFinal/trad.tab.c"
     break;

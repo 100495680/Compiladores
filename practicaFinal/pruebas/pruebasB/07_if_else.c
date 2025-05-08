@@ -1,7 +1,8 @@
 #include <stdio.h>
+int v = 5;
+int res;
 main() {
-    int v = 5;
-    int res;
+
     if (v % 2 == 0) {
         puts("Par");
     } else {

@@ -2,8 +2,8 @@
 
 # Compilar el parser
 echo "Compilando con bison y gcc..."
-bison trad3.y
-gcc trad3.tab.c -o trad3
+bison trad.y
+gcc trad.tab.c -o trad
 
 # Crear carpeta de resultados si no existe
 mkdir -p resultados
@@ -25,7 +25,7 @@ for cfile in tests/*/*.c; do
     echo "Procesando $cfile..."
 
     # Traducir a LISP
-    ./trad3 < "$cfile" > "$lisp_file"
+    ./trad < "$cfile" > "$lisp_file"
 
     # Ejecutar en CLISP y capturar salida
     clisp "$lisp_file" > "$output_file" 2>&1

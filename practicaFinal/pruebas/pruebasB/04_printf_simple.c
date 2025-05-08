@@ -1,6 +1,7 @@
 #include <stdio.h>
+int val = 42;
+
 main() {
-    int val = 42;
     printf("%d", val);
 }
 //@ (main)

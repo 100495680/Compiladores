@@ -1,8 +1,10 @@
 #include <stdio.h>
+
+int i;
+int suma = 0;
+int n = 5;
+
 main() {
-    int i;
-    int suma = 0;
-    int n = 5;
 
     for (i = 0; i < n; i = i + 1) {
         suma = suma + i;

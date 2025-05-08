@@ -1,6 +1,8 @@
 #include <stdio.h>
+int x;
+
 main() {
-    int x;
-    printf("%d\n", x + 1);
+    x = x + 1;
+    printf("%d\n", x);
 }
 //@ (main)

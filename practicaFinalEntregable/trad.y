@@ -148,7 +148,7 @@ var_local:          declaracion_local ';' var_local                     { sprint
                     ;
 
 declaracion_local:  INTEGER  IDENTIF valor_local r_decl_local           
-                        { sprintf (temp, "(setq %s_%s %s)%s", funcion_name, $2.code, $3.code, $4.code); 
+                        { sprintf (temp, "(setq %s %s)%s", $2.code, $3.code, $4.code); 
                         $$.code = gen_code (temp); }
                     | INTEGER  IDENTIF '[' NUMBER ']' r_decl_local      
                         { sprintf (temp, "(setq %s (make-array %d))\n%s", $2.code, $4.value, $6.code);
@@ -161,7 +161,7 @@ valor_local:        /* lambda */                                        { sprint
                                                                         $$.code = gen_code (temp); }
                     ;
 r_decl_local:       ',' IDENTIF valor_local r_decl_local                
-                        { sprintf (temp, "\n\t(setq %s_%s %s)", funcion_name, $2.code, $3.code); 
+                        { sprintf (temp, "\n\t(setq %s %s)", $2.code, $3.code); 
                         $$.code = gen_code (temp); }
                     | ',' IDENTIF '[' NUMBER ']' r_decl_local           
                         { sprintf (temp, "(setq %s (make-array %d))\n%s", $2.code, $4.value, $6.code);
@@ -198,10 +198,10 @@ estructura:         WHILE '(' expresion ')' '{' cuerpo_estructura '}'
 
 
 declaracion_for:    INTEGER  IDENTIF valor_for r_declaracion_for        
-                        { sprintf (temp, "(setq %s_%s %s)%s", funcion_name, $2.code, $3.code, $4.code); 
+                        { sprintf (temp, "(setq %s %s)%s", $2.code, $3.code, $4.code); 
                         $$.code = gen_code (temp); }
                     | IDENTIF valor_for r_declaracion_for          
-                        { sprintf (temp, "(setq %s_%s %s)%s", funcion_name, $1.code, $2.code, $3.code); 
+                        { sprintf (temp, "(setq %s %s)%s", $1.code, $2.code, $3.code); 
                         $$.code = gen_code (temp); }
                     ;
 valor_for:                                                              { sprintf (temp, "%d", 0); 
@@ -210,7 +210,7 @@ valor_for:                                                              { sprint
                                                                         $$.code = gen_code (temp); }
                     ;
 r_declaracion_for:  ',' IDENTIF valor_for r_declaracion_for         
-                        { sprintf (temp, "\n(setq %s_%s %s)%s", funcion_name, $2.code, $3.code, $4.code); 
+                        { sprintf (temp, "\n(setq %s %s)%s", $2.code, $3.code, $4.code); 
                         $$.code = gen_code (temp); }
                     |                                                   { $$.code = ""; }
                     ;
@@ -255,7 +255,7 @@ r_printf:           ',' expresion r_printf
 
 
 asignacion:         IDENTIF '=' expresion                               
-                        { sprintf (temp, "(setf %s_%s %s)", funcion_name, $1.code, $3.code); 
+                        { sprintf (temp, "(setf %s %s)",  $1.code, $3.code); 
                         $$.code = gen_code (temp); }
                     | vector '=' expresion                              
                         { sprintf (temp, "(setf %s %s)", $1.code, $3.code); 
@@ -317,7 +317,7 @@ unario:             operando                                            { $$ = $
                                                                         $$.code = gen_code (temp); }  
                     ;
 
-operando:           IDENTIF                                             { sprintf (temp, "%s_%s", funcion_name ,$1.code);
+operando:           IDENTIF                                             { sprintf (temp, "%s",$1.code);
                                                                         $$.code = gen_code (temp); }
                     | IDENTIF '(' argumento ')'                         { sprintf (temp, "(%s %s)", $1.code, $3.code); 
                                                                         $$.code = gen_code (temp); }
