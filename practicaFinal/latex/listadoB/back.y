@@ -143,7 +143,7 @@ sentencia:          '(' PRINT STRING ')'
                         { sprintf (temp, "%s %s !", $4.code, $3.code);  
                         $$.code = gen_code (temp); }
                     | '(' LOOP WHILE logical_or DO lista_sentencia ')'                  
-                        { sprintf (temp, "begin\n\t%s\n\t%s\nrepeat", $4.code, $6.code);  
+                        { sprintf (temp, "begin\n\t%s\nwhile\n\t%s\nrepeat", $4.code, $6.code);  
                         $$.code = gen_code (temp); }
                     | '(' IF logical_or sentencia ')'                             
                         { sprintf (temp, "%s if \n\t%s \nthen", $3.code, $4.code);  
@@ -173,39 +173,37 @@ igualdad:           relacional                                                  
                         { sprintf (temp, "%s %s = 0=", $3.code, $4.code);
                         $$.code = gen_code (temp); }
                     ;                               
-relacional:         aditivo                                                             { $$ = $1; }
-                    | '(' '<' relacional aditivo ')'                                    
+relacional:         operacion                                                           { $$ = $1; }
+                    | '(' '<' relacional operacion ')'                                    
                         { sprintf (temp, "%s %s <", $3.code, $4.code);
                         $$.code = gen_code (temp); }
-                    | '(' '>' relacional aditivo ')'                                    
+                    | '(' '>' relacional operacion ')'                                    
                         { sprintf (temp, "%s %s >", $3.code, $4.code);
                         $$.code = gen_code (temp); }
-                    | '(' LE relacional aditivo ')'                                
+                    | '(' LE relacional operacion ')'                                
                         { sprintf (temp, "%s %s <=", $3.code, $4.code);
                         $$.code = gen_code (temp); }
-                    | '(' GE relacional aditivo ')'                                
+                    | '(' GE relacional operacion ')'                                
                         { sprintf (temp, "%s %s >=", $3.code, $4.code);
                         $$.code = gen_code (temp); }
                     ;                               
-aditivo:            multiplicativo                                                      { $$ = $1; }
-                    | '(' '+' aditivo multiplicativo ')'                                
+operacion:          unario                                                              { $$ = $1; }
+                    | '(' '+' operacion operacion ')'                                
                         { sprintf (temp, "%s %s +", $3.code, $4.code);
                         $$.code = gen_code (temp); }
-                    | '(' '-' aditivo multiplicativo ')'                                
+                    | '(' '-' operacion operacion ')'                                
                         { sprintf (temp, "%s %s -", $3.code, $4.code);
                         $$.code = gen_code (temp); }
-                    ;                               
-multiplicativo:     unario                                                              { $$ = $1; }
-                    | '(' '*' multiplicativo unario ')'                                 
+                    | '(' '*' operacion operacion ')'                                 
                         { sprintf (temp, "%s %s *", $3.code, $4.code);
                         $$.code = gen_code (temp); }
-                    | '(' '/' multiplicativo unario ')'                                 
+                    | '(' '/' operacion operacion ')'                                 
                         { sprintf (temp, "%s %s /", $3.code, $4.code);
                         $$.code = gen_code (temp); }
-                    | '(' MOD multiplicativo unario ')'                                 
+                    | '(' MOD operacion operacion ')'                                 
                         { sprintf (temp, "%s %s mod", $3.code, $4.code);
                         $$.code = gen_code (temp); }
-                    ;                               
+                    ;                                                   
 unario:             operando                                                            { $$ = $1; }
                     | '(' NOT unario ')'                                                
                         { sprintf (temp, "%s 0=", $3.code);
@@ -215,7 +213,7 @@ unario:             operando                                                    
                         {sprintf (temp, "%s negate", $3.code);
                         $$.code = gen_code (temp); }  
                     ;
-operando:           IDENTIF                                                             { sprintf (temp, "%s", $1.code);
+operando:           IDENTIF                                                             { sprintf (temp, "%s @", $1.code);
                                                                                         $$.code = gen_code (temp); }
                     | NUMBER                                                            { sprintf (temp, "%d", $1.value);
                                                                                         $$.code = gen_code (temp); }

@@ -1,13 +1,13 @@
 (setq a 0)
 (setq b 0)
 (defun main ()
-	(setf main_a 10)
-	(loop while (> main_a 0) do
-	(progn	(princ main_a)
+	(setf a 10)
+	(loop while (> a 0) do
+	(progn	(princ a)
 	
-	(progn	(if (= (mod main_a 2) 0)
+	(progn	(if (= (mod a 2) 0)
 	(print " es par ")
 	(print " es impar "))
-	(progn	(setf main_a (- main_a 1))))))
+	(progn	(setf a (- a 1))))))
 )
  (main) 
