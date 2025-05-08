@@ -1,4 +1,4 @@
-/* 113 Liang Ji Zhu Ignacio Leal SÃ¡nchez */
+/* 113 Liang Ji Zhu Ignacio Leal Sánchez */
 /* 100495723@alumnos.uc3m.es 100495680@alumnos.uc3m.es */
 %{                          // SECCION 1 Declaraciones de C-Yacc
 
@@ -64,15 +64,18 @@ typedef struct s_attr {
 %token NOT
 %token IF
 %token PROGN
+%token NE
+%token LE
+%token GE
 
-%right '='                                /* asignaciÃ³n */
-%left OR                                /* lÃ³gico OR */
-%left AND                                /* lÃ³gico AND */
-%nonassoc "/="                       /* igualdad */
-%nonassoc '<' '>' "<=" ">="              /* relacionales */
-%left '+' '-'                            /* suma/resta */
-%left '*' '/' MOD                        /* multiplic./mÃ³dulo */
-%right UNARY_SIGN NOT                     /* unarios: +un, -un, ! */
+%right '='                                  /* asignación */
+%left OR                                    /* lógico OR */
+%left AND                                   /* lógico AND */
+%nonassoc NE                                /* igualdad */
+%nonassoc '<' '>' LE GE                     /* relacionales */
+%left '+' '-'                               /* suma/resta */
+%left '*' '/' MOD                           /* multiplic./módulo */
+%right UNARY_SIGN NOT                       /* unarios: +un, -un, ! */
 
 %%                            // Seccion 3 Gramatica - Semantico
 
@@ -92,7 +95,7 @@ declaracion:        '(' SETQ IDENTIF logical_or ')'
                     ;                       
 /* =================== =================== =================== */                       
 
-/* =================== Funcion main y genÃ©rico =================== */                       
+/* =================== Funcion main y genérico =================== */                       
 def_funcs:          def_funcs def_func                                                  
                         { sprintf (temp, "%s\n%s", $1.code, $2.code);
                         $$.code = gen_code (temp); }
@@ -166,8 +169,8 @@ igualdad:           relacional                                                  
                     | '(' '=' igualdad relacional ')'                                   
                         {sprintf (temp, "%s %s =", $3.code, $4.code);
                         $$.code = gen_code (temp); }
-                    | '(' '/' '=' igualdad relacional ')'                               
-                        { sprintf (temp, "%s %s = 0=", $4.code, $5.code);
+                    | '(' NE igualdad relacional ')'                               
+                        { sprintf (temp, "%s %s = 0=", $3.code, $4.code);
                         $$.code = gen_code (temp); }
                     ;                               
 relacional:         aditivo                                                             { $$ = $1; }
@@ -177,11 +180,11 @@ relacional:         aditivo                                                     
                     | '(' '>' relacional aditivo ')'                                    
                         { sprintf (temp, "%s %s >", $3.code, $4.code);
                         $$.code = gen_code (temp); }
-                    | '(' '<' '=' relacional aditivo ')'                                
-                        { sprintf (temp, "%s %s <=", $4.code, $5.code);
+                    | '(' LE relacional aditivo ')'                                
+                        { sprintf (temp, "%s %s <=", $3.code, $4.code);
                         $$.code = gen_code (temp); }
-                    | '(' '>' '=' relacional aditivo ')'                                
-                        { sprintf (temp, "%s %s >=", $4.code, $5.code);
+                    | '(' GE relacional aditivo ')'                                
+                        { sprintf (temp, "%s %s >=", $3.code, $4.code);
                         $$.code = gen_code (temp); }
                     ;                               
 aditivo:            multiplicativo                                                      { $$ = $1; }
@@ -288,6 +291,9 @@ t_keyword keywords [] = { // define las palabras reservadas y los
     "or",           OR,
     "and",          AND,
     "not",          NOT,
+    "/=",           NE,
+    "<=",           LE,
+    ">=",           GE,
     NULL,           0                   // para marcar el fin de la tabla
 
 } ;
