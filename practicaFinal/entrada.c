@@ -1,5 +1,7 @@
 int a, b = 10, c;
 main(){
+    int a, b = 10; 
+    int c;
     if (a == 0 || b == 0 || c == 0){
         puts("|| ||");
     }
@@ -53,4 +55,4 @@ main(){
         puts("IMPAR");
     }
 }
-//@ main
+//@ //@ main

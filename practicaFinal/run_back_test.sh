@@ -21,6 +21,8 @@ echo "Generando archivo de entrada en C: entrada.c"
 cat <<EOF > entrada.c
 int a, b = 10, c;
 main(){
+    int a, b = 10; 
+    int c;
     if (a == 0 || b == 0 || c == 0){
         puts("|| ||");
     }
