@@ -1,49 +1,47 @@
 #!/bin/bash
-set -e
+set -euo pipefail
 
-# Directorio base (ajusta si hace falta)
-BASE_DIR="$(cd "$(dirname "$0")" && pwd)"
-PRUEBAS_DIR="$BASE_DIR/pruebasB"
+BASE_DIR="$(cd "$(dirname "$0")/.." && pwd)"   # sube un nivel si tu script está en pruebas/
+PRUEBAS_DIR="$BASE_DIR/pruebas/pruebasB"
 
-# 1. Compilar trad.y con Bison (frontend)
-echo "Compilando trad.y con bison..."
-bison -o "$BASE_DIR"/trad.tab.c "$BASE_DIR"/trad.y
+# 1) Compila trad.y
+bison -o "$BASE_DIR/trad.tab.c" "$BASE_DIR/trad.y"
+gcc -o "$BASE_DIR/trad" "$BASE_DIR/trad.tab.c"
 
-# 2. Compilar trad.tab.c con GCC
-echo "Compilando trad.tab.c con gcc..."
-gcc "$BASE_DIR"/trad.tab.c -o "$BASE_DIR"/trad
-
-# 3. Compilar back.y con Bison (backend)
-echo "Compilando back.y con bison..."
-bison -o "$BASE_DIR"/back.tab.c "$BASE_DIR"/back.y
-
-# 4. Compilar back.tab.c con GCC
-echo "Compilando back.tab.c con gcc..."
-gcc "$BASE_DIR"/back.tab.c -o "$BASE_DIR"/back
+# 2) Compila back.y
+bison -o "$BASE_DIR/back.tab.c" "$BASE_DIR/back.y"
+gcc -o "$BASE_DIR/back" "$BASE_DIR/back.tab.c"
 
 echo
-echo "=== INICIANDO PRUEBAS BACKEND EN $PRUEBAS_DIR ==="
-echo
-
-# 5. Para cada .c en pruebasB:
-#    a) generar Lisp intermedio con trad
-#    b) pasar ese Lisp a back y guardar la salida en un .txt
+echo "=== INICIANDO EVALUACIÓN EN $PRUEBAS_DIR ==="
 for src in "$PRUEBAS_DIR"/*.c; do
     name="$(basename "$src" .c)"
-    lisp_file="$BASE_DIR"/"$name".l
-    output_file="$BASE_DIR"/salida_backend_"$name".txt
+    lisp_file="$BASE_DIR/${name}.l"
+    c_bin="$BASE_DIR/${name}"
+    out_gforth="$BASE_DIR/${name}_gforth.out"
+    out_clisp="$BASE_DIR/${name}_clisp.out"
+    out_c="$BASE_DIR/${name}_c.out"
 
-    echo ">>> Procesando $name.c"
-    echo " - Generando Lisp intermedio: $lisp_file"
-    "$BASE_DIR"/trad < "$src" > "$lisp_file"
+    echo ">>> $name.c"
 
-    echo " - Ejecutando back sobre $lisp_file y guardando en: $output_file"
-    "$BASE_DIR"/back < "$lisp_file" > "$output_file"
+    # 1) Pipeline C→Lisp→Forth
+    echo " 1) trad | back | gforth"
+    "$BASE_DIR/trad" < "$src" | "$BASE_DIR/back" | gforth > "$out_gforth"
+    echo "    [gforth] $(head -1 "$out_gforth")…"
 
-    echo " - Contenido de $output_file:"
-    cat "$output_file"
+    # 2) Solo frontend + clisp
+    echo " 2) trad → clisp"
+    "$BASE_DIR/trad" < "$src" > "$lisp_file"
+    clisp "$lisp_file" > "$out_clisp"
+    echo "    [clisp] $(head -1 "$out_clisp")…"
+
+    # 3) Compilación C nativa
+    echo " 3) gcc → binario → ejecución"
+    gcc "$src" -o "$c_bin"
+    "$c_bin" > "$out_c"
+    echo "    [C   ] $(head -1 "$out_c")…"
+
     echo "----------------------------------------"
 done
 
-echo
-echo "=== PRUEBAS BACKEND COMPLETADAS ==="
+echo "=== FIN ==="

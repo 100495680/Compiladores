@@ -1,8 +1,0 @@
-(defun main ()
-	(setq main_a 1)
-	(setq main_b 0)
-	(setq main_c 2)
-	(if (or (and (= (mod (+ main_a (* main_c 3)) 2) 1) (/= main_b 0)) (<= main_a main_c))
-	(progn	(print "OK")))
-)
- (main)

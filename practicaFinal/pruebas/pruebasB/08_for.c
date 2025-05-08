@@ -1,3 +1,4 @@
+#include <stdio.h>
 main() {
     int i;
     int suma = 0;

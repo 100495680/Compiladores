@@ -1,5 +1,0 @@
-(setq main_var 0)
-(defun main ()
-	(print "¡Hola, mundo!")
-)
- (main)

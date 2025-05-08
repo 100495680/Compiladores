@@ -1,3 +1,4 @@
+#include <stdio.h>
 main() {
     int g = 1;
     int a = 4, b;
