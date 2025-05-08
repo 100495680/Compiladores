@@ -166,7 +166,7 @@ logical_and:        igualdad                                                    
                         $$.code = gen_code (temp); }
                     ;                               
 igualdad:           relacional                                                          { $$ = $1; }
-                    | '(' '=' igualdad relacional ')'                                   
+                    | '(' '=' igualdad IDENTIF ')'                                   
                         {sprintf (temp, "%s %s =", $3.code, $4.code);
                         $$.code = gen_code (temp); }
                     | '(' NE igualdad relacional ')'                               
@@ -215,7 +215,7 @@ unario:             operando                                                    
                         {sprintf (temp, "%s negate", $3.code);
                         $$.code = gen_code (temp); }  
                     ;
-operando:           IDENTIF                                                             { sprintf (temp, "%s", $1.code);
+operando:           IDENTIF                                                             { sprintf (temp, "%s @", $1.code);
                                                                                         $$.code = gen_code (temp); }
                     | NUMBER                                                            { sprintf (temp, "%d", $1.value);
                                                                                         $$.code = gen_code (temp); }
