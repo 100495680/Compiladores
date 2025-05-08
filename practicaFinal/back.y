@@ -143,7 +143,7 @@ sentencia:          '(' PRINT STRING ')'
                         { sprintf (temp, "%s %s !", $4.code, $3.code);  
                         $$.code = gen_code (temp); }
                     | '(' LOOP WHILE logical_or DO lista_sentencia ')'                  
-                        { sprintf (temp, "begin\n\t%s\n\t%s\nrepeat", $4.code, $6.code);  
+                        { sprintf (temp, "begin\n\t%s\nwhile\n\t%s\nrepeat", $4.code, $6.code);  
                         $$.code = gen_code (temp); }
                     | '(' IF logical_or sentencia ')'                             
                         { sprintf (temp, "%s if \n\t%s \nthen", $3.code, $4.code);  

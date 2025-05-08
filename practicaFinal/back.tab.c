@@ -1442,7 +1442,7 @@ yyreduce:
 
   case 22: /* sentencia: '(' LOOP WHILE logical_or DO lista_sentencia ')'  */
 #line 146 "back.y"
-                        { sprintf (temp, "begin\n\t%s\n\t%s\nrepeat", yyvsp[-3].code, yyvsp[-1].code);  
+                        { sprintf (temp, "begin\n\t%s\nwhile\n\t%s\nrepeat", yyvsp[-3].code, yyvsp[-1].code);  
                         yyval.code = gen_code (temp); }
 #line 1448 "back.tab.c"
     break;
