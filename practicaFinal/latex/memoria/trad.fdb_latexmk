@@ -1,7 +1,7 @@
 # Fdb version 4
-["pdflatex"] 1746755025.73927 "/home/liang-ji-zhu/Escritorio/2Cuatri/ProcesadoresDelLenguaje/Compiladores/practicaFinal/latex/memoria/trad.tex" "trad.pdf" "trad" 1746755026.47185 0
+["pdflatex"] 1746788103.03414 "/home/liang-ji-zhu/Escritorio/2Cuatri/ProcesadoresDelLenguaje/Compiladores/practicaFinal/latex/memoria/trad.tex" "trad.pdf" "trad" 1746788103.63969 0
   "/etc/texmf/web2c/texmf.cnf" 1746725510.33759 475 c0e671620eb5563b2130f56340a5fde8 ""
-  "/home/liang-ji-zhu/Escritorio/2Cuatri/ProcesadoresDelLenguaje/Compiladores/practicaFinal/latex/memoria/trad.tex" 1746755025.56354 31037 a3e2c699bf57feb5361a60be7c89f2fa ""
+  "/home/liang-ji-zhu/Escritorio/2Cuatri/ProcesadoresDelLenguaje/Compiladores/practicaFinal/latex/memoria/trad.tex" 1746788102.8575 31911 89cb34aae640f32abbad42911f6c4dcc ""
   "/usr/share/texlive/texmf-dist/fonts/map/fontname/texfonts.map" 1577235249 3524 cb3e574dea2d1052e39280babc910dc8 ""
   "/usr/share/texlive/texmf-dist/fonts/tfm/jknappen/ec/ecbx1200.tfm" 1136768653 3584 402da0b29eafbad07963b1224b222f18 ""
   "/usr/share/texlive/texmf-dist/fonts/tfm/jknappen/ec/ecbx1440.tfm" 1136768653 3584 13049b61b922a28b158a38aeff75ee9b ""
@@ -73,9 +73,9 @@
   "/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map" 1746725776.35777 5472669 54eaf61a88b6b7896ebd0dac973cb29c ""
   "/var/lib/texmf/web2c/pdftex/pdflatex.fmt" 1746725792 8215019 7d3c7b8f124ce656ca47819b7fd5376f ""
   "logo_universidad.png" 1746742618.64167 220173 dc9a29c59ac405d99034d655a134d6f9 ""
-  "trad.aux" 1746755026.41954 3177 d9dfe34f59960fc23206754d73d6063b "pdflatex"
-  "trad.tex" 1746755025.56354 31037 a3e2c699bf57feb5361a60be7c89f2fa ""
-  "trad.toc" 1746755026.42054 1905 0b44697662a995e20c9cfe749d71ac89 "pdflatex"
+  "trad.aux" 1746788103.59548 3207 66fd53da7b1efa43cce0363ca663ba0c "pdflatex"
+  "trad.tex" 1746788102.8575 31911 89cb34aae640f32abbad42911f6c4dcc ""
+  "trad.toc" 1746788103.59648 1935 06097fd90a12dc840853fe3d17838265 "pdflatex"
   (generated)
   "trad.aux"
   "trad.log"

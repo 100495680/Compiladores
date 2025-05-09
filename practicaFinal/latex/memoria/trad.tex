@@ -96,7 +96,7 @@ cada miembro asumió más tareas cuando su disponibilidad lo permitía y cedió 
 circunstancias lo exigían, garantizando en todo momento un equilibrio global.
 
 \section{Traducción Frontend}
-\subsection{Variables globales}
+\subsection{Variables Globales}
 \noindent Las variables se declaran como enteros o como arrays en los que se puede dar valor o no, en este caso se 
 usará el valor 0 para la traducción a lisp. Se permite que se declaren múltiples variables en línea 
 separadas con "," o en cascada.
@@ -124,10 +124,15 @@ r_declaracion:      ',' IDENTIF valor_global r_declaracion
                     |
                     ;
 \end{lstlisting}
-\subsection{Función main y funciones genéricas}
+\subsection{Función MAIN, Funciones Genéricas y Variables Locales}
+
 \noindent Se definen las funciones de dos maneras: las funciones genéricas y el main. El main es una función 
-diferente ya que es obligatorio que exista esta función. También permitimos la declaración de variables locales 
-que serán la variable seguida del nombre de la función en la que es variable local.
+diferente ya que es obligatorio que exista esta función. 
+\noindent Dentro del cuerpo de las funciones pueden declararse variables,
+que tanto en C como en Lisp serán variables locales. Se emplea la misma traducción
+de las globales, pero en este caso deben generarse dentro del cuerpo de la función.
+Por lo que también permitimos la declaración de variables locales que serán la variable 
+seguida del nombre de la función en la que es variable local.
 \begin{lstlisting}
 funcion:            IDENTIF  '(' argumento ')' '{' var_local cuerpo '}' funcion  
                     | funcion_principal                                            
@@ -166,40 +171,7 @@ r_decl_local:       ',' IDENTIF valor_local r_decl_local
                     |                                              
                     ;
 \end{lstlisting}
-\subsection{Estructuras de Control}
-\noindent Las estructuras de control se encuentran dentro del cuerpo de una función y no acaban en ";". 
-Estas son el if, for y while. Cuentan con una estructura de cuerpo diferente ya que un return de 
-alguna de estas estructuras se interpreta diferente ya que no es un return al final de la función.
-\begin{lstlisting}
-cuerpo:             sentencia ';' cuerpo                        
-                    | sentencia ';'                                
-                    | estructura cuerpo                                                                    
-                    | estructura                                  
-                    | RETURN expresion ';'                        
-                    ;
-estructura:         WHILE '(' expresion ')' '{' cuerpo_estructura '}'                                    
-                    | IF '(' expresion ')' '{' cuerpo_estructura '}'                                     
-                    | IF '(' expresion ')' '{' cuerpo_estructura '}' ELSE '{' cuerpo_estructura '}'                                                                        
-                    | FOR '(' declaracion_for ';' expresion ';' asignacion ')' '{' cuerpo_estructura '}'                                        
-                    ;
-
-declaracion_for:    INTEGER  IDENTIF valor_for r_declaracion_for    
-                    |      IDENTIF valor_for r_declaracion_for                                           
-                    ;
-valor_for:                                                          
-                    | '=' NUMBER                                                                                      
-                    ;
-r_declaracion_for:      ',' IDENTIF valor_for r_declaracion_for                                                    
-                    |                                              
-                    ;
-cuerpo_estructura:  sentencia ';'                               
-                    | estructura                                      
-                    | sentencia ';' cuerpo_estructura           
-                    | estructura cuerpo_estructura                        
-                    | RETURN expresion ';'                                                           
-                    ;
-\end{lstlisting}
-\subsection{Impresión de cadenas}
+\subsection{Impresión de Cadenas}
 \noindent La impresión de cadenas de texto se hace imprimiendo o un string o una variable. No existe 
 la forma de impresión formateada como en C. Por ello cualquier impresión de variables en C se 
 traducirá a la impresión de variables individuales en Lisp.
@@ -217,16 +189,27 @@ r_printf:           ',' expresion r_printf
                     |                                           
                     ;
 \end{lstlisting}
-
-\subsection{Operadores, precedencia y asociatividad}
+\subsection{Operadores, Precedencia, Asociatividad y Vectores}
 \noindent Aquí hemos cambiado la forma de operar respecto a la versión anterior. Para garantizar 
 la mejor precedencia sin ninguna posibilidad de errores hemos dividido las diferentes operaciones 
 o comparaciones en No Terminales específicos de forma que la precedencia pueda ser cumplida en todo 
 momento.
+\noindent Para declarar un Vector podemos usar una sintaxis de Lisp extendiendo la que usamos para 
+variables y podrán declararse como variables globales o locales. 
 \begin{lstlisting}
+var_global:         declaracion ';'  var_global                         
+                    |                                                   
+                    ;
+
+declaracion:        INTEGER  IDENTIF valor_global r_declaracion         
+                    | INTEGER  IDENTIF '[' NUMBER ']' r_declaracion
+                    // Vector Global     
+                    ; 
+...
 /* ==== Operadores, precedencia y asociatividad ==== */
 asignacion:         IDENTIF '=' expresion                               
-                    | vector '=' expresion                              
+                    | vector '=' expresion    
+                    // Vector Local                           
                     ;
 
 expresion:          logical_or                                         
@@ -322,11 +305,45 @@ compilación, evitando comportamientos ambiguos o inesperados en tiempo de ejecu
 %left '*' '/' '%'                       
 %right UNARY_SIGN "!"                   
 \end{lstlisting}
+\subsection{Estructuras de Control}
+\noindent Las estructuras de control se encuentran dentro del cuerpo de una función y no acaban en ";". 
+Estas son el IF-ELSE, FOR y WHILE. Cuentan con una estructura de cuerpo diferente ya que un return de 
+alguna de estas estructuras se interpreta diferente ya que no es un return al final de la función.
+\begin{lstlisting}
+cuerpo:             sentencia ';' cuerpo                        
+                    | sentencia ';'                                
+                    | estructura cuerpo                                                                    
+                    | estructura                                  
+                    | RETURN expresion ';'                        
+                    ;
+estructura:         WHILE '(' expresion ')' '{' cuerpo_estructura '}'                                    
+                    | IF '(' expresion ')' '{' cuerpo_estructura '}'                                     
+                    | IF '(' expresion ')' '{' cuerpo_estructura '}' ELSE '{' cuerpo_estructura '}'                                                                        
+                    | FOR '(' declaracion_for ';' expresion ';' asignacion ')' '{' cuerpo_estructura '}'                                        
+                    ;
+
+declaracion_for:    INTEGER  IDENTIF valor_for r_declaracion_for    
+                    |      IDENTIF valor_for r_declaracion_for                                           
+                    ;
+valor_for:                                                          
+                    | '=' NUMBER                                                                                      
+                    ;
+r_declaracion_for:      ',' IDENTIF valor_for r_declaracion_for                                                    
+                    |                                              
+                    ;
+cuerpo_estructura:  sentencia ';'                               
+                    | estructura                                      
+                    | sentencia ';' cuerpo_estructura           
+                    | estructura cuerpo_estructura                        
+                    | RETURN expresion ';'                                                           
+                    ;
+\end{lstlisting}
+
 \section{Traducción Backend}
 \noindent Una vez acabado con la implementación del frontend que traducía de C a Lisp, vamos a 
 realizar el correspondiente backend, de Lisp a Forth. Para ello, hemos decidido dividir la 
 implementación en las siguientes fases:
-\subsection{Variables globales}
+\subsection{Variables Globales}
 \noindent Tal y como traducimos el lisp todas las variables que pueden haber en este código serán 
 globales. Simplemente cambiará el nombre si son específicas a una función en específico. Como ya 
 se unificaron las formas de declarar variables esta parte de la gramática es relativamente simple.
@@ -337,7 +354,7 @@ var_global:         declaracion
 declaracion:        '(' SETQ IDENTIF logical_or ')'
                     ; 
 \end{lstlisting}
-\subsection{Función main y funciones genéricas}
+\subsection{Función MAIN y Funciones Genéricas}
 \noindent La definición de funciones se puede unificar para que haya un no terminal que acoge ambos 
 dos tipos de posibles funciones el main que sigue siendo obligatorio y las otras que siguen siendo 
 opcionales. Esta es una forma más simple que la utilizada en el Frontend y por la traducción de Lisp 
@@ -354,7 +371,7 @@ def_func:           '(' DEFUN MAIN '(' ')' cuerpo ')'
                     | '(' DEFUN IDENTIF '(' ')' cuerpo ')'
                     ;  
 \end{lstlisting}
-\subsection{Impresión de cadenas}
+\subsection{Impresión de Cadenas}
 \noindent Esta función ya fue muy alterada para el cambio de C a Lisp y aquí la traducción es 
 bastante simple ya que el programa puede necesitar imprimir strings o variables/resultados de 
 operaciones. 
@@ -365,7 +382,7 @@ sentencia:          '(' PRINT STRING ')'
                     ...
                     ;
 \end{lstlisting}
-\subsection{Operadores, precedencia y asociatividad}
+\subsection{Operadores, Precedencia y Asociatividad}
 \noindent Estos son todos los operadores y comparadores que permiten que se sigan las reglas de 
 asociatividad que creamos en la primera gramática. Esta parte de la gramática es muy similar a la 
 del Frontend ya que el cambio de lenguaje no realiza ningún cambio estructural muy grande. Lo que sí
@@ -421,7 +438,7 @@ sentencia:          '(' PRINT STRING ')'
                     ;
 \end{lstlisting}
 
-\section{Pruebas}
+\section{Testing}
 \noindent En esta sección se presentan las pruebas realizadas para verificar el 
 correcto funcionamiento del traductor en sus distintas etapas. Cada prueba incluye 
 el código fuente en C, su correspondiente traducción a Lisp y finalmente la 

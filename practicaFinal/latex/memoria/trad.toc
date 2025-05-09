@@ -2,27 +2,27 @@
 \contentsline {section}{\numberline {1}Introducción}{2}{}%
 \contentsline {section}{\numberline {2}Transparencia}{3}{}%
 \contentsline {section}{\numberline {3}Traducción Frontend}{3}{}%
-\contentsline {subsection}{\numberline {3.1}Variables globales}{3}{}%
-\contentsline {subsection}{\numberline {3.2}Función main y funciones genéricas}{4}{}%
-\contentsline {subsection}{\numberline {3.3}Estructuras de Control}{5}{}%
-\contentsline {subsection}{\numberline {3.4}Impresión de cadenas}{6}{}%
-\contentsline {subsection}{\numberline {3.5}Operadores, precedencia y asociatividad}{6}{}%
+\contentsline {subsection}{\numberline {3.1}Variables Globales}{3}{}%
+\contentsline {subsection}{\numberline {3.2}Función MAIN, Funciones Genéricas y Variables Locales}{4}{}%
+\contentsline {subsection}{\numberline {3.3}Impresión de Cadenas}{5}{}%
+\contentsline {subsection}{\numberline {3.4}Operadores, Precedencia, Asociatividad y Vectores}{6}{}%
+\contentsline {subsection}{\numberline {3.5}Estructuras de Control}{8}{}%
 \contentsline {section}{\numberline {4}Traducción Backend}{9}{}%
-\contentsline {subsection}{\numberline {4.1}Variables globales}{9}{}%
-\contentsline {subsection}{\numberline {4.2}Función main y funciones genéricas}{9}{}%
-\contentsline {subsection}{\numberline {4.3}Impresión de cadenas}{10}{}%
-\contentsline {subsection}{\numberline {4.4}Operadores, precedencia y asociatividad}{10}{}%
-\contentsline {subsection}{\numberline {4.5}Estructuras de Control}{11}{}%
-\contentsline {section}{\numberline {5}Pruebas}{12}{}%
+\contentsline {subsection}{\numberline {4.1}Variables Globales}{9}{}%
+\contentsline {subsection}{\numberline {4.2}Función MAIN y Funciones Genéricas}{10}{}%
+\contentsline {subsection}{\numberline {4.3}Impresión de Cadenas}{10}{}%
+\contentsline {subsection}{\numberline {4.4}Operadores, Precedencia y Asociatividad}{11}{}%
+\contentsline {subsection}{\numberline {4.5}Estructuras de Control}{12}{}%
+\contentsline {section}{\numberline {5}Testing}{12}{}%
 \contentsline {subsection}{\numberline {5.1}Variables Globales}{12}{}%
 \contentsline {subsection}{\numberline {5.2}Función MAIN}{13}{}%
-\contentsline {subsection}{\numberline {5.3}PUTS}{13}{}%
+\contentsline {subsection}{\numberline {5.3}PUTS}{14}{}%
 \contentsline {subsection}{\numberline {5.4}PRINT Simple}{14}{}%
 \contentsline {subsection}{\numberline {5.5}Operadores}{15}{}%
 \contentsline {subsection}{\numberline {5.6}WHILE}{16}{}%
-\contentsline {subsection}{\numberline {5.7}IF-ELSE}{16}{}%
+\contentsline {subsection}{\numberline {5.7}IF-ELSE}{17}{}%
 \contentsline {subsection}{\numberline {5.8}FOR}{18}{}%
 \contentsline {subsection}{\numberline {5.9}Funciones (Lisp)}{19}{}%
 \contentsline {subsection}{\numberline {5.10}Variables Locales (Lisp)}{20}{}%
-\contentsline {subsection}{\numberline {5.11}Vectores (Lisp)}{20}{}%
-\contentsline {section}{\numberline {6}Conclusiones}{22}{}%
+\contentsline {subsection}{\numberline {5.11}Vectores (Lisp)}{21}{}%
+\contentsline {section}{\numberline {6}Conclusiones}{23}{}%
