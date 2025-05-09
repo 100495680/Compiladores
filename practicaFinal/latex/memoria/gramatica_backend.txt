@@ -1,0 +1,111 @@
+%token NUMBER        
+%token IDENTIF       // Identificador=variable
+%token INTEGER       // identifica el tipo entero
+%token STRING
+%token LOOP
+%token WHILE         // identifica el bucle main
+%token DO
+%token SETQ
+%token SETF
+%token DEFUN         
+%token MAIN          // identifica el comienzo del proc. main
+%token PRINT
+%token PRINC
+%token MOD
+%token OR
+%token AND
+%token NOT
+%token IF
+%token PROGN
+%token NE
+%token LE
+%token GE
+
+%right '='                                  /* asignación */
+%left OR                                    /* lógico OR */
+%left AND                                   /* lógico AND */
+%nonassoc NE                                /* igualdad */
+%nonassoc '<' '>' LE GE                     /* relacionales */
+%left '+' '-'                               /* suma/resta */
+%left '*' '/' MOD                           /* multiplic./módulo */
+%right UNARY_SIGN NOT                       /* unarios: +un, -un, ! */
+
+%%                            // Seccion 3 Gramatica - Semantico
+
+axioma:             var_global def_funcs                                                { printf ("\n%s\n%s\n", $1.code, $2.code); }
+                    | def_funcs                                                         { printf ("%s\n", $1.code); }
+                    ;                           
+
+/* =================== Varibles globales =================== */                             
+var_global:         declaracion                                                        
+                    | var_global declaracion
+                    ;                               
+declaracion:        '(' SETQ IDENTIF logical_or ')'
+                    ;                       
+/* =================== =================== =================== */                       
+
+/* =================== Funcion main y genérico =================== */                       
+def_funcs:          def_funcs def_func                
+                    | def_func                                                         
+                    | def_funcs llamada_main       
+                    | llamada_main                                                      
+                    ;
+llamada_main:       '(' MAIN ')'
+
+def_func:           '(' DEFUN MAIN '(' ')' cuerpo ')'
+                    | '(' DEFUN IDENTIF '(' ')' cuerpo ')'
+                    ;                       
+
+
+cuerpo:             lista_sentencia                                                     
+                    ;                               
+lista_sentencia:    sentencia                                                           
+                    | lista_sentencia sentencia                     
+                    ;                       
+
+/* =================== Impresion: print y princ =================== */
+/* =================== Estructuras de Control: loop while, if then, if else then =================== */                      
+sentencia:          '(' PRINT STRING ')'                 
+                    | '(' PRINC logical_or ')'          
+                    | '(' PRINC STRING ')'            
+                    | '(' SETF IDENTIF logical_or ')'    
+                    | '(' SETQ IDENTIF logical_or ')'   
+                    | '(' LOOP WHILE logical_or DO lista_sentencia ')' 
+                    | '(' IF logical_or sentencia ')'       
+                    | '(' IF logical_or sentencia sentencia ')' 
+                    | '(' PROGN lista_sentencia ')'                                     
+                    ;                               
+
+/* =================== Operadores, precedencia y asociatividad =================== */
+logical_or:         logical_and                                                         
+                    | '(' OR logical_or logical_and ')'      
+                    ;                               
+logical_and:        igualdad                                                            
+                    | '(' AND logical_and igualdad ')'       
+                    ;                               
+igualdad:           relacional                                                          
+                    | '(' '=' igualdad relacional ')'        
+                    | '(' NE igualdad relacional ')'        
+                    ;                               
+relacional:         operacion                                                          
+                    | '(' '<' relacional operacion ')'     
+                    | '(' '>' relacional operacion ')'   
+                    | '(' LE relacional operacion ')'   
+                    | '(' GE relacional operacion ')'    
+                    ;                               
+operacion:          unario                                                              
+                    | '(' '+' operacion operacion ')'    
+                    | '(' '-' operacion operacion ')'  
+                    | '(' '*' operacion operacion ')'  
+                    | '(' '/' operacion operacion ')'  
+                    | '(' MOD operacion operacion ')'  
+                    ;                                                   
+unario:             operando                                                            
+                    | '(' NOT unario ')'                           
+                    | '+' operando %prec UNARY_SIGN                                    
+                    | '(' '-' operando %prec UNARY_SIGN ')'   
+                    ;
+operando:           IDENTIF
+                    | NUMBER                                                            
+                    | '(' logical_or ')'                                                
+                    ;

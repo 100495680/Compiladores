@@ -1,0 +1,31 @@
+\babel@toc {spanish}{}\relax 
+\contentsline {section}{\numberline {1}Introducción}{2}{}%
+\contentsline {section}{\numberline {2}Transparencia}{3}{}%
+\contentsline {section}{\numberline {3}Traducción Frontend}{3}{}%
+\contentsline {subsection}{\numberline {3.1}Variables globales}{3}{}%
+\contentsline {subsection}{\numberline {3.2}Función main y funciones genéricas}{4}{}%
+\contentsline {subsection}{\numberline {3.3}Estructuras de Control}{5}{}%
+\contentsline {subsection}{\numberline {3.4}Impresión de cadenas}{6}{}%
+\contentsline {subsection}{\numberline {3.5}Operadores, precedencia y asociatividad}{6}{}%
+\contentsline {section}{\numberline {4}Traducción Backend}{9}{}%
+\contentsline {subsection}{\numberline {4.1}Variables globales}{9}{}%
+\contentsline {subsubsection}{\numberline {4.1.1}Ejemplo de traducción}{9}{}%
+\contentsline {subsection}{\numberline {4.2}Función main y funciones genéricas}{10}{}%
+\contentsline {subsubsection}{\numberline {4.2.1}Ejemplo de traducción}{10}{}%
+\contentsline {subsection}{\numberline {4.3}Impresión de cadenas}{11}{}%
+\contentsline {subsubsection}{\numberline {4.3.1}Ejemplo de traducción}{11}{}%
+\contentsline {subsection}{\numberline {4.4}Operadores, precedencia y asociatividad}{12}{}%
+\contentsline {subsubsection}{\numberline {4.4.1}Ejemplo de traducción}{13}{}%
+\contentsline {subsection}{\numberline {4.5}Estructuras de Control}{15}{}%
+\contentsline {subsubsection}{\numberline {4.5.1}Ejemplo de traducción}{15}{}%
+\contentsline {section}{\numberline {5}Pruebas}{16}{}%
+\contentsline {subsection}{\numberline {5.1}Variables globales}{16}{}%
+\contentsline {subsection}{\numberline {5.2}Función main}{17}{}%
+\contentsline {subsection}{\numberline {5.3}puts}{17}{}%
+\contentsline {subsection}{\numberline {5.4}print simple}{18}{}%
+\contentsline {subsection}{\numberline {5.5}while}{18}{}%
+\contentsline {subsection}{\numberline {5.6}if else}{19}{}%
+\contentsline {subsection}{\numberline {5.7}for}{20}{}%
+\contentsline {subsection}{\numberline {5.8}Funciones}{21}{}%
+\contentsline {subsection}{\numberline {5.9}Variables locales}{21}{}%
+\contentsline {subsection}{\numberline {5.10}Vectores}{21}{}%

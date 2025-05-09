@@ -1,0 +1,814 @@
+\documentclass[12pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[spanish]{babel}
+\usepackage{graphicx}
+\usepackage{listings}
+\usepackage{xcolor}
+\lstset{
+    basicstyle=\ttfamily\small,
+    keywordstyle=\color{blue}\bfseries,
+    commentstyle=\color{gray}\itshape,
+    stringstyle=\color{red},
+    breaklines=true,
+    numbers=left,
+    numberstyle=\tiny,
+    numbersep=5pt,
+    frame=single,
+    captionpos=b
+}
+
+\begin{document}
+
+% Portada
+\begin{titlepage}
+    \centering
+    \vspace*{2cm}
+    {\LARGE\textbf{PROCESADORES DEL LENGUAJE}\par}
+    \vspace{1cm}
+    {\Large Práctica Final: Frontend y Backend\par}
+    \vfill
+    \includegraphics[width=0.65\textwidth]{logo_universidad.png}
+    \vfill
+    {\large\textbf{Grupo:} 113-leal-zhu\par}
+    {\large\textbf{ID de grupo de prácticas:} 81\par}
+    \vspace{1cm}
+    {\large\textbf{Nombre de los participantes:}\par}
+    {\normalsize Liang Ji Zhu \\ Ignacio Leal Sánchez\par}
+    {\large\textbf{Correos electrónicos de los participantes:}\par}
+    {\normalsize 100495723@alumnos.uc3m.es \\ 100495680@alumnos.uc3m.es\par}
+    \vfill
+    {\large Madrid, \today\par}
+\end{titlepage}
+
+% Índice automático según estructura de secciones
+\clearpage
+\tableofcontents
+\clearpage
+
+% Introducción
+\section{Introducción}
+\noindent La presente memoria documenta el desarrollo integral de un traductor frontend y un traductor backend. 
+El trabajo plantea la construcción de éstas en dos fases:
+\begin{itemize}
+    \item Frontend: traduce el lenguaje C, de notación infija, a código Lisp, de notación prefija.
+    \item Backend: convierte dicho código Lisp a notación postfija, Forth, siguiendo la filosofía de máquina de pila integrada en gforth.
+\end{itemize}
+
+\noindent Se sifuió un ciclo incremental para la realización del proyecto, en cada iteración se añadió una nueva producción. 
+Esta estrategia permitió aislar errores tempranos y dosificar la complejidad, ya que los apartados iniciales 
+eran más asequibles y los últimos exigían mayor autonomía y un diseño gramatical más depurado.
+
+\smallskip
+\noindent Se puede apreciar 3 etapas de implementación aproximadas:
+\begin{itemize}
+    \item Etapa 1: se implementaron las declaraciones básicas, la función \texttt{main} y las primeras 
+    sentencias de E/S (\texttt{puts}, \texttt{printf}).
+    \item Etapa 2: se integraron operadores con su precedencia y las estructuras de control 
+    \texttt{while} e \texttt{if/else}.
+    \item Etapa 3: se añadieron funciones con retorno estructurado y vectores.
+    \item Etapa 4: desarrollo del backend y pruebas funcionales con la directiva 
+    \texttt{//@ (main)}, completando el flujo C $\to$ Lisp $\to$ Forth.
+\end{itemize}
+
+\smallskip
+\noindent El analizador léxico se mantuvo sin modificaciones; toda la lógica nueva se centró en la 
+gramática y las acciones semánticas, añadiendon los tokens necesarios.
+\smallskip
+
+\noindent Cada incremento semanal concluyó con una regresión completa sobre el conjunto de casos de prueba 
+—tanto los oficiales como los diseñados ad-hoc— y con la documentación de las decisiones en esta memoria. 
+Así, el resultado final es un traductor robusto cuya construcción refleja paso a paso la ruta marcada por 
+las pautas del enunciado, desde las bases del frontend hasta los detalles finales del backend.
+% Otras secciones según índice
+\section{Transparencia}
+
+\noindent En este apartado constatamos que el uso de la IA generativa ha sido utilizado para la 
+corrección de errores en las declaraciones de C, aunque ha sido intercalado con la asistencia de los 
+profesores que proponen respuestas más coherentes y simples. Y ha sido imposible usar la inteligencia 
+artificial en más partes del trabajo debido a su incapacidad para comprender los requisitos específicos 
+del problema, y por ello dando respuestas de nula utilidad.
+
+\smallskip
+\noindent Asimismo, hacemos constar que la carga de trabajo se ha repartido de forma justa entre los dos. 
+A lo largo de todo el período —y, muy especialmente, durante la fase final— la dedicación fue dinámica: 
+cada miembro asumió más tareas cuando su disponibilidad lo permitía y cedió responsabilidad cuando sus 
+circunstancias lo exigían, garantizando en todo momento un equilibrio global.
+
+\section{Traducción Frontend}
+\subsection{Variables globales}
+\noindent Las variables se declaran como enteros o como arrays en los que se puede dar valor o no, en este caso se 
+usará el valor 0 para la traducción a lisp. Se permite que se declaren múltiples variables en línea 
+separadas con "," o en cascada.
+\begin{lstlisting}
+axioma:             var_global funcion
+                    r_axioma
+                    ;
+r_axioma:
+                    |   axioma
+                    ;
+
+var_global:         declaracion ';'  var_global
+                    |
+                    ;
+
+declaracion:        INTEGER  IDENTIF valor_global r_declaracion
+                    | INTEGER  IDENTIF '[' NUMBER ']' r_declaracion
+                    ;
+
+valor_global:
+                    | '=' NUMBER
+                    ;
+r_declaracion:      ',' IDENTIF valor_global r_declaracion
+                    | ',' IDENTIF '[' NUMBER ']' r_declaracion
+                    |
+                    ;
+\end{lstlisting}
+\subsection{Función main y funciones genéricas}
+\noindent Se definen las funciones de dos maneras: las funciones genéricas y el main. El main es una función 
+diferente ya que es obligatorio que exista esta función. También permitimos la declaración de variables locales 
+que serán la variable seguida del nombre de la función en la que es variable local.
+\begin{lstlisting}
+funcion:            IDENTIF  '(' argumento ')' '{' var_local cuerpo '}' funcion  
+                    | funcion_principal                                            
+                    ;
+
+funcion_principal:  MAIN  '(' argumento ')' '{' var_local cuerpo '}'               
+                    ;
+
+argumento:          INTEGER valor resto_argumento                    
+                    | valor resto_argumento                       
+                    |                                               
+                    ;
+
+valor:              STRING                                           
+                    | expresion                                      
+                    ;
+
+resto_argumento:    ',' argumento                                 
+                    |                                              
+                    ;   
+
+
+var_local:          declaracion_local ';' var_local               
+                    |                                              
+                    ;
+
+declaracion_local:  INTEGER  IDENTIF valor_local r_decl_local       
+                    | INTEGER  IDENTIF '[' NUMBER ']' r_decl_local  
+                    ;
+
+valor_local:        /* lambda */                                    
+                    | '=' NUMBER                                    
+                    ;
+r_decl_local:       ',' IDENTIF valor_local r_decl_local            
+                    | ',' IDENTIF '[' NUMBER ']' r_decl_local        
+                    |                                              
+                    ;
+\end{lstlisting}
+\subsection{Estructuras de Control}
+\noindent Las estructuras de control se encuentran dentro del cuerpo de una función y no acaban en ";". 
+Estas son el if, for y while. Cuentan con una estructura de cuerpo diferente ya que un return de 
+alguna de estas estructuras se interpreta diferente ya que no es un return al final de la función.
+\begin{lstlisting}
+cuerpo:             sentencia ';' cuerpo                        
+                    | sentencia ';'                                
+                    | estructura cuerpo                                                                    
+                    | estructura                                  
+                    | RETURN expresion ';'                        
+                    ;
+estructura:         WHILE '(' expresion ')' '{' cuerpo_estructura '}'                                    
+                    | IF '(' expresion ')' '{' cuerpo_estructura '}'                                     
+                    | IF '(' expresion ')' '{' cuerpo_estructura '}' ELSE '{' cuerpo_estructura '}'                                                                        
+                    | FOR '(' declaracion_for ';' expresion ';' asignacion ')' '{' cuerpo_estructura '}'                                        
+                    ;
+
+declaracion_for:    INTEGER  IDENTIF valor_for r_declaracion_for    
+                    |      IDENTIF valor_for r_declaracion_for                                           
+                    ;
+valor_for:                                                          
+                    | '=' NUMBER                                                                                      
+                    ;
+r_declaracion_for:      ',' IDENTIF valor_for r_declaracion_for                                                    
+                    |                                              
+                    ;
+cuerpo_estructura:  sentencia ';'                               
+                    | estructura                                      
+                    | sentencia ';' cuerpo_estructura           
+                    | estructura cuerpo_estructura                        
+                    | RETURN expresion ';'                                                           
+                    ;
+\end{lstlisting}
+\subsection{Impresión de cadenas}
+\noindent La impresión de cadenas de texto se hace imprimiendo o un string o una variable. No existe 
+la forma de impresión formateada como en C. Por ello cualquier impresión de variables en C se 
+traducirá a la impresión de variables individuales en Lisp.
+\begin{lstlisting}
+sentencia:          asignacion                                   
+                    | '@' expresion                              
+                    | PUTS '(' STRING ')'                       
+                    | PRINTF printf                            
+                    | llamada                                  
+                    ;
+printf:             '(' STRING r_printf ')'                    
+                    ;
+r_printf:           ',' expresion r_printf                    
+                    | ',' STRING r_printf                      
+                    |                                           
+                    ;
+\end{lstlisting}
+
+\subsection{Operadores, precedencia y asociatividad}
+\noindent Aquí hemos cambiado la forma de operar respecto a la versión anterior. Para garantizar 
+la mejor precedencia sin ninguna posibilidad de errores hemos dividido las diferentes operaciones 
+o comparaciones en No Terminales específicos de forma que la precedencia pueda ser cumplida en todo 
+momento.
+\begin{lstlisting}
+/* ==== Operadores, precedencia y asociatividad ==== */
+asignacion:         IDENTIF '=' expresion                               
+                    | vector '=' expresion                              
+                    ;
+
+expresion:          logical_or                                         
+                    ;
+
+llamada:            IDENTIF '(' argumento ')'                           
+                    ;
+
+logical_or:         logical_and                                         
+                    | logical_or OR logical_and                         
+                    ;
+logical_and:        igualdad                                            
+                    | logical_and AND igualdad                          
+                    ;
+igualdad:           relacional                                          
+                    | igualdad EQ relacional                            
+                    | igualdad NE relacional                            
+                    ;
+relacional:         aditivo                                             
+                    | relacional '<' aditivo                            
+                    | relacional '>' aditivo                            
+                    | relacional LE aditivo                             
+                    | relacional GE aditivo                             
+                    ;
+aditivo:            multiplicativo                                      
+                    | aditivo '+' multiplicativo                        
+                    | aditivo '-' multiplicativo                        
+                    ;
+multiplicativo:     unario                                              
+                    | multiplicativo '*' unario                        
+                    | multiplicativo '/' unario                         
+                    | multiplicativo '%' unario                         
+                    ;
+unario:             operando                                            
+                    | '!' unario                                        
+                    | '+' operando %prec UNARY_SIGN                     
+                    | '-' operando %prec UNARY_SIGN                      
+                    ;
+
+operando:           IDENTIF                                            
+                    | IDENTIF '(' argumento ')'                         
+                    | NUMBER                                            
+                    | '(' logical_or ')'                                
+                    |  vector                                           
+                    ;
+
+vector:             IDENTIF '[' logical_or ']'
+                    ;
+\end{lstlisting}
+\noindent Se declararon \textit{tokens} para los operadores lógicos y de comparación con el objetivo 
+de mejorar la legibilidad del código y establecer un acoplamiento más claro entre las fases de 
+análisis léxico y análisis sintáctico.
+
+\noindent En particular, los operadores de comparación fueron definidos como \texttt{nonassoc}, 
+ya que, a diferencia de operadores como la suma o la multiplicación, las comparaciones 
+(por ejemplo, \texttt{==}, \texttt{!=}) no son asociativas. Esto significa que una expresión como:
+\begin{center}
+\texttt{a == b == c}
+\end{center}
+\noindent
+no tiene un significado bien definido en C. Existen dos posibles formas de interpretarla:
+
+\begin{center}
+\texttt{(a == b) == c} || \texttt{a == (b == c)}
+\end{center}
+
+\noindent Ambas interpretaciones pueden generar ambigüedad semántica. Al declarar estos operadores 
+como \texttt{nonassoc}, el \textit{parser} rechaza expresiones como \texttt{a == b == c} y obliga 
+al programador a escribirlas de manera explícita, por ejemplo:
+
+\begin{itemize}
+    \item \texttt{(a == b) \&\& (b == c)}
+    \item Uso de paréntesis para aclarar el orden de evaluación
+\end{itemize}
+
+\noindent Este enfoque permite capturar errores de lógica o errores tipográficos en tiempo de 
+compilación, evitando comportamientos ambiguos o inesperados en tiempo de ejecución.
+\begin{lstlisting}
+...
+%token EQ
+%token NE
+%token LE
+%token GE
+%token OR
+%token AND
+
+%right '='                              
+%left OR                               
+%left AND                               
+%nonassoc EQ NE                         
+%nonassoc '<' '>' LE GE                 
+%left '+' '-'                           
+%left '*' '/' '%'                       
+%right UNARY_SIGN "!"                   
+\end{lstlisting}
+\section{Traducción Backend}
+\noindent Una vez acabado con la implementación del frontend que traducía de C a Lisp, vamos a 
+realizar el correspondiente backend, de Lisp a Forth. Para ello, hemos decidido dividir la 
+implementación en las siguientes fases:
+\subsection{Variables globales}
+\noindent Tal y como traducimos el lisp todas las variables que pueden haber en este código serán 
+globales. Simplemente cambiará el nombre si son específicas a una función en específico. Como ya 
+se unificaron las formas de declarar variables esta parte de la gramática es relativamente simple.
+\begin{lstlisting}
+var_global:         declaracion                                                        
+                    | var_global declaracion
+                    ;                               
+declaracion:        '(' SETQ IDENTIF logical_or ')'
+                    ; 
+\end{lstlisting}
+\subsubsection{Ejemplo de traducción}
+\begin{lstlisting}
+// Lisp:
+(setq a 0)
+(setq b 10)
+(setq c 0)
+// Forth:
+variable a
+0 a !
+variable b
+10 b !
+variable c
+0 c !
+\end{lstlisting}
+\subsection{Función main y funciones genéricas}
+\noindent La definición de funciones se puede unificar para que haya un no terminal que acoge ambos 
+dos tipos de posibles funciones el main que sigue siendo obligatorio y las otras que siguen siendo 
+opcionales. Esta es una forma más simple que la utilizada en el Frontend y por la traducción de Lisp 
+no se nos requerirá el uso de argumentos en estas funciones.
+\begin{lstlisting}
+def_funcs:          def_funcs def_func                
+                    | def_func                                                         
+                    | def_funcs llamada_main       
+                    | llamada_main                                                      
+                    ;
+llamada_main:       '(' MAIN ')'
+
+def_func:           '(' DEFUN MAIN '(' ')' cuerpo ')'
+                    | '(' DEFUN IDENTIF '(' ')' cuerpo ')'
+                    ;  
+\end{lstlisting}
+\subsubsection{Ejemplo de traducción}
+\begin{lstlisting}
+// Lisp:
+(setq a 1)
+(setq b 2)
+(setq c 10)
+(defun square ()
+  (print (* a a))            
+  (print (+ b b))            
+)
+(defun sum_and_diff ()
+  (print (+ a b))            
+  (print (- c a))            
+)
+(defun main ()
+  (print (* (+ a b) c))   
+  (print (- c b))           
+)
+// Forth:
+: main ." a b +"
+variable a
+1 a !
+variable b
+2 b !
+variable c
+10 c !
+: square ." a a *"
+." b b +" ;
+: sum_and_diff ." a b +"
+." c a -" ;
+: main ." a b + c *"
+." c b -" ;
+\end{lstlisting}
+\subsection{Impresión de cadenas}
+\noindent Esta función ya fue muy alterada para el cambio de C a Lisp y aquí la traducción es 
+bastante simple ya que el programa puede necesitar imprimir strings o variables/resultados de 
+operaciones. 
+\begin{lstlisting}
+sentencia:          '(' PRINT STRING ')'            
+                    | '(' PRINC logical_or ')'          
+                    | '(' PRINC STRING ')' 
+                    ...
+                    ;
+\end{lstlisting}
+\subsubsection{Ejemplo de traducción}
+\begin{lstlisting}
+// Lisp:
+(defun main ()
+  (print (* (+ a b) c))   
+  (print (- c b))
+  (princ 22)
+  (princ asdasdasd)
+)
+// Forth:
+variable a
+1 a !
+variable b
+2 b !
+variable c
+10 c !
+: square ." a a *"
+." b b +" ;
+: sum_and_diff ." a b +"
+." c a -" ;
+: main ." a b + c *"
+." c b -"
+22 .
+asdasdasd . ;
+\end{lstlisting}
+\subsection{Operadores, precedencia y asociatividad}
+\noindent Estos son todos los operadores y comparadores que permiten que se sigan las reglas de 
+asociatividad que creamos en la primera gramática. Esta parte de la gramática es muy similar a la 
+del Frontend ya que el cambio de lenguaje no realiza ningún cambio estructural muy grande. Lo que sí
+que tuvimos en cuenta fue en cuanto a las operaciones en Lisp, que al llevar paréntesis hicimos que las
+operaciones tuvieran el mismo nivel de precedencia.
+\begin{lstlisting}
+logical_or:         logical_and                                                         
+                    | '(' OR logical_or logical_and ')'      
+                    ;                               
+logical_and:        igualdad                                                            
+                    | '(' AND logical_and igualdad ')'       
+                    ;                               
+igualdad:           relacional                                                          
+                    | '(' '=' igualdad relacional ')'        
+                    | '(' NE igualdad relacional ')'        
+                    ;                               
+relacional:         operacion                                                          
+                    | '(' '<' relacional operacion ')'     
+                    | '(' '>' relacional operacion ')'   
+                    | '(' LE relacional operacion ')'   
+                    | '(' GE relacional operacion ')'    
+                    ;                               
+operacion:          unario                                                              
+                    | '(' '+' operacion operacion ')'    
+                    | '(' '-' operacion operacion ')'  
+                    | '(' '*' operacion operacion ')'  
+                    | '(' '/' operacion operacion ')'  
+                    | '(' MOD operacion operacion ')'  
+                    ;                                                   
+unario:             operando                                                            
+                    | '(' NOT unario ')'                           
+                    | '+' operando %prec UNARY_SIGN                                    
+                    | '(' '-' operando %prec UNARY_SIGN ')'   
+                    ;
+operando:           IDENTIF
+                    | NUMBER                                                            
+                    | '(' logical_or ')'                                                
+                    ;
+\end{lstlisting}
+\subsubsection{Ejemplo de traducción}
+\begin{lstlisting}
+// Lisp:
+(defun main ()
+	(if (or (or (= main_a 0) (= main_b 0)) (= main_c 0))
+	(progn	(print "|| ||")))
+	(if (or (and (= main_a 0) (= main_b 0)) (= main_c 1))
+	(progn	(print "&& ||")))
+	(if (and (and (= main_a 0) (= main_b 0)) (= main_c 0))
+	(progn	(print "&& &&")))
+	(if (or (= main_a 0) (and (= main_b 0) (= main_c 1)))
+	(progn	(print "|| &&")))
+	(if (or (= main_a 0) (= main_b 0))
+	(progn	(print "||")))
+	(if (and (= main_a 0) (= main_b 0))
+	(progn	(print "&&")))
+	(if (/= main_a 0)
+	(progn	(print "!=")))
+	(if (= main_a 0)
+	(progn	(print "==")))
+	(if (> main_a 0)
+	(progn	(print ">")))
+	(if (< main_a 0)
+	(progn	(print "<")))
+	(if (>= main_a 0)
+	(progn	(print ">=")))
+	(if (<= main_a 0)
+	(progn	(print "<=")))
+	(setf main_a (+ main_b main_c))
+	(setf main_a (- main_b main_c))
+	(setf main_a (* main_b main_c))
+	(setf main_a (/ main_b main_c))
+	(setf main_a (mod main_b main_c))
+	(setf main_a (not main_b))
+	(setf main_a 29)
+	(setf main_a (- 29))
+)
+// Forth:
+variable a
+0 a !
+variable b
+10 b !
+variable c
+0 c !
+: main main_a 0 = main_b 0 = or main_c 0 = or if 
+        ." || ||" 
+then
+main_a 0 = main_b 0 = and main_c 1 = or if 
+        ." && ||" 
+then
+main_a 0 = main_b 0 = and main_c 0 = and if 
+        ." && &&" 
+then
+main_a 0 = main_b 0 = main_c 1 = and or if 
+        ." || &&" 
+then
+main_a 0 = main_b 0 = or if 
+        ." ||" 
+then
+main_a 0 = main_b 0 = and if 
+        ." &&" 
+then
+main_a 0 = 0= if 
+        ." !=" 
+then
+main_a 0 = if 
+        ." ==" 
+then
+main_a 0 > if 
+        ." >" 
+then
+main_a 0 < if 
+        ." <" 
+then
+main_a 0 >= if 
+        ." >=" 
+then
+main_a 0 <= if 
+        ." <=" 
+then
+main_b main_c + main_a !
+main_b main_c - main_a !
+main_b main_c * main_a !
+main_b main_c / main_a !
+main_b main_c mod main_a !
+main_b 0= main_a !
+29 main_a !
+29 negate main_a !
+\end{lstlisting}
+\subsection{Estructuras de Control}
+\noindent Hemos logrado que en esta gramática las sentencias y estructuras de control estén 
+unificadas gracias a la estructura de lisp y a la forma tan estandarizada de definir el código.
+\begin{lstlisting}
+sentencia:          '(' PRINT STRING ')'            
+                    | '(' PRINC logical_or ')'          
+                    | '(' PRINC STRING ')'                 
+                    | '(' SETF IDENTIF logical_or ')'           
+                    | '(' SETQ IDENTIF logical_or ')'               
+                    | '(' LOOP WHILE logical_or DO lista_sentencia ')'   
+                    | '(' IF logical_or sentencia ')'         
+                    | '(' IF logical_or sentencia sentencia ')'     
+                    | '(' PROGN lista_sentencia ')' 
+                    ;
+\end{lstlisting}
+\subsubsection{Ejemplo de traducción}
+\begin{lstlisting}
+// Lisp:
+(defun main()
+(if (<= main_a 0)
+(progn	(print "<=")))	
+(loop while (< main_a 5) do
+	(progn	(print "while")))
+	(if (mod main_a 2)
+	(progn	(print "PAR"))
+	(progn	(print "IMPAR")))
+)
+// Forth:
+main_a 0 <= if 
+        ." <=" 
+then
+begin
+        main_a 5 <
+        ." while"
+repeat
+main_a 2 mod if 
+        ." PAR" 
+else 
+        ." IMPAR" 
+then ;
+\end{lstlisting}
+\section{Pruebas}
+\noindent En esta sección se presentan las pruebas realizadas para verificar el 
+correcto funcionamiento del traductor en sus distintas etapas. Cada prueba incluye 
+el código fuente en C, su correspondiente traducción a Lisp y finalmente la 
+traducción a Forth.
+\subsection{Variables globales}
+\begin{lstlisting}
+int a;
+int b = 10, c, d = 5;
+
+main() {
+    puts("Variables globales");
+}
+//@ (main)
+---------------------------------------------------
+(setq a 0)
+(setq b 10)
+(setq c 0)
+(setq d 5)
+(defun main ()
+	(print "Variables globales")
+)
+ (main)
+---------------------------------------------------
+variable a
+0 a !
+variable b
+10 b !
+variable c
+0 c !
+variable d
+5 d !
+: main ." Variables globales" ;
+main
+\end{lstlisting}
+\subsection{Función main}
+\begin{lstlisting}
+main() {
+    int x;
+    printf("%d\n", x + 1);
+}
+//@ (main)
+---------------------------------------------------
+(defun main ()
+	(setq main_x 0)
+	(princ (+ main_x 1))
+)
+ (main)
+---------------------------------------------------
+: main 0 main_x !
+main_x 1 + . ;
+main
+
+\end{lstlisting}
+\subsection{puts}
+\begin{lstlisting}
+int main_var;
+main() {
+    puts("Hola, mundo!");
+}
+//@ (main)
+---------------------------------------------------
+(setq main_var 0)
+(defun main ()
+	(print "Hola, mundo!")
+)
+ (main)
+---------------------------------------------------
+variable main_var
+0 main_var !
+: main ." Hola, mundo!" ;
+main
+\end{lstlisting}
+\subsection{print simple}
+\begin{lstlisting}
+main() {
+    int val = 42;
+    printf("%d", val);
+}
+//@ (main)
+---------------------------------------------------
+(defun main ()
+	(setq main_val 42)
+	(princ main_val)
+)
+ (main)
+---------------------------------------------------
+: main 42 main_val !
+main_val . ;
+main
+\end{lstlisting}
+\subsection{while}
+\begin{lstlisting}
+main() {
+    int cnt = 0;
+    while (cnt < 3) {
+        printf("%d\n", cnt);
+        cnt = cnt + 1;
+    }
+}
+//@ (main)
+---------------------------------------------------
+(defun main ()
+	(setq main_cnt 0)
+	(loop while (< main_cnt 3) do
+	(progn	(princ main_cnt)
+	
+	(setf main_cnt (+ main_cnt 1))))
+)
+ (main)
+---------------------------------------------------
+: main 0 main_cnt !
+begin
+        main_cnt 3 <
+        main_cnt .
+main_cnt 1 + main_cnt !
+repeat ;
+main
+\end{lstlisting}
+\subsection{if else}
+\begin{lstlisting}
+main() {
+    int v = 5;
+    int res;
+    if (v % 2 == 0) {
+        puts("Par");
+    } else {
+        puts("Impar");
+    }
+
+    if (v > 10) {
+        puts("Grande");
+    }
+}
+//@ (main)
+---------------------------------------------------
+(defun main ()
+	(setq main_v 5)
+	(setq main_res 0)
+	(if (= (mod main_v 2) 0)
+	(progn	(print "Par"))
+	(progn	(print "Impar")))
+	(if (> main_v 10)
+	(progn	(print "Grande")))
+)
+ (main)
+---------------------------------------------------
+: main 5 main_v !
+0 main_res !
+main_v 2 mod 0 = if 
+        ." Par" 
+else 
+        ." Impar" 
+then
+main_v 10 > if 
+        ." Grande" 
+then ;
+main
+
+\end{lstlisting}
+\subsection{for}
+\begin{lstlisting}
+main() {
+    int i;
+    int suma = 0;
+    int n = 5;
+
+    for (i = 0; i < n; i = i + 1) {
+        suma = suma + i;
+    }
+    printf("%d\n", suma);
+}
+//@ (main)
+---------------------------------------------------
+(defun main ()
+	(setq main_i 0)
+	(setq main_suma 0)
+	(setq main_n 5)
+	(setq main_i 0)
+	(loop while (< main_i main_n) do
+	(progn	(setf main_suma (+ main_suma main_i)))
+	(setf main_i (+ main_i 1)))
+	(princ main_suma)	
+)
+ (main)
+---------------------------------------------------
+: main 0 main_i !
+0 main_suma !
+5 main_n !
+0 main_i !
+begin
+        main_i main_n <
+        main_suma main_i + main_suma !
+main_i 1 + main_i !
+repeat
+main_suma . ;
+main
+\end{lstlisting}
+\subsection{Funciones}
+
+\subsection{Variables locales}
+
+\subsection{Vectores}
+
+\end{document}

@@ -1,0 +1,200 @@
+// Definitions for explicit attributes
+
+%token NUMBER        
+%token IDENTIF       // Identificador=variable
+%token INTEGER       // identifica el tipo entero
+%token STRING
+%token RETURN        // identifica el return
+%token MAIN          // identifica el comienzo del proc. main
+%token WHILE         // identifica el bucle main
+%token FOR           // identifica el bucle for
+%token IF            // identifica el if
+%token ELSE          // identifica el else
+%token PUTS          // identifica la función puts()
+%token PRINTF        // identifica la funcion printf()
+%token EQ
+%token NE
+%token LE
+%token GE
+%token OR
+%token AND
+
+%right '='                              /* asignación */
+%left OR                                /* lógico OR "||" */
+%left AND                               /* lógico AND "&&" */
+%nonassoc EQ NE                         /* ==, != */
+%nonassoc '<' '>' LE GE                   /* <, >, <=, >= */
+%left '+' '-'                           /* suma/resta */
+%left '*' '/' '%'                       /* multiplic./módulo */
+%right UNARY_SIGN "!"                   /* unarios: +un, -un, ! */
+
+%%                            // Seccion 3 Gramatica - Semantico
+
+axioma:             var_global funcion                                  
+                    r_axioma                                           
+                    ;
+r_axioma:                                                               
+                    |   axioma                                          
+                    ;
+
+
+
+var_global:         declaracion ';'  var_global                         
+                    |                                                   
+                    ;
+
+declaracion:        INTEGER  IDENTIF valor_global r_declaracion         
+                    | INTEGER  IDENTIF '[' NUMBER ']' r_declaracion     
+                    ;
+
+valor_global:                                                          
+                    | '=' NUMBER                                        
+                    ;
+r_declaracion:        ',' IDENTIF valor_global r_declaracion            
+                    | ',' IDENTIF '[' NUMBER ']' r_declaracion          
+                    |                                                   
+                    ;
+
+
+
+
+funcion:            IDENTIF { strcpy(funcion_name, $1.code); operaciones = 1; } '(' argumento ')' '{' var_local cuerpo '}' funcion  
+                    | funcion_principal                                                                                                     
+                    ;
+
+funcion_principal:  MAIN { strcpy(funcion_name, $1.code); operaciones = 1; } '(' argumento ')' '{' var_local cuerpo '}'                
+                    ;
+
+argumento:          INTEGER valor resto_argumento                       
+                    | valor resto_argumento                             
+                    |                                                  
+                    ;
+
+valor:              STRING                                              
+                    | expresion                                         
+                    ;
+
+resto_argumento:    ',' argumento                                       
+                    |                                                   
+                    ;   
+
+
+var_local:          declaracion_local ';' var_local                     
+                    |                                                   
+                    ;
+
+declaracion_local:  INTEGER  IDENTIF valor_local r_decl_local           
+                    | INTEGER  IDENTIF '[' NUMBER ']' r_decl_local      
+                    ;
+
+valor_local:        /* lambda */                                        
+                    | '=' NUMBER                                        
+                    ;
+r_decl_local:       ',' IDENTIF valor_local r_decl_local    
+                    | ',' IDENTIF '[' NUMBER ']' r_decl_local
+                    |                                                   
+                    ;
+
+
+
+cuerpo:             sentencia ';' cuerpo                                
+                    | sentencia ';'                                     
+                    | estructura cuerpo                                 
+                    | estructura                                       
+                    | RETURN expresion ';'                              
+                    ;
+
+
+
+estructura:         WHILE '(' expresion ')' '{' cuerpo_estructura '}'             
+                    | IF '(' expresion ')' '{' cuerpo_estructura '}'                       
+                    | IF '(' expresion ')' '{' cuerpo_estructura '}' ELSE '{' cuerpo_estructura '}'   
+                    | FOR '(' declaracion_for ';' expresion ';' asignacion ')' '{' cuerpo_estructura '}'
+                    ;
+
+
+declaracion_for:    INTEGER  IDENTIF valor_for r_declaracion_for        
+                    | IDENTIF valor_for r_declaracion_for          
+                    ;
+valor_for:                                                              
+                    | '=' NUMBER                                        
+                    ;
+r_declaracion_for:  ',' IDENTIF valor_for r_declaracion_for         
+                    |                                                   
+                    ;
+
+
+
+cuerpo_estructura:  sentencia ';'                                       
+                    | estructura                                        
+                    | sentencia ';' cuerpo_estructura                   
+                    | estructura cuerpo_estructura                      
+                    | RETURN expresion ';'                              
+                    ;
+sentencia:          asignacion                                          
+                    | '@' expresion                                     
+                    | PUTS '(' STRING ')'                               
+                    | PRINTF printf                                     
+                    | llamada                                           
+                    ;
+
+printf:             '(' STRING r_printf ')'                             
+                    ;
+
+r_printf:           ',' expresion r_printf                              
+                    | ',' STRING r_printf                               
+                    |                                                   
+                    ;
+
+
+
+asignacion:         IDENTIF '=' expresion                               
+                    | vector '=' expresion                              
+                    ;
+
+expresion:          logical_or                                         
+                    ;
+
+llamada:            IDENTIF '(' argumento ')'                           
+                    ;
+
+logical_or:         logical_and                                         
+                    | logical_or OR logical_and                         
+                    ;
+logical_and:        igualdad                                            
+                    | logical_and AND igualdad                          
+                    ;
+igualdad:           relacional                                          
+                    | igualdad EQ relacional                            
+                    | igualdad NE relacional                            
+                    ;
+relacional:         aditivo                                             
+                    | relacional '<' aditivo                            
+                    | relacional '>' aditivo                            
+                    | relacional LE aditivo                             
+                    | relacional GE aditivo                             
+                    ;
+aditivo:            multiplicativo                                      
+                    | aditivo '+' multiplicativo                        
+                    | aditivo '-' multiplicativo                        
+                    ;
+multiplicativo:     unario                                              
+                    | multiplicativo '*' unario                        
+                    | multiplicativo '/' unario                         
+                    | multiplicativo '%' unario                         
+                    ;
+unario:             operando                                            
+                    | '!' unario                                        
+                    | '+' operando %prec UNARY_SIGN                     
+                    | '-' operando %prec UNARY_SIGN                      
+                    ;
+
+operando:           IDENTIF                                            
+                    | IDENTIF '(' argumento ')'                         
+                    | NUMBER                                            
+                    | '(' logical_or ')'                                
+                    |  vector                                           
+                    ;
+
+vector:             IDENTIF '[' logical_or ']'
+                    ;
