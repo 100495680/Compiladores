@@ -426,7 +426,7 @@ sentencia:          '(' PRINT STRING ')'
 correcto funcionamiento del traductor en sus distintas etapas. Cada prueba incluye 
 el código fuente en C, su correspondiente traducción a Lisp y finalmente la 
 traducción a Forth.
-\subsection{Variables globales}
+\subsection{Variables Globales}
 \begin{lstlisting}
 #include <stdio.h>
 int a;
@@ -462,7 +462,7 @@ main
 ---------------------------------------------------
 Variables globales
 \end{lstlisting}
-\subsection{Función main}
+\subsection{Función MAIN}
 \begin{lstlisting}
 #include <stdio.h>
 int x;
@@ -493,7 +493,7 @@ main
 ---------------------------------------------------
 1 
 \end{lstlisting}
-\subsection{puts}
+\subsection{PUTS}
 \begin{lstlisting}
 #include <stdio.h>
 int main_var;
@@ -519,7 +519,7 @@ main
 ---------------------------------------------------
 Hola, mundo!
 \end{lstlisting}
-\subsection{print simple}
+\subsection{PRINT Simple}
 \begin{lstlisting}
 #include <stdio.h>
 int val = 42;
@@ -546,7 +546,7 @@ main
 ---------------------------------------------------
 42 
 \end{lstlisting}
-\subsection{operadores}
+\subsection{Operadores}
 \begin{lstlisting}
 #include <stdio.h>
 int a = 1;
@@ -586,7 +586,7 @@ main
 ---------------------------------------------------
 OK
 \end{lstlisting}
-\subsection{while}
+\subsection{WHILE}
 \begin{lstlisting}
 #include <stdio.h>
 int cnt = 0;
@@ -625,7 +625,7 @@ main
 ---------------------------------------------------
 0 1 2 
 \end{lstlisting}
-\subsection{if-else-then}
+\subsection{IF-ELSE}
 \begin{lstlisting}
 #include <stdio.h>
 int v = 5;
@@ -673,7 +673,7 @@ main
 ---------------------------------------------------
 Impar
 \end{lstlisting}
-\subsection{for}
+\subsection{FOR}
 \begin{lstlisting}
 #include <stdio.h>
 int i;
@@ -725,11 +725,11 @@ main
 \end{lstlisting}
 \subsection{Funciones (Lisp)}
 \begin{lstlisting}
+#include <stdio.h>
 square (int v) {
     return v * v; 
     }
 sum (int x, int y) { return x + y; }
-
 main() {
     int r1, r2;
     r1 = square(7);
@@ -740,10 +740,11 @@ main() {
 }
 //@ (main)
 ---------------------------------------------------
+49 7
+---------------------------------------------------
 (defun square (v )
 	(* v v)
 )
-	
 (defun sum (x  y )
 	(+ x y)
 )
@@ -759,9 +760,12 @@ main() {
 	(square 5 )
 )
  (main)
+---------------------------------------------------
+497
 \end{lstlisting}
-\subsection{Variables locales (Lisp)}
+\subsection{Variables Locales (Lisp)}
 \begin{lstlisting}
+#include <stdio.h>
 main() {
     int g = 1;
     int a = 4, b;
@@ -771,6 +775,8 @@ main() {
 }
 //@ (main)
 ---------------------------------------------------
+5 10
+---------------------------------------------------
 (defun main ()
 	(setq g 1)
 	(setq a 4)
@@ -779,14 +785,15 @@ main() {
 	(setf b (* a 2))
 	(princ a)
 	(princ b)
-	
 )
  (main)
+---------------------------------------------------
+510
 \end{lstlisting}
 \subsection{Vectores (Lisp)}
 \begin{lstlisting}
+#include <stdio.h>
 int arr[5];
-
 main() {
     int i;
     for (i = 0; i < 5; i = i + 1) {
@@ -797,8 +804,9 @@ main() {
 }
 //@ (main)
 ---------------------------------------------------
+0 2 4 6 8
+---------------------------------------------------
 (setq arr (make-array 5))
-
 (defun main ()
 	(setq i 0)
 	(setq i 0)
@@ -810,8 +818,39 @@ main() {
 	(princ (aref arr 2))
 	(princ (aref arr 3))
 	(princ (aref arr 4))
-	
 )
  (main)
+---------------------------------------------------
+02468
 \end{lstlisting}
+\clearpage
+\section{Conclusiones}
+
+\noindent La presente memoria ha descrito en detalle el diseño, la implementación y la validación de un traductor 
+de dos fases para un subconjunto de C: un \emph{frontend} que convierte C en Lisp y un \emph{backend} que 
+convierte Lisp en Forth. A lo largo del proyecto se han abordado todos los objetivos formativos propuestos 
+en la asignatura: la definición de gramáticas jerárquicas, la gestión de la semántica mediante código 
+diferido, la generación de código intermedio y final, y la validación con conjuntos de pruebas 
+diseñados ad hoc y suministrados por el profesorado.
+
+\noindent El ciclo incremental de desarrollo permitió aislar y corregir errores de forma temprana en cada iteración. 
+Gracias a esta estrategia, pudimos empezar por las declaraciones básicas y la impresión de cadenas, añadir luego 
+operadores y estructuras de control, y finalmente incorporar funciones con retorno y vectores antes de abordar el 
+backend. La generación de los ficheros \texttt{trad.y} y \texttt{back.y}, así como el conjunto de scripts de prueba 
+automatizados, garantizó la robustez del traductor y facilitó la comparación de los comportamientos nativos en C, 
+Lisp y Forth.
+
+\noindent Como principales retos formativos cabe destacar la resolución de conflictos de gramática (shift/reduce y 
+reduce/reduce), la correcta gestión de ámbitos en variables locales versus globales, y la inserción de instrucciones 
+de salida (\texttt{bye} en GForth) para evitar bloqueos en los scripts automatizados. Estos desafíos han reforzado 
+el entendimiento de la teoría de compiladores y la importancia de un buen diseño gramatical y semántico.
+
+\noindent Para trabajos futuros, sería interesante ampliar el subconjunto de C soportado (por ejemplo, 
+punteros, estructuras y llamadas con múltiples argumentos) o una implementación propio de un analizador 
+léxico en \emph{flex}.
+
+\noindent En definitiva, este proyecto no solo cumple los requisitos de la práctica, sino que sienta las bases para 
+desarrollos posteriores en el ámbito de los procesadores de lenguaje y la generación de compiladores de 
+propósito educativo o industrial.
+
 \end{document}
