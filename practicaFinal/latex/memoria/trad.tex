@@ -337,20 +337,6 @@ var_global:         declaracion
 declaracion:        '(' SETQ IDENTIF logical_or ')'
                     ; 
 \end{lstlisting}
-\subsubsection{Ejemplo de traducción}
-\begin{lstlisting}
-// Lisp:
-(setq a 0)
-(setq b 10)
-(setq c 0)
-// Forth:
-variable a
-0 a !
-variable b
-10 b !
-variable c
-0 c !
-\end{lstlisting}
 \subsection{Función main y funciones genéricas}
 \noindent La definición de funciones se puede unificar para que haya un no terminal que acoge ambos 
 dos tipos de posibles funciones el main que sigue siendo obligatorio y las otras que siguen siendo 
@@ -368,39 +354,6 @@ def_func:           '(' DEFUN MAIN '(' ')' cuerpo ')'
                     | '(' DEFUN IDENTIF '(' ')' cuerpo ')'
                     ;  
 \end{lstlisting}
-\subsubsection{Ejemplo de traducción}
-\begin{lstlisting}
-// Lisp:
-(setq a 1)
-(setq b 2)
-(setq c 10)
-(defun square ()
-  (print (* a a))            
-  (print (+ b b))            
-)
-(defun sum_and_diff ()
-  (print (+ a b))            
-  (print (- c a))            
-)
-(defun main ()
-  (print (* (+ a b) c))   
-  (print (- c b))           
-)
-// Forth:
-: main ." a b +"
-variable a
-1 a !
-variable b
-2 b !
-variable c
-10 c !
-: square ." a a *"
-." b b +" ;
-: sum_and_diff ." a b +"
-." c a -" ;
-: main ." a b + c *"
-." c b -" ;
-\end{lstlisting}
 \subsection{Impresión de cadenas}
 \noindent Esta función ya fue muy alterada para el cambio de C a Lisp y aquí la traducción es 
 bastante simple ya que el programa puede necesitar imprimir strings o variables/resultados de 
@@ -411,31 +364,6 @@ sentencia:          '(' PRINT STRING ')'
                     | '(' PRINC STRING ')' 
                     ...
                     ;
-\end{lstlisting}
-\subsubsection{Ejemplo de traducción}
-\begin{lstlisting}
-// Lisp:
-(defun main ()
-  (print (* (+ a b) c))   
-  (print (- c b))
-  (princ 22)
-  (princ asdasdasd)
-)
-// Forth:
-variable a
-1 a !
-variable b
-2 b !
-variable c
-10 c !
-: square ." a a *"
-." b b +" ;
-: sum_and_diff ." a b +"
-." c a -" ;
-: main ." a b + c *"
-." c b -"
-22 .
-asdasdasd . ;
 \end{lstlisting}
 \subsection{Operadores, precedencia y asociatividad}
 \noindent Estos son todos los operadores y comparadores que permiten que se sigan las reglas de 
@@ -477,95 +405,6 @@ operando:           IDENTIF
                     | '(' logical_or ')'                                                
                     ;
 \end{lstlisting}
-\subsubsection{Ejemplo de traducción}
-\begin{lstlisting}
-// Lisp:
-(defun main ()
-	(if (or (or (= main_a 0) (= main_b 0)) (= main_c 0))
-	(progn	(print "|| ||")))
-	(if (or (and (= main_a 0) (= main_b 0)) (= main_c 1))
-	(progn	(print "&& ||")))
-	(if (and (and (= main_a 0) (= main_b 0)) (= main_c 0))
-	(progn	(print "&& &&")))
-	(if (or (= main_a 0) (and (= main_b 0) (= main_c 1)))
-	(progn	(print "|| &&")))
-	(if (or (= main_a 0) (= main_b 0))
-	(progn	(print "||")))
-	(if (and (= main_a 0) (= main_b 0))
-	(progn	(print "&&")))
-	(if (/= main_a 0)
-	(progn	(print "!=")))
-	(if (= main_a 0)
-	(progn	(print "==")))
-	(if (> main_a 0)
-	(progn	(print ">")))
-	(if (< main_a 0)
-	(progn	(print "<")))
-	(if (>= main_a 0)
-	(progn	(print ">=")))
-	(if (<= main_a 0)
-	(progn	(print "<=")))
-	(setf main_a (+ main_b main_c))
-	(setf main_a (- main_b main_c))
-	(setf main_a (* main_b main_c))
-	(setf main_a (/ main_b main_c))
-	(setf main_a (mod main_b main_c))
-	(setf main_a (not main_b))
-	(setf main_a 29)
-	(setf main_a (- 29))
-)
-// Forth:
-variable a
-0 a !
-variable b
-10 b !
-variable c
-0 c !
-: main main_a 0 = main_b 0 = or main_c 0 = or if 
-        ." || ||" 
-then
-main_a 0 = main_b 0 = and main_c 1 = or if 
-        ." && ||" 
-then
-main_a 0 = main_b 0 = and main_c 0 = and if 
-        ." && &&" 
-then
-main_a 0 = main_b 0 = main_c 1 = and or if 
-        ." || &&" 
-then
-main_a 0 = main_b 0 = or if 
-        ." ||" 
-then
-main_a 0 = main_b 0 = and if 
-        ." &&" 
-then
-main_a 0 = 0= if 
-        ." !=" 
-then
-main_a 0 = if 
-        ." ==" 
-then
-main_a 0 > if 
-        ." >" 
-then
-main_a 0 < if 
-        ." <" 
-then
-main_a 0 >= if 
-        ." >=" 
-then
-main_a 0 <= if 
-        ." <=" 
-then
-main_b main_c + main_a !
-main_b main_c - main_a !
-main_b main_c * main_a !
-main_b main_c / main_a !
-main_b main_c mod main_a !
-main_b 0= main_a !
-29 main_a !
-29 negate main_a !
-\end{lstlisting}
 \subsection{Estructuras de Control}
 \noindent Hemos logrado que en esta gramática las sentencias y estructuras de control estén 
 unificadas gracias a la estructura de lisp y a la forma tan estandarizada de definir el código.
@@ -581,32 +420,7 @@ sentencia:          '(' PRINT STRING ')'
                     | '(' PROGN lista_sentencia ')' 
                     ;
 \end{lstlisting}
-\subsubsection{Ejemplo de traducción}
-\begin{lstlisting}
-// Lisp:
-(defun main()
-(if (<= main_a 0)
-(progn	(print "<=")))	
-(loop while (< main_a 5) do
-	(progn	(print "while")))
-	(if (mod main_a 2)
-	(progn	(print "PAR"))
-	(progn	(print "IMPAR")))
-)
-// Forth:
-main_a 0 <= if 
-        ." <=" 
-then
-begin
-        main_a 5 <
-        ." while"
-repeat
-main_a 2 mod if 
-        ." PAR" 
-else 
-        ." IMPAR" 
-then ;
-\end{lstlisting}
+
 \section{Pruebas}
 \noindent En esta sección se presentan las pruebas realizadas para verificar el 
 correcto funcionamiento del traductor en sus distintas etapas. Cada prueba incluye 
@@ -614,13 +428,15 @@ el código fuente en C, su correspondiente traducción a Lisp y finalmente la
 traducción a Forth.
 \subsection{Variables globales}
 \begin{lstlisting}
+#include <stdio.h>
 int a;
 int b = 10, c, d = 5;
-
 main() {
     puts("Variables globales");
 }
 //@ (main)
+---------------------------------------------------
+Variables globales
 ---------------------------------------------------
 (setq a 0)
 (setq b 10)
@@ -630,6 +446,8 @@ main() {
 	(print "Variables globales")
 )
  (main)
+---------------------------------------------------
+"Variables globales" 
 ---------------------------------------------------
 variable a
 0 a !
@@ -641,33 +459,50 @@ variable d
 5 d !
 : main ." Variables globales" ;
 main
+---------------------------------------------------
+Variables globales
 \end{lstlisting}
 \subsection{Función main}
 \begin{lstlisting}
+#include <stdio.h>
+int x;
+
 main() {
-    int x;
-    printf("%d\n", x + 1);
+    x = x + 1;
+    printf("%d\n", x);
 }
 //@ (main)
 ---------------------------------------------------
+1
+---------------------------------------------------
+(setq x 0)
 (defun main ()
-	(setq main_x 0)
-	(princ (+ main_x 1))
+	(setf x (+ x 1))
+	(princ x)
+	
 )
  (main)
 ---------------------------------------------------
-: main 0 main_x !
-main_x 1 + . ;
+1
+---------------------------------------------------
+variable x
+0 x !
+: main x @ 1 + x !
+x @ . ;
 main
-
+---------------------------------------------------
+1 
 \end{lstlisting}
 \subsection{puts}
 \begin{lstlisting}
+#include <stdio.h>
 int main_var;
 main() {
     puts("Hola, mundo!");
 }
 //@ (main)
+---------------------------------------------------
+Hola, mundo!
 ---------------------------------------------------
 (setq main_var 0)
 (defun main ()
@@ -675,33 +510,87 @@ main() {
 )
  (main)
 ---------------------------------------------------
+"Hola, mundo!" 
+---------------------------------------------------
 variable main_var
 0 main_var !
 : main ." Hola, mundo!" ;
 main
+---------------------------------------------------
+Hola, mundo!
 \end{lstlisting}
 \subsection{print simple}
 \begin{lstlisting}
+#include <stdio.h>
+int val = 42;
 main() {
-    int val = 42;
     printf("%d", val);
 }
 //@ (main)
 ---------------------------------------------------
+42
+---------------------------------------------------
+(setq val 42)
 (defun main ()
-	(setq main_val 42)
-	(princ main_val)
+	(princ val)
+	
 )
  (main)
 ---------------------------------------------------
-: main 42 main_val !
-main_val . ;
+42
+---------------------------------------------------
+variable val
+42 val !
+: main val @ . ;
 main
+---------------------------------------------------
+42 
+\end{lstlisting}
+\subsection{operadores}
+\begin{lstlisting}
+#include <stdio.h>
+int a = 1;
+int b = 0;
+int c = 2;
+main() {
+    // mezcla &&, ||, ==, !=, <, >, <=, >=, %, +, -, *, /
+    if ((a + c * 3) % 2 == 1 && b != 0 || a <= c) {
+        puts("OK");
+    }
+}
+//@ (main)
+---------------------------------------------------
+OK
+---------------------------------------------------
+(setq a 1)
+(setq b 0)
+(setq c 2)
+(defun main ()
+	(if (or (and (= (mod (+ a (* c 3)) 2) 1) (/= b 0)) (<= a c))
+	(progn	(print "OK")))
+)
+ (main)
+---------------------------------------------------
+"OK" 
+---------------------------------------------------
+variable a
+1 a !
+variable b
+0 b !
+variable c
+2 c !
+: main a @ c @ 3 * + 2 mod 1 = b @ 0 = 0= and a @ c @ <= or if 
+	." OK" 
+then ;
+main
+---------------------------------------------------
+OK
 \end{lstlisting}
 \subsection{while}
 \begin{lstlisting}
+#include <stdio.h>
+int cnt = 0;
 main() {
-    int cnt = 0;
     while (cnt < 3) {
         printf("%d\n", cnt);
         cnt = cnt + 1;
@@ -709,70 +598,88 @@ main() {
 }
 //@ (main)
 ---------------------------------------------------
+0
+1
+2
+---------------------------------------------------
+(setq cnt 0)
 (defun main ()
-	(setq main_cnt 0)
-	(loop while (< main_cnt 3) do
-	(progn	(princ main_cnt)
+	(loop while (< cnt 3) do
+	(progn	(princ cnt)
 	
-	(setf main_cnt (+ main_cnt 1))))
+	(setf cnt (+ cnt 1))))
 )
  (main)
 ---------------------------------------------------
-: main 0 main_cnt !
-begin
-        main_cnt 3 <
-        main_cnt .
-main_cnt 1 + main_cnt !
+012
+---------------------------------------------------
+variable cnt
+0 cnt !
+: main begin
+	cnt @ 3 <
+while
+	cnt @ .
+cnt @ 1 + cnt !
 repeat ;
 main
+---------------------------------------------------
+0 1 2 
 \end{lstlisting}
-\subsection{if else}
+\subsection{if-else-then}
 \begin{lstlisting}
+#include <stdio.h>
+int v = 5;
+int res;
 main() {
-    int v = 5;
-    int res;
     if (v % 2 == 0) {
         puts("Par");
     } else {
         puts("Impar");
     }
-
     if (v > 10) {
         puts("Grande");
     }
 }
 //@ (main)
 ---------------------------------------------------
+Impar
+---------------------------------------------------
+(setq v 5)
+(setq res 0)
 (defun main ()
-	(setq main_v 5)
-	(setq main_res 0)
-	(if (= (mod main_v 2) 0)
+	(if (= (mod v 2) 0)
 	(progn	(print "Par"))
 	(progn	(print "Impar")))
-	(if (> main_v 10)
+	(if (> v 10)
 	(progn	(print "Grande")))
 )
  (main)
 ---------------------------------------------------
-: main 5 main_v !
-0 main_res !
-main_v 2 mod 0 = if 
-        ." Par" 
+"Impar" 
+---------------------------------------------------
+variable v
+5 v !
+variable res
+0 res !
+: main v @ 2 mod 0 = if 
+	." Par" 
 else 
-        ." Impar" 
+	." Impar" 
 then
-main_v 10 > if 
-        ." Grande" 
+v @ 10 > if 
+	." Grande" 
 then ;
 main
-
+---------------------------------------------------
+Impar
 \end{lstlisting}
 \subsection{for}
 \begin{lstlisting}
+#include <stdio.h>
+int i;
+int suma = 0;
+int n = 5;
 main() {
-    int i;
-    int suma = 0;
-    int n = 5;
 
     for (i = 0; i < n; i = i + 1) {
         suma = suma + i;
@@ -781,34 +688,130 @@ main() {
 }
 //@ (main)
 ---------------------------------------------------
+10
+---------------------------------------------------
+(setq i 0)
+(setq suma 0)
+(setq n 5)
 (defun main ()
-	(setq main_i 0)
-	(setq main_suma 0)
-	(setq main_n 5)
-	(setq main_i 0)
-	(loop while (< main_i main_n) do
-	(progn	(setf main_suma (+ main_suma main_i)))
-	(setf main_i (+ main_i 1)))
-	(princ main_suma)	
+	(setq i 0)
+	(loop while (< i n) do
+	(progn	(setf suma (+ suma i)))
+	(setf i (+ i 1)))
+	(princ suma)
+	
 )
  (main)
 ---------------------------------------------------
-: main 0 main_i !
-0 main_suma !
-5 main_n !
-0 main_i !
+10
+---------------------------------------------------
+variable i
+0 i !
+variable suma
+0 suma !
+variable n
+5 n !
+: main 0 i !
 begin
-        main_i main_n <
-        main_suma main_i + main_suma !
-main_i 1 + main_i !
+	i @ n @ <
+while
+	suma @ i @ + suma !
+i @ 1 + i !
 repeat
-main_suma . ;
+suma @ . ;
 main
+---------------------------------------------------
+10 
 \end{lstlisting}
-\subsection{Funciones}
+\subsection{Funciones (Lisp)}
+\begin{lstlisting}
+square (int v) {
+    return v * v; 
+    }
+sum (int x, int y) { return x + y; }
 
-\subsection{Variables locales}
+main() {
+    int r1, r2;
+    r1 = square(7);
+    r2 = sum(3, 4);
+    printf("%d %d\n", r1, r2);
+    // llamada como procedimiento (valor ignorado)
+    square(5);
+}
+//@ (main)
+---------------------------------------------------
+(defun square (v )
+	(* v v)
+)
+	
+(defun sum (x  y )
+	(+ x y)
+)
+	
+(defun main ()
+	(setq r1 0)
+	(setq r2 0)
+	(setf r1 (square 7 ))
+	(setf r2 (sum 3  4 ))
+	(princ r1)
+	(princ r2)
+	
+	(square 5 )
+)
+ (main)
+\end{lstlisting}
+\subsection{Variables locales (Lisp)}
+\begin{lstlisting}
+main() {
+    int g = 1;
+    int a = 4, b;
+    a = a + 1;
+    b = a * 2;
+    printf("%d %d\n", a, b);
+}
+//@ (main)
+---------------------------------------------------
+(defun main ()
+	(setq g 1)
+	(setq a 4)
+	(setq b 0)
+	(setf a (+ a 1))
+	(setf b (* a 2))
+	(princ a)
+	(princ b)
+	
+)
+ (main)
+\end{lstlisting}
+\subsection{Vectores (Lisp)}
+\begin{lstlisting}
+int arr[5];
 
-\subsection{Vectores}
+main() {
+    int i;
+    for (i = 0; i < 5; i = i + 1) {
+        arr[i] = i * 2;
+    }
+    printf("%d %d %d %d %d\n",
+           arr[0], arr[1], arr[2], arr[3], arr[4]);
+}
+//@ (main)
+---------------------------------------------------
+(setq arr (make-array 5))
 
+(defun main ()
+	(setq i 0)
+	(setq i 0)
+	(loop while (< i 5) do
+	(progn	(setf (aref arr i) (* i 2)))
+	(setf i (+ i 1)))
+	(princ (aref arr 0))
+	(princ (aref arr 1))
+	(princ (aref arr 2))
+	(princ (aref arr 3))
+	(princ (aref arr 4))
+	
+)
+ (main)
+\end{lstlisting}
 \end{document}

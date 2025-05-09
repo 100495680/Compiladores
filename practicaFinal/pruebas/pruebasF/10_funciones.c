@@ -1,4 +1,4 @@
-#include <stdio.h>ww
+#include <stdio.h>
 square (int v) {
     return v * v; 
     }

@@ -1,0 +1,27 @@
+#include <stdio.h>
+int main_var;
+
+main() {
+    puts("¡Hola, mundo!");
+}
+//@ (main)
+---------------------------------------------------
+¡Hola, mundo!
+---------------------------------------------------
+(setq main_var 0)
+(defun main ()
+	(print "¡Hola, mundo!")
+)
+ (main)
+---------------------------------------------------
+
+"¡Hola, mundo!" 
+---------------------------------------------------
+
+variable main_var
+0 main_var !
+: main ." ¡Hola, mundo!" ;
+main
+---------------------------------------------------
+Unknown option: -q
+¡Hola, mundo!

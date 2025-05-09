@@ -1,0 +1,51 @@
+#include <stdio.h>
+
+int i;
+int suma = 0;
+int n = 5;
+
+main() {
+
+    for (i = 0; i < n; i = i + 1) {
+        suma = suma + i;
+    }
+    printf("%d\n", suma);
+}
+//@ (main)
+---------------------------------------------------
+10
+---------------------------------------------------
+(setq i 0)
+(setq suma 0)
+(setq n 5)
+(defun main ()
+	(setq i 0)
+	(loop while (< i n) do
+	(progn	(setf suma (+ suma i)))
+	(setf i (+ i 1)))
+	(princ suma)
+	
+)
+ (main)
+---------------------------------------------------
+10
+---------------------------------------------------
+
+variable i
+0 i !
+variable suma
+0 suma !
+variable n
+5 n !
+: main 0 i !
+begin
+	i @ n @ <
+while
+	suma @ i @ + suma !
+i @ 1 + i !
+repeat
+suma @ . ;
+main
+---------------------------------------------------
+Unknown option: -q
+10 

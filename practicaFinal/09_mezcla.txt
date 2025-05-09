@@ -1,0 +1,315 @@
+#include <stdio.h>
+int a;
+int b = 10;
+int c;
+
+main(){
+    if (a == 0 || b == 0 || c == 0){
+        puts("|| ||");
+    }
+    if (a == 0 && b == 0 || c == 1){
+        puts("&& ||");
+    }
+    if (a == 0 && b == 0 && c == 0){
+        puts("&& &&");
+    }
+    if (a == 0 || b == 0 && c == 1){
+        puts("|| &&");
+    }
+    if (a == 0 || b == 0){
+        puts("||");
+    }
+    if (a == 0 && b == 0){
+        puts("&&");
+    }
+    if (a != 0){
+        puts("!=");
+    }
+    if (a == 0){
+        puts("==");
+    }
+    if (a > 0){
+        puts(">");
+    }
+    if (a < 0){
+        puts("<");
+    }
+    if (a >= 0){
+        puts(">=");
+    }
+    if (a <= 0){
+        puts("<=");
+    }
+
+    a = b + c;
+    puts("Operacion a = b + c");
+    puts("Valor de a:");
+    printf("%d", a);
+    a = b - c;
+    puts("Operacion a = b - c");
+    puts("Valor de a:");
+    printf("%d", a);
+    a = b * c;
+    puts("Operacion a = b * c");
+    puts("Valor de a:");
+    printf("%d", a);
+    a = b / 3;
+    puts("Operacion a = b / 3");
+    puts("Valor de a:");
+    printf("%d", a);
+    a = b % 10;
+    puts("Operacion a = b % 10");
+    puts("Valor de a:");
+    printf("%d", a);
+    a = !b;
+    puts("Operacion a = !b");
+    puts("Valor de a:");
+    printf("%d", a);
+    a = +29;
+    puts("Operacion a = +29");
+    puts("Valor de a:");
+    printf("%d", a);
+    a = -1;
+    puts("Operacion a = -1");
+    puts("Valor de a:");
+    printf("%d", a);
+    while (a < 5){
+        puts("while");
+        a = a + 1;
+    }
+    if (a % 2){
+        puts("PAR");
+    } else {
+        puts("IMPAR");
+    }
+}
+//@ (main)
+---------------------------------------------------
+|| ||
+|| &&
+||
+==
+>=
+<=
+Operacion a = b + c
+Valor de a:
+10Operacion a = b - c
+Valor de a:
+10Operacion a = b * c
+Valor de a:
+0Operacion a = b / 3
+Valor de a:
+3Operacion a = b % 10
+Valor de a:
+0Operacion a = !b
+Valor de a:
+0Operacion a = +29
+Valor de a:
+29Operacion a = -1
+Valor de a:
+-1while
+while
+while
+while
+while
+while
+PAR
+---------------------------------------------------
+(setq a 0)
+(setq b 10)
+(setq c 0)
+(defun main ()
+	(if (or (or (= a 0) (= b 0)) (= c 0))
+	(progn	(print "|| ||")))
+	(if (or (and (= a 0) (= b 0)) (= c 1))
+	(progn	(print "&& ||")))
+	(if (and (and (= a 0) (= b 0)) (= c 0))
+	(progn	(print "&& &&")))
+	(if (or (= a 0) (and (= b 0) (= c 1)))
+	(progn	(print "|| &&")))
+	(if (or (= a 0) (= b 0))
+	(progn	(print "||")))
+	(if (and (= a 0) (= b 0))
+	(progn	(print "&&")))
+	(if (/= a 0)
+	(progn	(print "!=")))
+	(if (= a 0)
+	(progn	(print "==")))
+	(if (> a 0)
+	(progn	(print ">")))
+	(if (< a 0)
+	(progn	(print "<")))
+	(if (>= a 0)
+	(progn	(print ">=")))
+	(if (<= a 0)
+	(progn	(print "<=")))
+	(setf a (+ b c))
+	(print "Operacion a = b + c")
+	(print "Valor de a:")
+	(princ a)
+	
+	(setf a (- b c))
+	(print "Operacion a = b - c")
+	(print "Valor de a:")
+	(princ a)
+	
+	(setf a (* b c))
+	(print "Operacion a = b * c")
+	(print "Valor de a:")
+	(princ a)
+	
+	(setf a (/ b 3))
+	(print "Operacion a = b / 3")
+	(print "Valor de a:")
+	(princ a)
+	
+	(setf a (mod b 10))
+	(print "Operacion a = b % 10")
+	(print "Valor de a:")
+	(princ a)
+	
+	(setf a (not b))
+	(print "Operacion a = !b")
+	(print "Valor de a:")
+	(princ a)
+	
+	(setf a 29)
+	(print "Operacion a = +29")
+	(print "Valor de a:")
+	(princ a)
+	
+	(setf a (- 1))
+	(print "Operacion a = -1")
+	(print "Valor de a:")
+	(princ a)
+	
+	(loop while (< a 5) do
+	(progn	(print "while")
+	(progn	(setf a (+ a 1)))))
+	(if (mod a 2)
+	(progn	(print "PAR"))
+	(progn	(print "IMPAR")))
+)
+ (main)
+---------------------------------------------------
+
+"|| ||" 
+"|| &&" 
+"||" 
+"==" 
+">=" 
+"<=" 
+"Operacion a = b + c" 
+"Valor de a:" 10
+"Operacion a = b - c" 
+"Valor de a:" 10
+"Operacion a = b * c" 
+"Valor de a:" 0
+"Operacion a = b / 3" 
+"Valor de a:" 10/3
+"Operacion a = b % 10" 
+"Valor de a:" 0
+"Operacion a = !b" 
+"Valor de a:" NIL
+"Operacion a = +29" 
+"Valor de a:" 29
+"Operacion a = -1" 
+"Valor de a:" -1
+"while" 
+"while" 
+"while" 
+"while" 
+"while" 
+"while" 
+"PAR" 
+---------------------------------------------------
+
+variable a
+0 a !
+variable b
+10 b !
+variable c
+0 c !
+: main a @ 0 = b @ 0 = or c @ 0 = or if 
+	." || ||" 
+then
+a @ 0 = b @ 0 = and c @ 1 = or if 
+	." && ||" 
+then
+a @ 0 = b @ 0 = and c @ 0 = and if 
+	." && &&" 
+then
+a @ 0 = b @ 0 = c @ 1 = and or if 
+	." || &&" 
+then
+a @ 0 = b @ 0 = or if 
+	." ||" 
+then
+a @ 0 = b @ 0 = and if 
+	." &&" 
+then
+a @ 0 = 0= if 
+	." !=" 
+then
+a @ 0 = if 
+	." ==" 
+then
+a @ 0 > if 
+	." >" 
+then
+a @ 0 < if 
+	." <" 
+then
+a @ 0 >= if 
+	." >=" 
+then
+a @ 0 <= if 
+	." <=" 
+then
+b @ c @ + a !
+." Operacion a = b + c"
+." Valor de a:"
+a @ .
+b @ c @ - a !
+." Operacion a = b - c"
+." Valor de a:"
+a @ .
+b @ c @ * a !
+." Operacion a = b * c"
+." Valor de a:"
+a @ .
+b @ 3 / a !
+." Operacion a = b / 3"
+." Valor de a:"
+a @ .
+b @ 10 mod a !
+." Operacion a = b % 10"
+." Valor de a:"
+a @ .
+b @ 0= a !
+." Operacion a = !b"
+." Valor de a:"
+a @ .
+29 a !
+." Operacion a = +29"
+." Valor de a:"
+a @ .
+1 negate a !
+." Operacion a = -1"
+." Valor de a:"
+a @ .
+begin
+	a @ 5 <
+while
+	." while"
+a @ 1 + a !
+repeat
+a @ 2 mod if 
+	." PAR" 
+else 
+	." IMPAR" 
+then ;
+main
+---------------------------------------------------
+Unknown option: -q
+|| |||| &&||==>=<=Operacion a = b + cValor de a:10 Operacion a = b - cValor de a:10 Operacion a = b * cValor de a:0 Operacion a = b / 3Valor de a:3 Operacion a = b % 10Valor de a:0 Operacion a = !bValor de a:0 Operacion a = +29Valor de a:29 Operacion a = -1Valor de a:-1 whilewhilewhilewhilewhilewhilePAR
